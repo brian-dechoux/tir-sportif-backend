@@ -16,6 +16,6 @@ public class JwtProperties {
     String secret;
 
     @Positive
-    int validity;
+    long validity;
 
 }

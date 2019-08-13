@@ -4,9 +4,12 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class AuthenticationResponse {
+public class ErrorResponse {
 
     @NonNull
-    String jwtToken;
+    String error;
+
+    @NonNull
+    String message;
 
 }
