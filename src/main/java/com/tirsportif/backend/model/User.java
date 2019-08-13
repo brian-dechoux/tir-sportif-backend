@@ -6,6 +6,7 @@ import lombok.NonNull;
 import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
@@ -18,9 +19,11 @@ public class User implements Authentication {
     Long id;
 
     @NonNull
+    @NotNull
     String username;
 
     @NonNull
+    @NotNull
     String password;
 
     @ManyToMany

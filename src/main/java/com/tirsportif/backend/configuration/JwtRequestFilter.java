@@ -40,25 +40,28 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestTokenHeader = request.getHeader("Authorization");
         String username, jwtToken;
 
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                // TODO Check in Redis, for a proper logout workflow
-                username = jwtTokenManager.getUsernameFromToken(jwtToken);
-            } catch (ExpiredJwtException e) {
-                throw new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN);
+        if (requestTokenHeader != null) {
+            if (requestTokenHeader.startsWith("Bearer ")) {
+                jwtToken = requestTokenHeader.substring(7);
+                try {
+                    // TODO Check in Redis, for a proper logout workflow
+                    username = jwtTokenManager.getUsernameFromToken(jwtToken);
+                } catch (ExpiredJwtException e) {
+                    throw new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN);
+                }
+            } else {
+                throw new UnauthorizedException(AuthenticationError.WRONG_FORMAT_TOKEN);
             }
-        } else {
-            throw new UnauthorizedException(AuthenticationError.WRONG_FORMAT_TOKEN);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR, "Cannot find user with username: "+ username));
+                if (jwtTokenManager.validateToken(jwtToken, user)) {
+                    SecurityContextHolder.getContext().setAuthentication(user);
+                }
+            }
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR, "Cannot find user with username: "+ username));
-            if (jwtTokenManager.validateToken(jwtToken, user)) {
-                SecurityContextHolder.getContext().setAuthentication(user);
-            }
-        }
         chain.doFilter(request, response);
     }
 }
