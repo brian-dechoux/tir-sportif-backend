@@ -40,6 +40,9 @@ public class AuthenticationService {
         log.info("Generating token");
         String jwtToken = jwtTokenManager.generateToken(user);
 
+        log.info("Storing token");
+        jwtTokenManager.storeGeneratedToken(jwtToken);
+
         log.info("Setting Spring authentication up");
         SecurityContextHolder.getContext().setAuthentication(user);
 

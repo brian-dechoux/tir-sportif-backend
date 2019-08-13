@@ -1,11 +1,12 @@
 package com.tirsportif.backend.service;
 
+import com.tirsportif.backend.model.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.properties.JwtProperties;
+import com.tirsportif.backend.repository.JwtRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -19,9 +20,11 @@ import java.util.function.Function;
 public class JwtTokenManager {
 
     private final JwtProperties jwtProperties;
+    private final JwtRepository jwtRepository;
 
-    public JwtTokenManager(JwtProperties jwtProperties) {
+    public JwtTokenManager(JwtProperties jwtProperties, JwtRepository jwtRepository) {
         this.jwtProperties = jwtProperties;
+        this.jwtRepository = jwtRepository;
     }
 
     public String getUsernameFromToken(String token) {
@@ -60,6 +63,11 @@ public class JwtTokenManager {
     public Boolean validateToken(String token, User user) {
         final String username = getUsernameFromToken(token);
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    }
+
+    public void storeGeneratedToken(String token) {
+        JwtTokenRedis jwtRedisModel = new JwtTokenRedis(token, (long) jwtProperties.getValidity());
+        jwtRepository.save(jwtRedisModel);
     }
 
 }
