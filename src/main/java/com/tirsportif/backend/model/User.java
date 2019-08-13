@@ -1,15 +1,17 @@
 package com.tirsportif.backend.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Value
+@Data
+@NoArgsConstructor
 @Entity
-public class User implements UserDetails {
+public class User implements Authentication {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -26,23 +28,32 @@ public class User implements UserDetails {
     Set<Role> authorities;
 
     @Override
-    public boolean isAccountNonExpired() {
+    public Object getCredentials() {
+        return password;
+    }
+
+    @Override
+    public Object getDetails() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return username;
+    }
+
+    @Override
+    public Object getPrincipal() {
+        return username;
+    }
+
+    @Override
+    public boolean isAuthenticated() {
         return true;
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
     }
 
 }

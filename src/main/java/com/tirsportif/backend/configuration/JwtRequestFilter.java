@@ -1,11 +1,11 @@
 package com.tirsportif.backend.configuration;
 
+import com.tirsportif.backend.model.User;
+import com.tirsportif.backend.repository.UserRepository;
 import com.tirsportif.backend.service.JwtTokenManager;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,9 +23,11 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenManager jwtTokenManager;
+    private final UserRepository userRepository;
 
-    public JwtRequestFilter(JwtTokenManager jwtTokenManager) {
+    public JwtRequestFilter(JwtTokenManager jwtTokenManager, UserRepository userRepository) {
         this.jwtTokenManager = jwtTokenManager;
+        this.userRepository = userRepository;
     }
 
     // TODO proper exception
@@ -49,11 +51,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = null;// FIXME this.jwtUserDetailsService.loadUserByUsername(username);
-            if (jwtTokenManager.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            String finalUsername = username;
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with username: "+ finalUsername));
+            if (jwtTokenManager.validateToken(jwtToken, user)) {
+                SecurityContextHolder.getContext().setAuthentication(user);
             }
         }
         chain.doFilter(request, response);
