@@ -6,7 +6,6 @@ package com.tirsportif.backend.model;
 public enum Authority {
 
     ADMIN,
-    MANAGER,
-    VIEWER
+    MANAGER
 
 }
