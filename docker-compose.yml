@@ -8,8 +8,9 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: tir-sportif
-      MYSQL_USER: root
+      MYSQL_USER: admin
       MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: SomeSecurePassword!
 
   redis:
     image: redis:alpine

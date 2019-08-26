@@ -2,24 +2,24 @@
 
 ## Current app properties
 
+### Server configs
+
+server:
+  port: 8081
+
 ### Spring related configs
 spring:
+
   jpa:
+    hibernate.ddl-auto: create
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
-      #### TODO Remove this after development, and use LiquiBase instead
-      javax:
-        persistence:
-          schema-generation:
-            create-source: metadata
-            scripts:
-              action: create
-              create-target: creation-script.sql
-    hibernate.ddl-auto: update
+
+  liquibase.enabled: false
 
   datasource:
     url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false
-    username: root
+    username: admin
     password: password
     driver-class-name: com.mysql.jdbc.Driver
 
