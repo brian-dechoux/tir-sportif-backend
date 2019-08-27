@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Data
@@ -25,6 +26,11 @@ public class User implements Authentication {
     @NonNull
     @NotNull
     String password;
+
+    @NonNull
+    @NotNull
+    @Column(name = "creationDate", columnDefinition = "TIME WITH TIME ZONE")
+    OffsetDateTime creationDate;
 
     @ManyToMany
     @NonNull
