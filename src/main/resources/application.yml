@@ -28,10 +28,14 @@ spring:
     url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false
     username: admin
     password: password
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 ### Custom app configs
 tir-sportif:
+
+  api:
+    # Default pages size
+    pagination.size: 10
 
   jwt:
     secret: springfield1911EMP

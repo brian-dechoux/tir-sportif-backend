@@ -45,6 +45,7 @@ public class ShotResult {
     @NonNull
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "participationId")
     Participation participation;
 
 }

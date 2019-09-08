@@ -2,7 +2,7 @@ package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.model.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
-import com.tirsportif.backend.properties.JwtProperties;
+import com.tirsportif.backend.property.JwtProperties;
 import com.tirsportif.backend.repository.JwtRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

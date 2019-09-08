@@ -18,22 +18,26 @@ public class Participation {
 
     @NonNull
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "shooterId")
     Shooter shooter;
 
     @NonNull
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "challengeId")
     Challenge challenge;
 
     @NonNull
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "categoryId")
     Category category;
 
     @NonNull
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "disciplineId")
     Discipline discipline;
 
     @NotNull
