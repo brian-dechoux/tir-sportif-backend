@@ -15,6 +15,6 @@ public class CreateClubRequest {
     String name;
 
     @NotNull
-    AddressDto address;
+    CreateAddressRequest address;
 
 }

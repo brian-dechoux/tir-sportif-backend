@@ -3,21 +3,23 @@ package com.tirsportif.backend.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
-public class AddressDto {
+public class CreateAddressRequest {
 
     @NotNull
     String street;
 
-    @NotNull
-    int number;
+    String number;
 
     String zip;
 
     @NotNull
     String city;
 
-    CountryDto country;
+    @NotNull
+    @Positive
+    Long countryId;
 
 }

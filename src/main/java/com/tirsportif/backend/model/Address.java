@@ -20,8 +20,8 @@ public class Address {
     @NotNull
     String street;
 
-    @NotNull
-    int number;
+    // Can be problematic stuff like 2A
+    String number;
 
     String zip;
 
@@ -29,7 +29,7 @@ public class Address {
     @NotNull
     String city;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "countryId")
     Country country;
 

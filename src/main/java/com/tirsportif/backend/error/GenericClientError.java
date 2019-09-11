@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum GenericClientError implements Error {
 
-    RESOURCE_NOT_FOUND("GCE0001", "Cannot find resource identified by the provided ID: {}");
+    RESOURCE_NOT_FOUND("GCE0001", "Cannot find resource identified by the provided ID: %s");
 
     private String code;
     private String message;

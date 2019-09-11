@@ -7,6 +7,6 @@ public class GetClubResponse {
 
     String name;
 
-    AddressDto address;
+    GetAddressResponse address;
 
 }

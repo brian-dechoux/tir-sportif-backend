@@ -22,12 +22,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
+    // TODO there are remaining test unlocked routes here
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers(HttpMethod.POST, "/authentication").permitAll().
-        anyRequest().authenticated().and().
-        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/authentication/**").permitAll().and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/clubs/**").permitAll().and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/authentication/**").permitAll().and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/clubs/**").permitAll()
+                .anyRequest().authenticated().and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

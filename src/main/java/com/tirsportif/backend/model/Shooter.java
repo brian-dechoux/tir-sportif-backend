@@ -28,7 +28,7 @@ public class Shooter {
     @Column(name = "birthDate", columnDefinition = "DATE")
     LocalDate birthDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId")
     Address address;
 
@@ -36,6 +36,8 @@ public class Shooter {
     @JoinColumn(name = "clubId")
     Club club;
 
-
+    @ManyToOne
+    @JoinColumn(name = "category")
+    Category category;
 
 }

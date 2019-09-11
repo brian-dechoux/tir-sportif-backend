@@ -20,7 +20,7 @@ public class Club {
     @NotNull
     String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId")
     Address address;
 

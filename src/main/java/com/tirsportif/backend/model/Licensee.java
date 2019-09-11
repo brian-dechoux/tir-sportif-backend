@@ -27,7 +27,7 @@ public class Licensee {
     @Column(name = "subscriptionDate", columnDefinition = "TIME WITH TIME ZONE")
     OffsetDateTime subscriptionDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shooterId")
     Shooter shooter;
 

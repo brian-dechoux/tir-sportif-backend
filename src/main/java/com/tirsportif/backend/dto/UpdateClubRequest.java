@@ -7,6 +7,6 @@ public class UpdateClubRequest {
 
     String name;
 
-    AddressDto address;
+    CreateAddressRequest address;
 
 }

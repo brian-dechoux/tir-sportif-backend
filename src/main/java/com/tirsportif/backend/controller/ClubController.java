@@ -18,13 +18,13 @@ public class ClubController {
     }
 
     @PostMapping
-    public void createClub(CreateClubRequest request) {
+    public void createClub(@RequestBody CreateClubRequest request) {
         clubService.createClub(request);
     }
 
     @GetMapping(value = "/{clubId}")
     @ResponseBody
-    public GetClubResponse getClub(Long clubId) {
+    public GetClubResponse getClub(@PathVariable Long clubId) {
         return clubService.getClubById(clubId);
     }
 
