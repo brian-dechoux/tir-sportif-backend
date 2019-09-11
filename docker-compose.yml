@@ -11,6 +11,8 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: SomeSecurePassword!
+    volumes:
+      - mysql:/var/lib/mysql
 
   redis:
     image: redis:alpine
@@ -31,3 +33,4 @@ networks:
 
 volumes:
   m2cache:
+  mysql:
