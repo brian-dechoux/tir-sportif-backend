@@ -12,6 +12,6 @@ WORKDIR ${WORKDIR}
 
 ADD docker/ihub-backend/settings.xml /root/.m2/settings.xml
 
-ADD . ${WORKDIR}
+ADD .. ${WORKDIR}
 
 CMD ["sh", "-c", "printenv && cat /root/.m2/settings.xml && mvn clean && mvn -B -Dmaven.test.skip=true package && java -jar -Dspring.profiles.active=${ENVIRONMENT} target/ihub-backend.jar"]

@@ -17,11 +17,6 @@ security.require-ssl: true
 ### Spring related configs
 spring:
 
-  jpa:
-    hibernate.ddl-auto: create
-    properties:
-      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
-
   liquibase.enabled: false
 
   datasource:

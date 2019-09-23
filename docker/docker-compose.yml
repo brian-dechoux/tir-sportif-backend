@@ -2,15 +2,10 @@ version: "3"
 services:
 
   mysql:
-    image: mysql:5.7
+    build: mysql
     ports:
       - "3306:3306"
     restart: always
-    environment:
-      MYSQL_DATABASE: tir-sportif
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: SomeSecurePassword!
     volumes:
       - mysql:/var/lib/mysql
 
@@ -20,7 +15,7 @@ services:
       - "6379:6379"
 
   backend:
-    build: .
+    build: ..
     ports:
       - "8080:8080"
       - "8443:8443"
