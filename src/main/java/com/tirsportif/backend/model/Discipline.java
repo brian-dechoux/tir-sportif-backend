@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "discipline")
 public class Discipline {
 
     @Id

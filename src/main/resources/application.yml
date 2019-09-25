@@ -17,6 +17,9 @@ security.require-ssl: true
 ### Spring related configs
 spring:
 
+  #### Naming convention for database columns: CamelCase
+  jpa.hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
   liquibase.enabled: false
 
   datasource:
@@ -34,4 +37,4 @@ tir-sportif:
 
   jwt:
     secret: springfield1911EMP
-    validity: 3600
+    validity: 3600000

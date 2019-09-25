@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "country")
 public class Country {
 
     @Id

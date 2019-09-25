@@ -8,9 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
 @Data
 @NoArgsConstructor
+@Entity(name = "role")
 public class Role implements GrantedAuthority {
 
     @Id

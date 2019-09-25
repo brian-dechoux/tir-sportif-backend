@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "user")
 public class User implements Authentication {
 
     @Id

@@ -16,7 +16,7 @@ import javax.validation.constraints.Positive;
  */
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "shotResult")
 public class ShotResult {
 
     @Id

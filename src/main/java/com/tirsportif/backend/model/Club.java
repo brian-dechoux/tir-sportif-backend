@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "club")
 public class Club {
 
     @Id

@@ -10,7 +10,7 @@ import javax.validation.constraints.Positive;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "price")
 public class Price {
 
     @Id
