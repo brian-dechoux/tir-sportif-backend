@@ -4,24 +4,31 @@ import com.tirsportif.backend.model.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.property.JwtProperties;
 import com.tirsportif.backend.repository.JwtRepository;
+import com.tirsportif.backend.utils.DateUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-// This class model comes from: https://dzone.com/articles/spring-boot-security-json-web-tokenjwt-hello-world
+/**
+ * JWT Token generator and validator.
+ * This class model comes from: https://dzone.com/articles/spring-boot-security-json-web-tokenjwt-hello-world
+ */
 @Component
 public class JwtTokenManager {
 
+    private final DateUtils dateUtils;
     private final JwtProperties jwtProperties;
     private final JwtRepository jwtRepository;
 
-    public JwtTokenManager(JwtProperties jwtProperties, JwtRepository jwtRepository) {
+    public JwtTokenManager(Clock clock, JwtProperties jwtProperties, JwtRepository jwtRepository) {
+        this.dateUtils = DateUtils.fromClock(clock);
         this.jwtProperties = jwtProperties;
         this.jwtRepository = jwtRepository;
     }
@@ -46,8 +53,10 @@ public class JwtTokenManager {
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getValidity()))
+        return Jwts.builder().setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(dateUtils.now())
+                .setExpiration(dateUtils.nowPlus(jwtProperties.getValidity()))
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret()).compact();
     }
 
@@ -67,7 +76,7 @@ public class JwtTokenManager {
 
     private boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        return expiration.before(dateUtils.now());
     }
 
 }

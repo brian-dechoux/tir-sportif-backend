@@ -12,9 +12,15 @@ import javax.validation.constraints.Positive;
 @ConfigurationProperties(value = "tir-sportif.jwt")
 public class JwtProperties {
 
+    /**
+     * Necessary secret to add entropy into JWT token generation.
+     */
     @NotEmpty
     String secret;
 
+    /**
+     * Ms validity of the token.
+     */
     @Positive
     long validity;
 
