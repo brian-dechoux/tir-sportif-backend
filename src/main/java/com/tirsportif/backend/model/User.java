@@ -4,11 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @NoArgsConstructor
@@ -32,9 +34,14 @@ public class User implements Authentication {
     @Column(name = "creationDate", columnDefinition = "TIME WITH TIME ZONE")
     OffsetDateTime creationDate;
 
-    @ManyToMany
+    @ManyToOne
     @NonNull
-    Set<Role> authorities;
+    Authority authority;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(authority);
+    }
 
     @Override
     public Object getCredentials() {

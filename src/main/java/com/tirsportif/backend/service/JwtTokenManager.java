@@ -8,9 +8,11 @@ import com.tirsportif.backend.utils.DateUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +44,9 @@ public class JwtTokenManager {
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
     }
 
-    String generateToken(User user) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, user.getUsername());
+        return doGenerateToken(claims, user.getUsername(), user.getAuthorities());
     }
 
     void storeGeneratedToken(String token) {
@@ -52,7 +54,7 @@ public class JwtTokenManager {
         jwtRepository.save(jwtRedisModel);
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    private String doGenerateToken(Map<String, Object> claims, String subject, Collection<? extends GrantedAuthority> authorities) {
         return Jwts.builder().setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(dateUtils.now())
