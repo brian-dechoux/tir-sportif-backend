@@ -1,3 +1,7 @@
-- Proper SQL Initialization (user test)
+- Proper SQL Initialization
 - Indexes on database
-- Proper outside application handling password generation 
+- Proper outside application handling password generation
+- Shot results might be candidate to another database type, because: 
+    - it varies a lot
+    - SGBDR storage will be redundant and heavy 
+    -> a solution could be to use Cassandra, or Mongo
