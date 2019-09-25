@@ -1,2 +1,3 @@
-- Proper SQL Creation script + Initialization (countries)
+- Proper SQL Initialization (user test)
 - Indexes on database
+- Proper outside application handling password generation 
