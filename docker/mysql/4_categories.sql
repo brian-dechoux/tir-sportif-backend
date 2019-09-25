@@ -1,0 +1,1 @@
+INSERT INTO category (label,code,gender,ageMin,ageMax,gccMax) VALUES ('');

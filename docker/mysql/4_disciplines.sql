@@ -1,0 +1,1 @@
+INSERT INTO discipline (label,code,nbSeries,nbShotsPerSerie,isDecimalResult) VALUES ('');

@@ -62,9 +62,9 @@ CREATE TABLE `licensee` (
 
 CREATE TABLE `category` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
-  `label` varchar(255),
-  `code` varchar(255),
-  `gender` ENUM ('M', 'F'),
+  `label` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `gender` ENUM ('M', 'F') NOT NULL,
   `ageMin` int,
   `ageMax` int,
   `gccMax` ENUM ('white', 'yellow', 'green', 'blue', 'brown')
@@ -76,7 +76,7 @@ CREATE TABLE `discipline` (
   `code` varchar(255) NOT NULL,
   `nbSeries` int NOT NULL,
   `nbShotsPerSerie` int NOT NULL,
-  `isDecimalResult` boolean
+  `isDecimalResult` boolean NOT NULL
 );
 
 CREATE TABLE `challenge` (
