@@ -6,7 +6,6 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.Set;
 
 @Data
@@ -25,14 +24,6 @@ public class Discipline {
     @NonNull
     @NotNull
     String code;
-
-    @NotNull
-    @Positive
-    int nbSeries;
-
-    @NotNull
-    @Positive
-    int nbShotsPerSerie;
 
     /**
      * Some discipline uses integer, some others decimal.

@@ -73,9 +73,15 @@ CREATE TABLE `discipline` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
-  `nbSeries` int NOT NULL,
-  `nbShotsPerSerie` int NOT NULL,
   `isDecimalResult` boolean NOT NULL
+);
+
+CREATE TABLE `categoriesDisciplinesParameters` (
+  `id` int  PRIMARY KEY AUTO_INCREMENT,
+  `categoryId` int NOT NULL,
+  `disciplineId` int NOT NULL,
+  `nbSeries` int NOT NULL,
+  `nbShotsPerSerie` int NOT NULL
 );
 
 CREATE TABLE `challenge` (
@@ -137,6 +143,10 @@ ALTER TABLE `licensee` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`)
 ALTER TABLE `challenge` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `challenge` ADD FOREIGN KEY (`organiserClubId`) REFERENCES `club` (`id`);
+
+ALTER TABLE `categoriesDisciplinesParameters` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
+
+ALTER TABLE `categoriesDisciplinesParameters` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
 ALTER TABLE `challengeDisciplines` ADD FOREIGN KEY (`challengeId`) REFERENCES `challenge` (`id`);
 
