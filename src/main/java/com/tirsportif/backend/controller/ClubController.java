@@ -5,6 +5,7 @@ import com.tirsportif.backend.dto.GetClubResponse;
 import com.tirsportif.backend.dto.UpdateClubRequest;
 import com.tirsportif.backend.service.ClubService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +25,7 @@ public class ClubController {
 
     @GetMapping(value = "/{clubId}")
     @ResponseBody
+    @PreAuthorize("authorizedFor('ADMIN')")
     public GetClubResponse getClub(@PathVariable Long clubId) {
         return clubService.getClubById(clubId);
     }

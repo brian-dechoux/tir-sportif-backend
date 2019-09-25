@@ -20,10 +20,10 @@ public class Authority implements GrantedAuthority {
     @NonNull
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    AuthorityType authorityType;
+    AuthorityType label;
 
     public String getAuthority() {
-        return authorityType.name();
+        return label.name();
     }
 
 }

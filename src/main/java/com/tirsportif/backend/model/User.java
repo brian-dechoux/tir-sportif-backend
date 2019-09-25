@@ -34,8 +34,9 @@ public class User implements Authentication {
     @Column(name = "creationDate", columnDefinition = "TIME WITH TIME ZONE")
     OffsetDateTime creationDate;
 
-    @ManyToOne
     @NonNull
+    @ManyToOne
+    @JoinColumn(name = "authorityId")
     Authority authority;
 
     @Override
