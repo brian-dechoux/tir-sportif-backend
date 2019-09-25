@@ -64,10 +64,9 @@ CREATE TABLE `category` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
-  `gender` ENUM ('M', 'F') NOT NULL,
+  `gender` ENUM ('M', 'F'),
   `ageMin` int,
-  `ageMax` int,
-  `gccMax` ENUM ('white', 'yellow', 'green', 'blue', 'brown')
+  `ageMax` int
 );
 
 CREATE TABLE `discipline` (
