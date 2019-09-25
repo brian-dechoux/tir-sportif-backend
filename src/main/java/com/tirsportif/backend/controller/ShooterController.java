@@ -1,9 +1,9 @@
 package com.tirsportif.backend.controller;
 
 import com.tirsportif.backend.dto.CreateShooterRequest;
-import com.tirsportif.backend.dto.GetClubResponse;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.service.ShooterService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,12 +17,14 @@ public class ShooterController {
     }
 
     @PostMapping
+    @PreAuthorize("authorizedFor('MANAGER')")
     public void createShooter(@RequestBody CreateShooterRequest request) {
         shooterService.createShooter(request);
     }
 
     @GetMapping(value = "/{shooterId}")
     @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
     public GetShooterResponse getShooter(@PathVariable Long shooterId) {
         return shooterService.getShooterById(shooterId);
     }

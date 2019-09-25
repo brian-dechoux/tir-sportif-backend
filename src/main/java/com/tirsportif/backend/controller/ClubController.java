@@ -19,25 +19,28 @@ public class ClubController {
     }
 
     @PostMapping
+    @PreAuthorize("authorizedFor('ADMIN')")
     public void createClub(@RequestBody CreateClubRequest request) {
         clubService.createClub(request);
     }
 
     @GetMapping(value = "/{clubId}")
     @ResponseBody
-    @PreAuthorize("authorizedFor('ADMIN')")
+    @PreAuthorize("authorizedFor('MANAGER')")
     public GetClubResponse getClub(@PathVariable Long clubId) {
         return clubService.getClubById(clubId);
     }
 
     @GetMapping
     @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
     public Page<GetClubResponse> getClubs(@RequestParam("page") int page) {
         // TODO Exclude current club (Briey) as it's MyClub. Depends on connected user.
         return clubService.getClubs(page);
     }
 
     @PutMapping(value = "/{clubId}")
+    @PreAuthorize("authorizedFor('ADMIN')")
     public void updateClub(@PathVariable Long clubId, @RequestBody UpdateClubRequest request) {
         clubService.updateClub(clubId, request);
     }
