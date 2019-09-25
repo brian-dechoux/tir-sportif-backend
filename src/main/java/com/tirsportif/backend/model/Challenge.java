@@ -15,7 +15,7 @@ import java.util.Set;
 public class Challenge {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull

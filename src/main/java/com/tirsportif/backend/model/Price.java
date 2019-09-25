@@ -14,7 +14,7 @@ import javax.validation.constraints.Positive;
 public class Price {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull

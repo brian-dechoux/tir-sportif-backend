@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class Shooter {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull

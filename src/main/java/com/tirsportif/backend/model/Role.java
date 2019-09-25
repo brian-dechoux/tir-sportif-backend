@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull

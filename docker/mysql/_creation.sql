@@ -21,7 +21,7 @@ CREATE TABLE `country` (
 CREATE TABLE `address` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `street` varchar(255) NOT NULL,
-  `number` int NOT NULL,
+  `number` varchar(255),
   `zip` varchar(255),
   `city` varchar(255) NOT NULL,
   `countryId` int NOT NULL

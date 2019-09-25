@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "address")
 public class Address {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull
@@ -29,7 +29,7 @@ public class Address {
     @NotNull
     String city;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "countryId")
     Country country;
 

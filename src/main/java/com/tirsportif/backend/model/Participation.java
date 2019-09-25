@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class Participation {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NonNull

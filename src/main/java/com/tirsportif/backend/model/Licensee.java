@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 public class Licensee {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
     @NotNull
