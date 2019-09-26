@@ -10,7 +10,7 @@ services:
       - mysql:/var/lib/mysql
 
   redis:
-    image: redis:alpine
+    build: ./redis
     ports:
       - "6379:6379"
 

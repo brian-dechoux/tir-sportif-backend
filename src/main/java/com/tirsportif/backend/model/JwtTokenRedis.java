@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.TimeToLive;
 
 /**
  * As we just use Redis to store JWT along with provided TTL feature, no need to hold a value.
+ * TODO BDX Correct this shit, it's duplicated when persisted.
  */
 @Data
 @RedisHash("token")
