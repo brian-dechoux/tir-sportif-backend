@@ -15,7 +15,7 @@ services:
       - "6379:6379"
 
   backend:
-    build: ..
+    build: .
     ports:
       - "8080:8080"
       - "8443:8443"

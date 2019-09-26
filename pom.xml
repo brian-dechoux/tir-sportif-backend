@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>backend</name>
     <description>tir sportif backend</description>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>11</java.version>
@@ -96,6 +97,7 @@
     </dependencies>
 
     <build>
+        <finalName>tir-sportif</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

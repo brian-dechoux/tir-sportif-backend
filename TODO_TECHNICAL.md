@@ -5,3 +5,4 @@
     - it varies a lot
     - SGBDR storage will be redundant and heavy 
     -> a solution could be to use Cassandra, or Mongo
+- JWT + RSA
