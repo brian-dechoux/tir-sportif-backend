@@ -1,9 +1,6 @@
 package com.tirsportif.backend.repository;
 
-import com.tirsportif.backend.model.JwtTokenRedis;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.redis.core.ValueOperations;
 
-@Repository
-public interface JwtRepository extends CrudRepository<JwtTokenRedis, String> {
+public interface JwtRepository extends ValueOperations<String, String> {
 }

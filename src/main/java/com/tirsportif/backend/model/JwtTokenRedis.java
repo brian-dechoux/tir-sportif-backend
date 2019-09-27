@@ -1,29 +1,38 @@
 package com.tirsportif.backend.model;
 
+import com.tirsportif.backend.model.redis.RedisModel;
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 /**
  * As we just use Redis to store JWT along with provided TTL feature, no need to hold a value.
- * TODO BDX Correct this shit, it's duplicated when persisted.
+ * use value operations
  */
 @Data
-@RedisHash("token")
-public class JwtTokenRedis {
+public class JwtTokenRedis implements RedisModel {
 
     @Id
+    @NonNull
     String key;
 
-    String value = "";
+    @NonNull
+    String value;
 
     @TimeToLive
+    @NonNull
     Long timeout;
 
-    public JwtTokenRedis(String key, Long timeout) {
-        this.key = key;
+    public JwtTokenRedis(String baseKey, String username, Long timeout) {
+        this.key = formatKey(baseKey);
+        this.value = username;
         this.timeout = timeout;
+    }
+
+    @Override
+    public String formatKey(String baseKey) {
+        return "token:" + baseKey;
     }
 
 }

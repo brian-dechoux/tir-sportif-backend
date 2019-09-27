@@ -3,19 +3,18 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.model.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.property.JwtProperties;
-import com.tirsportif.backend.repository.JwtRepository;
 import com.tirsportif.backend.utils.DateUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -27,12 +26,12 @@ public class JwtTokenManager {
 
     private final DateUtils dateUtils;
     private final JwtProperties jwtProperties;
-    private final JwtRepository jwtRepository;
+    private final ValueOperations<String,String> valueOperations;
 
-    public JwtTokenManager(Clock clock, JwtProperties jwtProperties, JwtRepository jwtRepository) {
+    public JwtTokenManager(Clock clock, JwtProperties jwtProperties, ValueOperations<String,String> valueOperations) {
         this.dateUtils = DateUtils.fromClock(clock);
         this.jwtProperties = jwtProperties;
-        this.jwtRepository = jwtRepository;
+        this.valueOperations = valueOperations;
     }
 
     public String getUsernameFromToken(String token) {
@@ -46,15 +45,15 @@ public class JwtTokenManager {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, user.getUsername(), user.getAuthorities());
+        return doGenerateToken(claims, user.getUsername());
     }
 
-    void storeGeneratedToken(String token) {
-        JwtTokenRedis jwtRedisModel = new JwtTokenRedis(token, jwtProperties.getValidity());
-        jwtRepository.save(jwtRedisModel);
+    void storeGeneratedToken(String token, String username) {
+        JwtTokenRedis jwtRedisModel = new JwtTokenRedis(token, username, jwtProperties.getValidity());
+        valueOperations.set(jwtRedisModel.getKey(), jwtRedisModel.getValue(), jwtRedisModel.getTimeout(), TimeUnit.MINUTES);
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject, Collection<? extends GrantedAuthority> authorities) {
+    private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(dateUtils.now())
