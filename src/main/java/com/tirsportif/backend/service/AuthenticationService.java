@@ -26,9 +26,9 @@ public class AuthenticationService {
         this.passwordService = passwordService;
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UsernameNotFoundException {
+    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws UsernameNotFoundException {
         String username = authenticationRequest.getUsername();
-        log.debug("BEGIN AuthenticationService.loadUserByUsername(Username: {})", username);
+        log.debug("BEGIN AuthenticationService.login(Username: {})", username);
         log.info("Authenticating user by username/password, for username: {}", username);
 
         User user = userRepository.findByUsername(username)
@@ -47,8 +47,17 @@ public class AuthenticationService {
         log.debug("Setting Spring authentication up");
         SecurityContextHolder.getContext().setAuthentication(user);
 
-        log.debug("END AuthenticationService.loadUserByUsername");
+        log.debug("END AuthenticationService.login");
         return new AuthenticationResponse(jwtToken);
+    }
+
+    public void logout(String rawAuthorization) {
+        log.debug("BEGIN AuthenticationService.logout()");
+        log.info("Logging out from application for current authenticated user");
+        String jwtToken = rawAuthorization.substring("Bearer ".length());
+        jwtTokenManager.removeToken(jwtToken);
+        SecurityContextHolder.getContext().setAuthentication(null);
+        log.debug("END AuthenticationService.logout");
     }
 
 }

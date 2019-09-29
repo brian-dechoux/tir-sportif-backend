@@ -2,11 +2,13 @@ package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.model.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
+import com.tirsportif.backend.model.redis.JwtTokenKey;
 import com.tirsportif.backend.property.JwtProperties;
 import com.tirsportif.backend.utils.DateUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +28,15 @@ public class JwtTokenManager {
 
     private final DateUtils dateUtils;
     private final JwtProperties jwtProperties;
+    private final RedisTemplate<String, String> redisTemplate;
+
     private final ValueOperations<String,String> valueOperations;
 
-    public JwtTokenManager(Clock clock, JwtProperties jwtProperties, ValueOperations<String,String> valueOperations) {
+    public JwtTokenManager(Clock clock, JwtProperties jwtProperties, RedisTemplate<String,String> redisTemplate) {
         this.dateUtils = DateUtils.fromClock(clock);
         this.jwtProperties = jwtProperties;
-        this.valueOperations = valueOperations;
+        this.redisTemplate = redisTemplate;
+        this.valueOperations = redisTemplate.opsForValue();
     }
 
     public String getUsernameFromToken(String token) {
@@ -51,6 +56,10 @@ public class JwtTokenManager {
     void storeGeneratedToken(String token, String username) {
         JwtTokenRedis jwtRedisModel = new JwtTokenRedis(token, username, jwtProperties.getValidity());
         valueOperations.set(jwtRedisModel.getKey(), jwtRedisModel.getValue(), jwtRedisModel.getTimeout(), TimeUnit.MINUTES);
+    }
+
+    void removeToken(String token) {
+        redisTemplate.delete(new JwtTokenKey(token).getFormattedKey());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {

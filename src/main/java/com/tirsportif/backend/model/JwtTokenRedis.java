@@ -1,6 +1,6 @@
 package com.tirsportif.backend.model;
 
-import com.tirsportif.backend.model.redis.RedisModel;
+import com.tirsportif.backend.model.redis.JwtTokenKey;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.TimeToLive;
  * use value operations
  */
 @Data
-public class JwtTokenRedis implements RedisModel {
+public class JwtTokenRedis {
 
     @Id
     @NonNull
@@ -25,14 +25,9 @@ public class JwtTokenRedis implements RedisModel {
     Long timeout;
 
     public JwtTokenRedis(String baseKey, String username, Long timeout) {
-        this.key = formatKey(baseKey);
+        this.key = new JwtTokenKey(baseKey).getFormattedKey();
         this.value = username;
         this.timeout = timeout;
-    }
-
-    @Override
-    public String formatKey(String baseKey) {
-        return "token:" + baseKey;
     }
 
 }

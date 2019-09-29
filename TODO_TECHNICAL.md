@@ -6,5 +6,4 @@
     - SGBDR storage will be redundant and heavy 
     -> a solution could be to use Cassandra, or Mongo
 - JWT + RSA
-- Configure prod docker compose by removing defaults -> Redis does not even work with an empty "" password like it's done now
-- TODO change redis persistence format ? Looks like things are stored duplicated
+- Redis custom repositories to handle key value properly (like it was done in iHub) without code duplication and automatic use of RedisKey

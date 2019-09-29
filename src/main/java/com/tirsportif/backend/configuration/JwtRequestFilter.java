@@ -5,12 +5,12 @@ import com.tirsportif.backend.error.SystemError;
 import com.tirsportif.backend.exception.InternalServerErrorException;
 import com.tirsportif.backend.exception.UnauthorizedException;
 import com.tirsportif.backend.model.User;
+import com.tirsportif.backend.model.redis.JwtTokenKey;
 import com.tirsportif.backend.repository.UserRepository;
 import com.tirsportif.backend.service.JwtTokenManager;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Filter checking that the request contains a JWT token in the headers.
@@ -27,10 +28,12 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenManager jwtTokenManager;
     private final UserRepository userRepository;
 
-    public JwtRequestFilter(JwtTokenManager jwtTokenManager, UserRepository userRepository) {
+    public JwtRequestFilter(RedisTemplate<String, String> redisTemplate, JwtTokenManager jwtTokenManager, UserRepository userRepository) {
+        this.redisTemplate = redisTemplate;
         this.jwtTokenManager = jwtTokenManager;
         this.userRepository = userRepository;
     }
@@ -44,8 +47,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (requestTokenHeader.startsWith("Bearer ")) {
                 jwtToken = requestTokenHeader.substring(7);
                 try {
-                    // TODO Check in Redis, for a proper logout workflow
-                    username = jwtTokenManager.getUsernameFromToken(jwtToken);
+                    username = Optional.ofNullable(redisTemplate.opsForValue().get(new JwtTokenKey(jwtToken).getFormattedKey()))
+                            .orElseThrow(() -> new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN));
                 } catch (ExpiredJwtException e) {
                     throw new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN);
                 }
