@@ -5,5 +5,7 @@
     - it varies a lot
     - SGBDR storage will be redundant and heavy 
     -> a solution could be to use Cassandra, or Mongo
+    -> Maybe just store results of challenge (flatten)
 - JWT + RSA
 - Redis custom repositories to handle key value properly (like it was done in iHub) without code duplication and automatic use of RedisKey
+- Real paiements and due paiements module
