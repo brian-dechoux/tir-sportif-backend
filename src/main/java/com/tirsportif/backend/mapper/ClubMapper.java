@@ -35,7 +35,11 @@ public class ClubMapper {
     }
 
     public GetClubResponse mapClubToResponse(Club club) {
-        return new GetClubResponse(club.getName(), addressMapper.mapAddressToDto(club.getAddress()));
+        return new GetClubResponse(
+                club.getId(),
+                club.getName(),
+                addressMapper.mapAddressToDto(club.getAddress())
+        );
     }
 
 }

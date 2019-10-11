@@ -8,6 +8,8 @@ import java.time.LocalDate;
 @Value
 public class GetShooterResponse {
 
+    Long id;
+
     String lastname;
 
     String firstname;

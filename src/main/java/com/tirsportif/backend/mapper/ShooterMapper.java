@@ -31,6 +31,7 @@ public class ShooterMapper {
 
     public GetShooterResponse mapShooterToResponse(Shooter shooter) {
         return new GetShooterResponse(
+                shooter.getId(),
                 shooter.getLastname(),
                 shooter.getFirstname(),
                 shooter.getBirthDate(),

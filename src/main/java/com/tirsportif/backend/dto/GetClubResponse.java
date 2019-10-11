@@ -5,6 +5,8 @@ import lombok.Value;
 @Value
 public class GetClubResponse {
 
+    Long id;
+
     String name;
 
     GetAddressResponse address;
