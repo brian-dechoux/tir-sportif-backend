@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -41,5 +42,8 @@ public class Category {
 
     @Enumerated(value = EnumType.STRING)
     Gcc gccMax;
+
+    @ManyToMany(mappedBy = "categories")
+    Set<Challenge> challenges;
 
 }

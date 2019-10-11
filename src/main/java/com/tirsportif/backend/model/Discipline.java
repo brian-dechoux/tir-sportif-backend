@@ -29,7 +29,7 @@ public class Discipline {
      * Some discipline uses integer, some others decimal.
      */
     @NotNull
-    boolean usesDecimalResults;
+    boolean isDecimalResult;
 
     @ManyToMany(mappedBy = "disciplines")
     Set<Challenge> challenges;

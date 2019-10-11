@@ -27,7 +27,7 @@ public class Challenge {
     @Column(name = "startDate", columnDefinition = "TIME WITH TIME ZONE")
     OffsetDateTime startDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId")
     Address address;
 
@@ -36,11 +36,19 @@ public class Challenge {
     Club organiserClub;
 
     @ManyToMany
-    @JoinTable(name = "challengeDiscipline")
-    Set<Discipline> disciplines;
+    @JoinTable(
+            name = "challengeCategories",
+            joinColumns = @JoinColumn(name = "challengeId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "categoryId", referencedColumnName = "id")
+    )
+    Set<Category> categories;
 
     @ManyToMany
-    @JoinTable(name = "challengeCategory")
-    Set<Category> categories;
+    @JoinTable(
+            name = "challengeDisciplines",
+            joinColumns = @JoinColumn(name = "challengeId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "disciplineId", referencedColumnName = "id")
+    )
+    Set<Discipline> disciplines;
 
 }

@@ -89,20 +89,19 @@ CREATE TABLE `challenge` (
   `name` varchar(255) NOT NULL,
   `startDate` datetime NOT NULL,
   `addressId` int NOT NULL,
-  `categoryId` int NOT NULL,
   `organiserClubId` int NOT NULL
 );
 
 CREATE TABLE `challengeDisciplines` (
-  `id` int  PRIMARY KEY AUTO_INCREMENT,
   `challengeId` int NOT NULL,
-  `disciplineId` int NOT NULL
+  `disciplineId` int NOT NULL,
+  CONSTRAINT `id` PRIMARY KEY (challengeId, disciplineId)
 );
 
 CREATE TABLE `challengeCategories` (
-  `id` int  PRIMARY KEY AUTO_INCREMENT,
   `challengeId` int NOT NULL,
-  `categoryId` int NOT NULL
+  `categoryId` int NOT NULL,
+  CONSTRAINT `id` PRIMARY KEY (challengeId, categoryId)
 );
 
 CREATE TABLE `participation` (
@@ -139,8 +138,6 @@ ALTER TABLE `shooter` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
 ALTER TABLE `shooter` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `licensee` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`);
-
-ALTER TABLE `challenge` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `challenge` ADD FOREIGN KEY (`organiserClubId`) REFERENCES `club` (`id`);
 

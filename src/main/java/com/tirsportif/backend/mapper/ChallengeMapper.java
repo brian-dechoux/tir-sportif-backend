@@ -1,25 +1,28 @@
 package com.tirsportif.backend.mapper;
 
-import com.tirsportif.backend.dto.GetShooterResponse;
+import com.tirsportif.backend.dto.GetChallengeResponse;
 import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
 import com.tirsportif.backend.model.Challenge;
-import com.tirsportif.backend.model.Shooter;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ChallengeMapper {
 
     private final AddressMapper addressMapper;
     private final ClubMapper clubMapper;
+    private final CategoryMapper categoryMapper;
+    private final DisciplineMapper disciplineMapper;
 
-    public ChallengeMapper(AddressMapper addressMapper, ClubMapper clubMapper) {
+    public ChallengeMapper(AddressMapper addressMapper, ClubMapper clubMapper, CategoryMapper categoryMapper, DisciplineMapper disciplineMapper) {
         this.addressMapper = addressMapper;
         this.clubMapper = clubMapper;
+        this.categoryMapper = categoryMapper;
+        this.disciplineMapper = disciplineMapper;
     }
 
-    public Challenge mapCreateShooterDtoToShooter(ResolvedCreateChallengeRequest request) {
+    public Challenge mapCreateChallengeDtoToChallenge(ResolvedCreateChallengeRequest request) {
         Challenge challenge = new Challenge();
         challenge.setName(request.getName());
         challenge.setStartDate(request.getStartDate());
@@ -30,17 +33,19 @@ public class ChallengeMapper {
         return challenge;
     }
 
-    // TODO
-    public GetShooterResponse mapShooterToResponse(Shooter shooter) {
-        return new GetShooterResponse(
-                shooter.getLastname(),
-                shooter.getFirstname(),
-                shooter.getBirthDate(),
-                addressMapper.mapAddressToDto(shooter.getAddress()),
-                Optional.ofNullable(shooter.getClub())
-                        .map(clubMapper::mapClubToResponse)
-                        .orElse(null),
-                shooter.getCategory()
+    public GetChallengeResponse mapChallengeToResponse(Challenge challenge) {
+        return new GetChallengeResponse(
+                challenge.getId(),
+                challenge.getName(),
+                challenge.getStartDate(),
+                addressMapper.mapAddressToDto(challenge.getAddress()),
+                clubMapper.mapClubToResponse(challenge.getOrganiserClub()),
+                challenge.getCategories().stream()
+                    .map(categoryMapper::mapClubToResponse)
+                    .collect(Collectors.toSet()),
+                challenge.getDisciplines().stream()
+                        .map(disciplineMapper::mapDisciplineToResponse)
+                        .collect(Collectors.toSet())
         );
     }
 

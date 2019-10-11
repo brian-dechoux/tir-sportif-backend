@@ -1,6 +1,7 @@
 package com.tirsportif.backend.controller;
 
 import com.tirsportif.backend.dto.CreateChallengeRequest;
+import com.tirsportif.backend.dto.GetChallengeResponse;
 import com.tirsportif.backend.service.ChallengeService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,8 @@ public class ChallengeController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('MANAGER')")
-    public void createShooter(@Valid @RequestBody CreateChallengeRequest request) {
-        challengeService.createChallenge(request);
+    public GetChallengeResponse createShooter(@Valid @RequestBody CreateChallengeRequest request) {
+        return challengeService.createChallenge(request);
     }
 
 
