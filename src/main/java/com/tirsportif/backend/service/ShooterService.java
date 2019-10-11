@@ -39,7 +39,7 @@ public class ShooterService extends AbstractService {
         this.countryStore = countryStore;
     }
 
-    private Country getCountryById(Long id) {
+    private Country findCountryById(Long id) {
         return countryStore.getCountryById(id)
                 .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
@@ -61,14 +61,14 @@ public class ShooterService extends AbstractService {
 
     public GetShooterResponse createShooter(CreateShooterRequest request) {
         log.info("Creating shooter named : {} {}", request.getLastname(), request.getFirstname());
+        Country country = findCountryById(request.getAddress().getCountryId());
         // TODO Remove this possibility. Force to use multiple routes
         Club club = Optional.ofNullable(request.getClubId())
                 .map(this::findClubById)
                 .orElse(null);
         Category category = findCategoryById(request.getCategoryId());
         Shooter shooter = shooterMapper.mapCreateShooterDtoToShooter(
-                ResolvedCreateShooterRequest.ofRawRequest(request, club, category),
-                getCountryById(request.getAddress().getCountryId())
+                ResolvedCreateShooterRequest.ofRawRequest(request, country, club, category)
         );
         shooter = shooterRepository.save(shooter);
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);

@@ -1,12 +1,9 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.CreateClubRequest;
-import com.tirsportif.backend.dto.GetClubResponse;
-import com.tirsportif.backend.dto.UpdateClubRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestException;
 import com.tirsportif.backend.exception.NotFoundException;
-import com.tirsportif.backend.mapper.AddressMapper;
 import com.tirsportif.backend.mapper.ClubMapper;
 import com.tirsportif.backend.model.Club;
 import com.tirsportif.backend.model.Country;
@@ -24,27 +21,27 @@ import java.util.Optional;
 public class ClubService extends AbstractService {
 
     private final ClubMapper clubMapper;
-    private final AddressMapper addressMapper;
     private final ClubRepository clubRepository;
     private final CountryStore countryStore;
 
-    public ClubService(ApiProperties apiProperties, ClubMapper clubMapper, AddressMapper addressMapper, ClubRepository clubRepository, CountryStore countryStore) {
+    public ClubService(ApiProperties apiProperties, ClubMapper clubMapper, ClubRepository clubRepository, CountryStore countryStore) {
         super(apiProperties);
         this.clubMapper = clubMapper;
-        this.addressMapper = addressMapper;
         this.clubRepository = clubRepository;
         this.countryStore = countryStore;
     }
 
-    private Country getCountryById(Long id) {
+    private Country findCountryById(Long id) {
         return countryStore.getCountryById(id)
                 .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
+    // TODO return created club
     public void createClub(CreateClubRequest request) {
         log.info("Creating club named: {}", request.getName());
-        Country country = getCountryById(request.getAddress().getCountryId());
-        Club club = clubMapper.mapCreateClubDtoToClub(request, country);
+        Country country = findCountryById(request.getAddress().getCountryId());
+        ResolvedCreateClubRequest resolvedCreateAddressRequest = ResolvedCreateClubRequest.ofRawRequest(request, country);
+        Club club = clubMapper.mapCreateClubDtoToClub(resolvedCreateAddressRequest);
         clubRepository.save(club);
         log.info("Club created");
     }
@@ -67,16 +64,16 @@ public class ClubService extends AbstractService {
         return responses;
     }
 
+    // TODO return updated club
     public void updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());
         Club club = clubRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
-        club.setName(Optional.ofNullable(request.getName()).orElse(club.getName()));
-        club.setAddress(
-                Optional.ofNullable(request.getAddress())
-                        .map(address -> addressMapper.mapAddressDtoToAddress(address, getCountryById(address.getCountryId())))
-                        .orElse(club.getAddress())
-        );
+        Country country = Optional.ofNullable(request.getAddress())
+                .map(CreateAddressRequest::getCountryId)
+                .map(this::findCountryById)
+                .orElse(null);
+        ResolvedUpdateClubRequest resolvedUpdateClubRequest = ResolvedUpdateClubRequest.ofRawRequest(request, country);
         clubRepository.save(club);
         log.info("Updated club");
     }

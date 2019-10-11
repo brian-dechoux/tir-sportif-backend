@@ -1,34 +1,36 @@
 package com.tirsportif.backend.mapper;
 
 import com.tirsportif.backend.dto.GetShooterResponse;
-import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
+import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
+import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Shooter;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-public class ShooterMapper {
+public class ChallengeMapper {
 
     private final AddressMapper addressMapper;
     private final ClubMapper clubMapper;
 
-    public ShooterMapper(AddressMapper addressMapper, ClubMapper clubMapper) {
+    public ChallengeMapper(AddressMapper addressMapper, ClubMapper clubMapper) {
         this.addressMapper = addressMapper;
         this.clubMapper = clubMapper;
     }
 
-    public Shooter mapCreateShooterDtoToShooter(ResolvedCreateShooterRequest request) {
-        Shooter shooter = new Shooter();
-        shooter.setLastname(request.getLastname());
-        shooter.setFirstname(request.getFirstname());
-        shooter.setBirthDate(request.getBirthdate());
-        shooter.setClub(request.getClub());
-        shooter.setCategory(request.getCategory());
-        shooter.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
-        return shooter;
+    public Challenge mapCreateShooterDtoToShooter(ResolvedCreateChallengeRequest request) {
+        Challenge challenge = new Challenge();
+        challenge.setName(request.getName());
+        challenge.setStartDate(request.getStartDate());
+        challenge.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
+        challenge.setOrganiserClub(request.getOrganiserClub());
+        challenge.setCategories(request.getCategories());
+        challenge.setDisciplines(request.getDisciplines());
+        return challenge;
     }
 
+    // TODO
     public GetShooterResponse mapShooterToResponse(Shooter shooter) {
         return new GetShooterResponse(
                 shooter.getLastname(),

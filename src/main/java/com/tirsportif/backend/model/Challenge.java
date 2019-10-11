@@ -33,7 +33,7 @@ public class Challenge {
 
     @ManyToOne
     @JoinColumn(name = "organiserClubId")
-    Club organiserClubId;
+    Club organiserClub;
 
     @ManyToMany
     @JoinTable(name = "challengeDiscipline")

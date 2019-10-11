@@ -1,21 +1,20 @@
 package com.tirsportif.backend.mapper;
 
-import com.tirsportif.backend.dto.CreateAddressRequest;
 import com.tirsportif.backend.dto.GetAddressResponse;
+import com.tirsportif.backend.dto.ResolvedCreateAddressRequest;
 import com.tirsportif.backend.model.Address;
-import com.tirsportif.backend.model.Country;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AddressMapper {
 
-    public Address mapAddressDtoToAddress(CreateAddressRequest dto, Country country) {
+    public Address mapAddressDtoToAddress(ResolvedCreateAddressRequest dto) {
         Address address = new Address();
         address.setNumber(dto.getNumber());
         address.setStreet(dto.getStreet());
         address.setZip(dto.getZip());
         address.setCity(dto.getCity());
-        address.setCountry(country);
+        address.setCountry(dto.getCountry());
         return address;
     }
 
