@@ -16,7 +16,7 @@ public class GetShooterResponse {
 
     GetAddressResponse address;
 
-    GetClubResponse clubResponse;
+    GetClubResponse club;
 
     Category category;
 

@@ -18,6 +18,8 @@ import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class ShooterService extends AbstractService {
@@ -59,15 +61,18 @@ public class ShooterService extends AbstractService {
 
     public GetShooterResponse createShooter(CreateShooterRequest request) {
         log.info("Creating shooter named : {} {}", request.getLastname(), request.getFirstname());
-        Club club = findClubById(request.getClubId());
+        // TODO Remove this possibility. Force to use multiple routes
+        Club club = Optional.ofNullable(request.getClubId())
+                .map(this::findClubById)
+                .orElse(null);
         Category category = findCategoryById(request.getCategoryId());
         Shooter shooter = shooterMapper.mapCreateShooterDtoToShooter(
                 ResolvedCreateShooterRequest.ofRawRequest(request, club, category),
                 getCountryById(request.getAddress().getCountryId())
         );
         shooter = shooterRepository.save(shooter);
-        log.info("Shooter created");
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
+        log.info("Shooter created");
         return response;
     }
 
@@ -89,8 +94,8 @@ public class ShooterService extends AbstractService {
                     .club(club)
                     .build()
         );
-        log.info("Shooter associated.");
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
+        log.info("Shooter associated.");
         return response;
     }
 

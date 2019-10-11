@@ -1,5 +1,6 @@
 package com.tirsportif.backend.controller;
 
+import com.tirsportif.backend.dto.AssociateShooterToClubRequest;
 import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.service.ShooterService;
@@ -29,12 +30,10 @@ public class ShooterController {
         return shooterService.getShooterById(shooterId);
     }
 
-    // TODO change this route it's plain wrong
-    @GetMapping(value = "/{shooterId}/associate/{clubId}")
-    @PostMapping
+    @PostMapping(value = "/{shooterId}/associate")
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @PathVariable Long clubId) {
-        return shooterService.associateShooter(shooterId, clubId);
+    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @RequestBody AssociateShooterToClubRequest associateShooterToClubRequest) {
+        return shooterService.associateShooter(shooterId, associateShooterToClubRequest.getClubId());
     }
 
 }

@@ -9,11 +9,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "category")
 public class Category {
 
     @Id
@@ -40,14 +39,7 @@ public class Category {
     @Positive
     Integer ageMax;
 
-    @NonNull
-    @NotNull
-    String street;
-
     @Enumerated(value = EnumType.STRING)
-    Gcc maxGcc;
-
-    @ManyToMany(mappedBy = "categories")
-    Set<Challenge> challenges;
+    Gcc gccMax;
 
 }

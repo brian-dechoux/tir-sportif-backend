@@ -1,9 +1,6 @@
 package com.tirsportif.backend.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +8,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity(name = "licensee")
 public class Licensee {

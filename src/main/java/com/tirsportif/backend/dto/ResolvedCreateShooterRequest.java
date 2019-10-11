@@ -20,7 +20,6 @@ public class ResolvedCreateShooterRequest {
 
     CreateAddressRequest address;
 
-    @NonNull
     Club club;
 
     @NonNull
