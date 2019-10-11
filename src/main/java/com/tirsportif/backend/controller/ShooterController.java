@@ -18,8 +18,8 @@ public class ShooterController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('MANAGER')")
-    public void createShooter(@RequestBody CreateShooterRequest request) {
-        shooterService.createShooter(request);
+    public GetShooterResponse createShooter(@RequestBody CreateShooterRequest request) {
+        return shooterService.createShooter(request);
     }
 
     @GetMapping(value = "/{shooterId}")
@@ -27,6 +27,14 @@ public class ShooterController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetShooterResponse getShooter(@PathVariable Long shooterId) {
         return shooterService.getShooterById(shooterId);
+    }
+
+    // TODO change this route it's plain wrong
+    @GetMapping(value = "/{shooterId}/associate/{clubId}")
+    @PostMapping
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @PathVariable Long clubId) {
+        return shooterService.associateShooter(shooterId, clubId);
     }
 
 }

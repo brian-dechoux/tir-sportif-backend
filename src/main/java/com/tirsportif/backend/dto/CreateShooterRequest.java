@@ -26,7 +26,6 @@ public class CreateShooterRequest {
 
     CreateAddressRequest address;
 
-    @NotNull
     @Positive
     Long clubId;
 

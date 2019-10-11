@@ -5,6 +5,8 @@ import com.tirsportif.backend.model.Country;
 import com.tirsportif.backend.model.Shooter;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class ShooterMapper {
 
@@ -33,7 +35,9 @@ public class ShooterMapper {
                 shooter.getFirstname(),
                 shooter.getBirthDate(),
                 addressMapper.mapAddressToDto(shooter.getAddress()),
-                clubMapper.mapClubToResponse(shooter.getClub()),
+                Optional.ofNullable(shooter.getClub())
+                        .map(clubMapper::mapClubToResponse)
+                        .orElse(null),
                 shooter.getCategory()
         );
     }

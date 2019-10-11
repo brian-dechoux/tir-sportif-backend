@@ -42,6 +42,11 @@ public class ShooterService extends AbstractService {
                 .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
+    private Shooter findShooterById(Long shooterId) {
+        return shooterRepository.findById(shooterId)
+                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+    }
+
     private Club findClubById(Long clubId) {
         return clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, clubId.toString()));
@@ -52,7 +57,7 @@ public class ShooterService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
     }
 
-    public void createShooter(CreateShooterRequest request) {
+    public GetShooterResponse createShooter(CreateShooterRequest request) {
         log.info("Creating shooter named : {} {}", request.getLastname(), request.getFirstname());
         Club club = findClubById(request.getClubId());
         Category category = findCategoryById(request.getCategoryId());
@@ -60,8 +65,10 @@ public class ShooterService extends AbstractService {
                 ResolvedCreateShooterRequest.ofRawRequest(request, club, category),
                 getCountryById(request.getAddress().getCountryId())
         );
-        shooterRepository.save(shooter);
+        shooter = shooterRepository.save(shooter);
         log.info("Shooter created");
+        GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
+        return response;
     }
 
     public GetShooterResponse getShooterById(Long id) {
@@ -70,6 +77,20 @@ public class ShooterService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
         log.info("Found shooter");
+        return response;
+    }
+
+    public GetShooterResponse associateShooter(Long shooterId, Long clubId) {
+        log.info("Associating shooter with ID: {} to the club with ID: {}", shooterId, clubId);
+        Shooter shooter = findShooterById(shooterId);
+        Club club = findClubById(clubId);
+        shooter = shooterRepository.save(
+                shooter.toBuilder()
+                    .club(club)
+                    .build()
+        );
+        log.info("Shooter associated.");
+        GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
         return response;
     }
 

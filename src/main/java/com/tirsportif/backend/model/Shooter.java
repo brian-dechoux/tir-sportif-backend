@@ -1,5 +1,6 @@
 package com.tirsportif.backend.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
+@Builder(toBuilder = true)
 @Entity(name = "shooter")
 public class Shooter {
 
@@ -37,7 +39,7 @@ public class Shooter {
     Club club;
 
     @ManyToOne
-    @JoinColumn(name = "category")
+    @JoinColumn(name = "categoryId")
     Category category;
 
 }
