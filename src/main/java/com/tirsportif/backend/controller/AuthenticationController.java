@@ -6,6 +6,8 @@ import com.tirsportif.backend.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/authentication", produces = "application/json; charset=UTF-8")
 public class AuthenticationController {
@@ -14,7 +16,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping(value = "/login")
-    public AuthenticationResponse login(@RequestBody AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse login(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
         return authenticationService.login(authenticationRequest);
     }
 

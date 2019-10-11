@@ -2,13 +2,13 @@ package com.tirsportif.backend.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 @Data
-@Valid
+@Validated
 @ConfigurationProperties(value = "tir-sportif.jwt")
 public class JwtProperties {
 

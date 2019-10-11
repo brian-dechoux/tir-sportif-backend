@@ -6,6 +6,8 @@ import com.tirsportif.backend.service.LicenseeService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/licensees", produces = "application/json;charset=UTF-8")
 public class LicenseeController {
@@ -18,7 +20,7 @@ public class LicenseeController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetLicenseeResponse createLicensee(@RequestBody CreateLicenseeRequest request) {
+    public GetLicenseeResponse createLicensee(@Valid @RequestBody CreateLicenseeRequest request) {
         // TODO club should be resolved automatically, because a licensee can only be created in scope of own club
         return licenseeService.createLicensee(request);
     }

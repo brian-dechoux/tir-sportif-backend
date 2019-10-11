@@ -7,6 +7,8 @@ import com.tirsportif.backend.service.ShooterService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/shooters", produces = "application/json;charset=UTF-8")
 public class ShooterController {
@@ -19,7 +21,7 @@ public class ShooterController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResponse createShooter(@RequestBody CreateShooterRequest request) {
+    public GetShooterResponse createShooter(@Valid @RequestBody CreateShooterRequest request) {
         return shooterService.createShooter(request);
     }
 
@@ -32,7 +34,7 @@ public class ShooterController {
 
     @PostMapping(value = "/{shooterId}/associate")
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @RequestBody AssociateShooterToClubRequest associateShooterToClubRequest) {
+    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @Valid @RequestBody AssociateShooterToClubRequest associateShooterToClubRequest) {
         return shooterService.associateShooter(shooterId, associateShooterToClubRequest.getClubId());
     }
 

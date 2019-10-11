@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/clubs", produces = "application/json;charset=UTF-8")
 public class ClubController {
@@ -20,7 +22,7 @@ public class ClubController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('ADMIN')")
-    public void createClub(@RequestBody CreateClubRequest request) {
+    public void createClub(@Valid @RequestBody CreateClubRequest request) {
         clubService.createClub(request);
     }
 
@@ -41,7 +43,7 @@ public class ClubController {
 
     @PutMapping(value = "/{clubId}")
     @PreAuthorize("authorizedFor('ADMIN')")
-    public void updateClub(@PathVariable Long clubId, @RequestBody UpdateClubRequest request) {
+    public void updateClub(@PathVariable Long clubId, @Valid @RequestBody UpdateClubRequest request) {
         clubService.updateClub(clubId, request);
     }
 
