@@ -2,7 +2,7 @@ package com.tirsportif.backend.dto;
 
 import lombok.Value;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 @Value
 public class GetLicenseeResponse {
@@ -13,7 +13,7 @@ public class GetLicenseeResponse {
 
     Integer lockerNumber;
 
-    OffsetDateTime subscriptionDate;
+    LocalDate subscriptionDate;
 
     GetShooterResponse shooter;
 

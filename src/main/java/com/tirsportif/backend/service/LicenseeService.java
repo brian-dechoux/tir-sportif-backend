@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 @Service
 @Slf4j
@@ -49,7 +49,7 @@ public class LicenseeService extends AbstractService {
         Shooter shooter = findShooterById(request.getShooterId());
         Licensee licensee = licenseeMapper.mapCreateLicenseeDtoToLicensee(
                 ResolvedCreateLicenseeRequest.ofRawRequest(request, shooter),
-                OffsetDateTime.now(clock)
+                LocalDate.now(clock)
         );
         licensee = licenseeRepository.save(licensee);
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
@@ -70,7 +70,7 @@ public class LicenseeService extends AbstractService {
         Licensee licensee = findLicenseeById(licenseeId);
         licensee = licenseeRepository.save(
                 licensee.toBuilder()
-                    .subscriptionDate(OffsetDateTime.now(clock))
+                    .subscriptionDate(LocalDate.now(clock))
                     .build()
         );
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);

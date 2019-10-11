@@ -56,7 +56,7 @@ CREATE TABLE `licensee` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `badgeNumber` int NOT NULL,
   `lockerNumber` int,
-  `subscriptionDate` datetime NOT NULL,
+  `subscriptionDate` date NOT NULL,
   `shooterId` int NOT NULL
 );
 

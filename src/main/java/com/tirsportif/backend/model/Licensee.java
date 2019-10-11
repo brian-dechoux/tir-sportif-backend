@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -22,11 +22,10 @@ public class Licensee {
 
     int lockerNumber;
 
-    // TODO this should be a date, not datetime
     @NonNull
     @NotNull
-    @Column(name = "subscriptionDate", columnDefinition = "TIME WITH TIME ZONE")
-    OffsetDateTime subscriptionDate;
+    @Column(name = "subscriptionDate", columnDefinition = "DATE")
+    LocalDate subscriptionDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shooterId")

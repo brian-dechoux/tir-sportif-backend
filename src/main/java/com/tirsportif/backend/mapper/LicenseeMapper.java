@@ -5,7 +5,7 @@ import com.tirsportif.backend.dto.ResolvedCreateLicenseeRequest;
 import com.tirsportif.backend.model.Licensee;
 import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 @Component
 public class LicenseeMapper {
@@ -16,7 +16,7 @@ public class LicenseeMapper {
         this.shooterMapper = shooterMapper;
     }
 
-    public Licensee mapCreateLicenseeDtoToLicensee(ResolvedCreateLicenseeRequest request, OffsetDateTime subscriptionDate) {
+    public Licensee mapCreateLicenseeDtoToLicensee(ResolvedCreateLicenseeRequest request, LocalDate subscriptionDate) {
         Licensee licensee = new Licensee();
         licensee.setBadgeNumber(request.getBadgeNumber());
         licensee.setLockerNumber(request.getLockerNumber());
