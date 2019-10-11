@@ -22,10 +22,8 @@ public class Price {
     @Enumerated(value = EnumType.STRING)
     PriceType type;
 
-    @NotNull
     boolean forLicenseeOnly;
 
-    @NotNull
     @Positive
     double value;
 
