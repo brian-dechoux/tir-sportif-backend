@@ -1,5 +1,6 @@
 package com.tirsportif.backend.controller;
 
+import com.tirsportif.backend.dto.AssociateLicenseeToShooterRequest;
 import com.tirsportif.backend.dto.CreateLicenseeRequest;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
 import com.tirsportif.backend.service.LicenseeService;
@@ -28,8 +29,22 @@ public class LicenseeController {
     @GetMapping(value = "/{licenseeId}")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetLicenseeResponse getLicensee(@PathVariable Long shooterId) {
-        return licenseeService.getLicenseeById(shooterId);
+    public GetLicenseeResponse getLicensee(@PathVariable Long licenseeId) {
+        return licenseeService.getLicenseeById(licenseeId);
+    }
+
+    @PostMapping(value = "/{licenseeId}/update-subscription")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetLicenseeResponse updateLicenseeSubscription(@PathVariable Long licenseeId) {
+        return licenseeService.updateLicenseeSubscription(licenseeId);
+    }
+
+    @PostMapping(value = "/{licenseeId}/associate")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    @Deprecated
+    public GetLicenseeResponse associateLicensee(@PathVariable Long licenseeId, @Valid @RequestBody AssociateLicenseeToShooterRequest associateLicenseeToShooterRequest) {
+        // TODO check if not already associated
+        return licenseeService.associateLicenseeToShooter(licenseeId, associateLicenseeToShooterRequest.getShooterId());
     }
 
 }

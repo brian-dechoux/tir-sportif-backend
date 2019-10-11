@@ -40,7 +40,7 @@ tir-sportif:
 
   api:
     ### Default pages size
-    pagination.size: 10
+    pagination-size: 10
 
   jwt:
     secret: ${TIRSPORTIF_JWT_SECRET}

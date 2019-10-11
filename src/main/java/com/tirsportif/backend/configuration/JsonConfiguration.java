@@ -13,7 +13,9 @@ public class JsonConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.registerModule(new JavaTimeModule());
+        JavaTimeModule javaTimeModule=new JavaTimeModule();
+        // TODO javaTimeModule.addSerializer(OffsetDateTime.class);
+        objectMapper.registerModule(javaTimeModule);
         return objectMapper;
     }
     

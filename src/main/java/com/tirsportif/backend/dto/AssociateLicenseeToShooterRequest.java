@@ -6,13 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Data
-public class CreateLicenseeRequest {
-
-    @Positive
-    Integer badgeNumber;
-
-    @Positive
-    Integer lockerNumber;
+public class AssociateLicenseeToShooterRequest {
 
     @NotNull
     @Positive

@@ -2,6 +2,7 @@ package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.dto.CreateLicenseeRequest;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
+import com.tirsportif.backend.dto.ResolvedCreateLicenseeRequest;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.NotFoundException;
 import com.tirsportif.backend.mapper.LicenseeMapper;
@@ -45,8 +46,9 @@ public class LicenseeService extends AbstractService {
 
     public GetLicenseeResponse createLicensee(CreateLicenseeRequest request) {
         log.info("Creating licensee");
+        Shooter shooter = findShooterById(request.getShooterId());
         Licensee licensee = licenseeMapper.mapCreateLicenseeDtoToLicensee(
-                request,
+                ResolvedCreateLicenseeRequest.ofRawRequest(request, shooter),
                 OffsetDateTime.now(clock)
         );
         licensee = licenseeRepository.save(licensee);
@@ -63,17 +65,30 @@ public class LicenseeService extends AbstractService {
         return response;
     }
 
+    public GetLicenseeResponse updateLicenseeSubscription(Long licenseeId) {
+        log.info("Updating licensee subscription date.");
+        Licensee licensee = findLicenseeById(licenseeId);
+        licensee = licenseeRepository.save(
+                licensee.toBuilder()
+                    .subscriptionDate(OffsetDateTime.now(clock))
+                    .build()
+        );
+        GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
+        log.info("Licensee subscription updated.");
+        return response;
+    }
+
     public GetLicenseeResponse associateLicenseeToShooter(Long licenseeId, Long shooterId) {
         log.info("Associating licensee with ID: {} to the shooter with ID: {}", licenseeId, shooterId);
         Licensee licensee = findLicenseeById(licenseeId);
         Shooter shooter = findShooterById(shooterId);
         licensee = licenseeRepository.save(
                 licensee.toBuilder()
-                    .shooter(shooter)
-                    .build()
+                        .shooter(shooter)
+                        .build()
         );
-        log.info("Licensee associated.");
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
+        log.info("Licensee associated.");
         return response;
     }
 
