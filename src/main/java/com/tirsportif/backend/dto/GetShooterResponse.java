@@ -1,6 +1,5 @@
 package com.tirsportif.backend.dto;
 
-import com.tirsportif.backend.model.Category;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -20,6 +19,6 @@ public class GetShooterResponse {
 
     GetClubResponse club;
 
-    Category category;
+    GetCategoryResponse category;
 
 }

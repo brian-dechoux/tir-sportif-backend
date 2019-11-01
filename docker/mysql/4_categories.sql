@@ -16,4 +16,4 @@ INSERT INTO category (label,code,gender,ageMin) VALUES ('senior 3','S3','M',60);
 INSERT INTO category (label,code,gender,ageMin) VALUES ('dame 3','D3','F',60);
 INSERT INTO category (label,code,gender,ageMin) VALUES ('handi homme','HM','M',20);
 INSERT INTO category (label,code,gender,ageMin) VALUES ('handi femme','HF','F',20);
-INSERT INTO category (label,code,gender,ageMin) VALUES ('unique','UN',20);
+INSERT INTO category (label,code,ageMin) VALUES ('unique','UN',20);

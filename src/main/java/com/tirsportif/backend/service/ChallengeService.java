@@ -1,18 +1,13 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.CreateChallengeRequest;
-import com.tirsportif.backend.dto.GetChallengeResponse;
-import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestException;
 import com.tirsportif.backend.exception.NotFoundException;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
 import com.tirsportif.backend.property.ApiProperties;
-import com.tirsportif.backend.repository.CategoryRepository;
-import com.tirsportif.backend.repository.ChallengeRepository;
-import com.tirsportif.backend.repository.ClubRepository;
-import com.tirsportif.backend.repository.DisciplineRepository;
+import com.tirsportif.backend.repository.*;
 import com.tirsportif.backend.utils.IterableUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,15 +26,19 @@ public class ChallengeService extends AbstractService {
     private final ClubRepository clubRepository;
     private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
+    private final ShooterRepository shooterRepository;
+    private final ParticipationRepository participationRepository;
     private final CountryStore countryStore;
 
-    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, CountryStore countryStore) {
+    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, CountryStore countryStore) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
         this.clubRepository = clubRepository;
         this.categoryRepository = categoryRepository;
         this.disciplineRepository = disciplineRepository;
+        this.shooterRepository = shooterRepository;
+        this.participationRepository = participationRepository;
         this.countryStore = countryStore;
     }
 
@@ -55,6 +55,21 @@ public class ChallengeService extends AbstractService {
     private Challenge findChallengeById(Long challengeId) {
         return challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, challengeId.toString()));
+    }
+
+    private Shooter findShooterById(Long shooterId) {
+        return shooterRepository.findById(shooterId)
+                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+    }
+
+    private Category findCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
+    }
+
+    private Discipline findDisciplineById(Long disciplineId) {
+        return disciplineRepository.findById(disciplineId)
+                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, disciplineId.toString()));
     }
 
     private Set<Category> findCategoriesByIds(Set<Long> categoryIds) {
@@ -104,6 +119,56 @@ public class ChallengeService extends AbstractService {
                 .map(challengeMapper::mapChallengeToResponse);
         log.info("Found {} clubs", responses.getSize());
         return responses;
+    }
+
+    /**
+     * Create multiple {@link Participation} instances from a single creation request.
+     *
+     * @param request, Creation request with challenge, shooter, category, and multiple disciplines
+     * @return Generated participations
+     */
+    public GetParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
+        log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
+        Challenge challenge = findChallengeById(challengeId);
+        Shooter shooter = findShooterById(request.getShooterId());
+        Category category = findCategoryById(request.getCategoryId());
+        /*
+        TODO Cache categories and disciplines
+        Map<Long, Discipline> disciplinesMap =
+                findDisciplinesByIds(
+                    request.getDisciplinesInformation().stream()
+                            .map(CreateDisciplineParticipationRequest::getDisciplineId)
+                            .collect(Collectors.toSet())
+                ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
+        */
+
+        // TODO Check disciplines IDs authorized for challenge
+        // TODO Check only one ranked for each discipline
+
+        Set<Participation> participations = request.getDisciplinesInformation().stream()
+                .map(disciplineInformation -> {
+                    Discipline discipline = findDisciplineById(disciplineInformation.getDisciplineId());
+                    return Participation.builder()
+                            .challenge(challenge)
+                            .shooter(shooter)
+                            .category(category)
+                            .discipline(discipline)
+                            .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
+                            .paid(disciplineInformation.isPaid())
+                            .outrank(disciplineInformation.isOutrank())
+                            .build();
+                }).collect(Collectors.toSet());
+
+        participationRepository.saveAll(participations);
+
+        GetParticipationsResponse response = GetParticipationsResponse.builder()
+                .participations(
+                        participations.stream()
+                            .map(challengeMapper::mapParticipationToResponse)
+                            .collect(Collectors.toSet())
+                ).build();
+        log.info("Participations created");
+        return response;
     }
 
 }

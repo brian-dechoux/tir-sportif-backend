@@ -1,7 +1,9 @@
 package com.tirsportif.backend.controller;
 
 import com.tirsportif.backend.dto.CreateChallengeRequest;
+import com.tirsportif.backend.dto.CreateParticipationsRequest;
 import com.tirsportif.backend.dto.GetChallengeResponse;
+import com.tirsportif.backend.dto.GetParticipationsResponse;
 import com.tirsportif.backend.service.ChallengeService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +38,12 @@ public class ChallengeController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public Page<GetChallengeResponse> getChallenges(@RequestParam("page") int page) {
         return challengeService.getChallenges(page);
+    }
+
+    @PostMapping(value = "/{challengeId}/participation")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetParticipationsResponse createParticipation(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
+        return challengeService.createParticipations(challengeId, request);
     }
 
 }

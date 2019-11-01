@@ -17,7 +17,7 @@ public class TemporaryPasswordGenerator {
     @Test
     public void generate() {
         String encryptedPassword = passwordService.encryptPassword("password");
-        System.out.println("Generated encrypted passsword: "+encryptedPassword);
+        System.out.println("Generated encrypted password: " +  encryptedPassword);
     }
 
 }

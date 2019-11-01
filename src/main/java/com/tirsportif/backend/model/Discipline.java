@@ -1,8 +1,6 @@
 package com.tirsportif.backend.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +9,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity(name = "discipline")
+// To avoid StackOverflow error when retrieving data from database (recursive dependency from object POV):
+@EqualsAndHashCode(exclude="challenges")
+@ToString(exclude = "challenges")
 public class Discipline {
 
     @Id

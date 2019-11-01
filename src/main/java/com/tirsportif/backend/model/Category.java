@@ -1,9 +1,7 @@
 package com.tirsportif.backend.model;
 
 import com.tirsportif.backend.utils.Regexes;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,6 +12,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity(name = "category")
+// To avoid StackOverflow error when retrieving data from database (recursive dependency from object POV):
+@EqualsAndHashCode(exclude="challenges")
+@ToString(exclude = "challenges")
 public class Category {
 
     @Id
@@ -39,9 +40,6 @@ public class Category {
 
     @Positive
     Integer ageMax;
-
-    @Enumerated(value = EnumType.STRING)
-    Gcc gccMax;
 
     @ManyToMany(mappedBy = "categories")
     Set<Challenge> challenges;

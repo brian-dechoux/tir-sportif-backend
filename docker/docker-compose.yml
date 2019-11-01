@@ -2,19 +2,24 @@ version: "3"
 services:
 
   mysql:
+    container_name: tir-sportif-mysql
     build: mysql
+    env_file: env_file
     ports:
       - "3306:3306"
     restart: always
     volumes:
-      - mysql:/var/lib/mysql
+      - tir-sportif_mysql:/var/lib/mysql
 
   redis:
+    container_name: tir-sportif-redis
     build: ./redis
+    env_file: env_file
     ports:
       - "6379:6379"
 
   backend:
+    container_name: tir-sportif-backend
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -22,12 +27,12 @@ services:
     ports:
       - "8443:8443"
     volumes:
-      - m2cache:/root/.m2/repository
+      - tir-sportif_m2cache:/root/.m2/repository
 
 networks:
   default:
     driver: bridge
 
 volumes:
-  m2cache:
-  mysql:
+  tir-sportif_m2cache:
+  tir-sportif_mysql:

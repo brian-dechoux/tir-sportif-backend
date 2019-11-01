@@ -9,3 +9,4 @@
 - Redis custom repositories to handle key value properly (like it was done in iHub) without code duplication and automatic use of RedisKey
 - GenericClientError.RESOURCE_NOT_FOUND -> Should be logging type if resource....
 - Real paiements and due paiements module
+- Docker JAVA 11 alpine when prod ready (check online, last check 01/11/19 not ready)

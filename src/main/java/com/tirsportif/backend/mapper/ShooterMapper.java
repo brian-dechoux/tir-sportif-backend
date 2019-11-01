@@ -11,10 +11,12 @@ import java.util.Optional;
 public class ShooterMapper {
 
     private final AddressMapper addressMapper;
+    private final CategoryMapper categoryMapper;
     private final ClubMapper clubMapper;
 
-    public ShooterMapper(AddressMapper addressMapper, ClubMapper clubMapper) {
+    public ShooterMapper(AddressMapper addressMapper, CategoryMapper categoryMapper, ClubMapper clubMapper) {
         this.addressMapper = addressMapper;
+        this.categoryMapper = categoryMapper;
         this.clubMapper = clubMapper;
     }
 
@@ -39,7 +41,7 @@ public class ShooterMapper {
                 Optional.ofNullable(shooter.getClub())
                         .map(clubMapper::mapClubToResponse)
                         .orElse(null),
-                shooter.getCategory()
+                categoryMapper.mapCategoryToResponse(shooter.getCategory())
         );
     }
 

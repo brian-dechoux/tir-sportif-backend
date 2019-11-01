@@ -8,7 +8,7 @@ CREATE TABLE `user` (
   `authorityId` int NOT NULL
 );
 
-CREATE TABLE `authorityType` (
+CREATE TABLE `authority` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `label` varchar(255) NOT NULL
 );
@@ -123,7 +123,7 @@ CREATE TABLE `shotResult` (
   `participationId` int NOT NULL
 );
 
-ALTER TABLE `user` ADD FOREIGN KEY (`authorityId`) REFERENCES `authorityType` (`id`);
+ALTER TABLE `user` ADD FOREIGN KEY (`authorityId`) REFERENCES `authority` (`id`);
 
 ALTER TABLE `address` ADD FOREIGN KEY (`countryId`) REFERENCES `country` (`id`);
 

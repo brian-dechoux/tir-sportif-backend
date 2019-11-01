@@ -7,15 +7,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategoryMapper {
 
-    public GetCategoryResponse mapClubToResponse(Category category) {
+    public GetCategoryResponse mapCategoryToResponse(Category category) {
         return new GetCategoryResponse(
                 category.getId(),
                 category.getLabel(),
                 category.getCode(),
                 category.getGender(),
                 category.getAgeMin(),
-                category.getAgeMax(),
-                category.getGccMax()
+                category.getAgeMax()
         );
     }
 

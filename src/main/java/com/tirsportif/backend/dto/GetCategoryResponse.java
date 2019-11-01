@@ -1,6 +1,5 @@
 package com.tirsportif.backend.dto;
 
-import com.tirsportif.backend.model.Gcc;
 import com.tirsportif.backend.model.Gender;
 import lombok.NonNull;
 import lombok.Value;
@@ -23,7 +22,5 @@ public class GetCategoryResponse {
     Integer ageMin;
 
     Integer ageMax;
-
-    Gcc gccMax;
 
 }
