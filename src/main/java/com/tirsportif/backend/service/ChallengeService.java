@@ -15,6 +15,8 @@ import com.tirsportif.backend.repository.ClubRepository;
 import com.tirsportif.backend.repository.DisciplineRepository;
 import com.tirsportif.backend.utils.IterableUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -50,6 +52,11 @@ public class ChallengeService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, clubId.toString()));
     }
 
+    private Challenge findChallengeById(Long challengeId) {
+        return challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, challengeId.toString()));
+    }
+
     private Set<Category> findCategoriesByIds(Set<Long> categoryIds) {
         Set<Category> categories = IterableUtils.toSet(categoryRepository.findAllById(categoryIds));
         if (categories.size() != categoryIds.size()) {
@@ -80,6 +87,23 @@ public class ChallengeService extends AbstractService {
         GetChallengeResponse response = challengeMapper.mapChallengeToResponse(challenge);
         log.info("Challenge created");
         return response;
+    }
+
+    public GetChallengeResponse getChallenge(Long challengeId) {
+        log.info("Looking for a challenge with ID : {}", challengeId);
+        Challenge challenge = findChallengeById(challengeId);
+        GetChallengeResponse response = challengeMapper.mapChallengeToResponse(challenge);
+        log.info("Found challenge");
+        return response;
+    }
+
+    public Page<GetChallengeResponse> getChallenges(int page) {
+        log.info("Looking for all challenges");
+        PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
+        Page<GetChallengeResponse> responses = challengeRepository.findAll(pageRequest)
+                .map(challengeMapper::mapChallengeToResponse);
+        log.info("Found {} clubs", responses.getSize());
+        return responses;
     }
 
 }

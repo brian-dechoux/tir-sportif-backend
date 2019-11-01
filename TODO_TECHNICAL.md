@@ -1,4 +1,3 @@
-- Proper SQL Initialization
 - Indexes on database
 - Proper outside application handling password generation
 - Shot results might be candidate to another database type, because: 
@@ -8,4 +7,5 @@
     -> Maybe just store results of challenge (flatten)
 - JWT + RSA
 - Redis custom repositories to handle key value properly (like it was done in iHub) without code duplication and automatic use of RedisKey
+- GenericClientError.RESOURCE_NOT_FOUND -> Should be logging type if resource....
 - Real paiements and due paiements module
