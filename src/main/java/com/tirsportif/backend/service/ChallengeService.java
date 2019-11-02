@@ -1,8 +1,10 @@
 package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.dto.*;
+import com.tirsportif.backend.error.ChallengeError;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestException;
+import com.tirsportif.backend.exception.ForbiddenException;
 import com.tirsportif.backend.exception.NotFoundException;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
@@ -132,6 +134,7 @@ public class ChallengeService extends AbstractService {
         Challenge challenge = findChallengeById(challengeId);
         Shooter shooter = findShooterById(request.getShooterId());
         Category category = findCategoryById(request.getCategoryId());
+
         /*
         TODO Cache categories and disciplines
         Map<Long, Discipline> disciplinesMap =
@@ -142,8 +145,8 @@ public class ChallengeService extends AbstractService {
                 ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
         */
 
-        // TODO Check disciplines IDs authorized for challenge
-        // TODO Check only one ranked for each discipline
+        checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
+
 
         Set<Participation> participations = request.getDisciplinesInformation().stream()
                 .map(disciplineInformation -> {
@@ -169,6 +172,22 @@ public class ChallengeService extends AbstractService {
                 ).build();
         log.info("Participations created");
         return response;
+    }
+
+    private void checkAuthorizedDisciplines(Challenge challenge, Set<CreateDisciplineParticipationRequest> requestedDisciplinesInformation) {
+        Set<Long> challengeDisciplineIds = challenge.getDisciplines().stream()
+                .map(Discipline::getId)
+                .collect(Collectors.toSet());
+        Set<Long> requestedDisciplineIds = requestedDisciplinesInformation.stream()
+                .map(CreateDisciplineParticipationRequest::getDisciplineId)
+                .collect(Collectors.toSet());
+        if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
+            throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
+        }
+    }
+
+    private void checkDisciplineRankedInformation() {
+        // TODO Check only one ranked for each discipline (get participation for challenge, shooter, category, discipline and outrank==false)
     }
 
 }

@@ -10,3 +10,4 @@
 - GenericClientError.RESOURCE_NOT_FOUND -> Should be logging type if resource....
 - Real paiements and due paiements module
 - Docker JAVA 11 alpine when prod ready (check online, last check 01/11/19 not ready)
+- Postgre over MySQL ?
