@@ -162,3 +162,6 @@ ALTER TABLE `participation` ADD FOREIGN KEY (`categoryId`) REFERENCES `category`
 ALTER TABLE `participation` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
 ALTER TABLE `shotResult` ADD FOREIGN KEY (`participationId`) REFERENCES `participation` (`id`);
+
+CREATE UNIQUE INDEX `participationDisciplineOnlyOneRankedUniqueIndex`
+ON `participation` (challengeId, shooterId, categoryId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));

@@ -12,6 +12,7 @@ import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import com.tirsportif.backend.utils.IterableUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -162,7 +163,14 @@ public class ChallengeService extends AbstractService {
                             .build();
                 }).collect(Collectors.toSet());
 
-        participationRepository.saveAll(participations);
+        try {
+            participationRepository.saveAll(participations);
+        } catch (DataIntegrityViolationException exception) {
+            if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
+                throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
+            }
+            throw exception;
+        }
 
         GetParticipationsResponse response = GetParticipationsResponse.builder()
                 .participations(
