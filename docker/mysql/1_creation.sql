@@ -3,7 +3,7 @@ CREATE TABLE `user` (
   `email` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `creationDate` timestamp NOT NULL,
+  `creationDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` boolean NOT NULL,
   `authorityId` int NOT NULL
 );
