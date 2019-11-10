@@ -43,13 +43,13 @@ public class ChallengeController {
         return challengeService.getChallenges(page);
     }
 
-    @PostMapping(value = "/{challengeId}/participation")
+    @PostMapping(value = "/{challengeId}/participations")
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetParticipationsResponse createParticipation(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
+    public GetParticipationsResponse createParticipations(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
         return participationService.createParticipations(challengeId, request);
     }
 
-    @DeleteMapping(value = "/{challengeId}/participation/{participationId}")
+    @DeleteMapping(value = "/{challengeId}/participations/{participationId}")
     @PreAuthorize("authorizedFor('MANAGER')")
     public void deleteParticipation(@PathVariable Long challengeId, @PathVariable Long participationId) {
         participationService.deleteParticipation(challengeId, participationId);

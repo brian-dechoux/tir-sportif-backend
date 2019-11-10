@@ -3,7 +3,7 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.dto.CreateDisciplineParticipationRequest;
 import com.tirsportif.backend.dto.CreateParticipationsRequest;
 import com.tirsportif.backend.dto.GetParticipationsResponse;
-import com.tirsportif.backend.error.ChallengeError;
+import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.ForbiddenException;
 import com.tirsportif.backend.exception.NotFoundException;
@@ -21,14 +21,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ParticipationService extends AbstractService {
+
     private final ChallengeMapper challengeMapper;
     private final ChallengeRepository challengeRepository;
     private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
     private final ShooterRepository shooterRepository;
     private final ParticipationRepository participationRepository;
+    private final ShotResultRepository shotResultRepository;
 
-    public ParticipationService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository) {
+    public ParticipationService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
@@ -36,6 +38,7 @@ public class ParticipationService extends AbstractService {
         this.disciplineRepository = disciplineRepository;
         this.shooterRepository = shooterRepository;
         this.participationRepository = participationRepository;
+        this.shotResultRepository = shotResultRepository;
     }
 
     private Challenge findChallengeById(Long challengeId) {
@@ -101,7 +104,7 @@ public class ParticipationService extends AbstractService {
             participationRepository.saveAll(participations);
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
-                throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
+                throw new ForbiddenException(ParticipationError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
             }
             throw exception;
         }
@@ -124,7 +127,7 @@ public class ParticipationService extends AbstractService {
                 .map(CreateDisciplineParticipationRequest::getDisciplineId)
                 .collect(Collectors.toSet());
         if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
-            throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
+            throw new ForbiddenException(ParticipationError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
         }
     }
 
@@ -139,8 +142,24 @@ public class ParticipationService extends AbstractService {
      * @param participationId   Participation
      */
     public void deleteParticipation(Long challengeId, Long participationId) {
-        // TODO check if no results associated
-        // TODO remove
+        log.info("Deleting participation with ID: {}, for challenge with ID: {}", participationId, challengeId);
+        checkExistingParticipationForChallenge(participationId, challengeId);
+        checkNoExistingShotResultsForParticipation(participationId);
+        participationRepository.deleteById(participationId);
+        log.info("Participation deleted");
+    }
+
+    private void checkExistingParticipationForChallenge(Long participationId, Long challengeId) {
+        if (!participationRepository.existsByChallengeIdAndId(challengeId, participationId)) {
+            String ids = "ChallengeId: "+challengeId.toString()+", Id: "+participationId.toString();
+            throw new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, ids);
+        }
+    }
+
+    private void checkNoExistingShotResultsForParticipation(Long participationId) {
+        if (shotResultRepository.existsByParticipationId(participationId)) {
+            throw new ForbiddenException(ParticipationError.EXISTING_SHOT_RESULTS_FOR_PARTICIPATION, participationId.toString());
+        }
     }
 
 }
