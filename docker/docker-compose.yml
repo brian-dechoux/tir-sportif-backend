@@ -20,6 +20,9 @@ services:
 
   backend:
     container_name: tir-sportif-backend
+    depends_on:
+      - redis
+      - mysql
     build:
       context: ..
       dockerfile: docker/Dockerfile
