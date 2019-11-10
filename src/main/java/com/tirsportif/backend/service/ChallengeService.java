@@ -1,10 +1,10 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.*;
-import com.tirsportif.backend.error.ChallengeError;
+import com.tirsportif.backend.dto.CreateChallengeRequest;
+import com.tirsportif.backend.dto.GetChallengeResponse;
+import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.ForbiddenException;
 import com.tirsportif.backend.exception.NotFoundException;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
@@ -12,13 +12,11 @@ import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import com.tirsportif.backend.utils.IterableUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,10 +28,9 @@ public class ChallengeService extends AbstractService {
     private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
     private final ShooterRepository shooterRepository;
-    private final ParticipationRepository participationRepository;
     private final CountryStore countryStore;
 
-    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, CountryStore countryStore) {
+    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, CountryStore countryStore) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
@@ -41,7 +38,6 @@ public class ChallengeService extends AbstractService {
         this.categoryRepository = categoryRepository;
         this.disciplineRepository = disciplineRepository;
         this.shooterRepository = shooterRepository;
-        this.participationRepository = participationRepository;
         this.countryStore = countryStore;
     }
 
@@ -122,80 +118,6 @@ public class ChallengeService extends AbstractService {
                 .map(challengeMapper::mapChallengeToResponse);
         log.info("Found {} clubs", responses.getSize());
         return responses;
-    }
-
-    /**
-     * Create multiple {@link Participation} instances from a single creation request.
-     *
-     * @param request, Creation request with challenge, shooter, category, and multiple disciplines
-     * @return Generated participations
-     */
-    public GetParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
-        log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
-        Challenge challenge = findChallengeById(challengeId);
-        Shooter shooter = findShooterById(request.getShooterId());
-        Category category = findCategoryById(request.getCategoryId());
-
-        /*
-        TODO Cache categories and disciplines
-        Map<Long, Discipline> disciplinesMap =
-                findDisciplinesByIds(
-                    request.getDisciplinesInformation().stream()
-                            .map(CreateDisciplineParticipationRequest::getDisciplineId)
-                            .collect(Collectors.toSet())
-                ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
-        */
-
-        checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
-
-
-        Set<Participation> participations = request.getDisciplinesInformation().stream()
-                .map(disciplineInformation -> {
-                    Discipline discipline = findDisciplineById(disciplineInformation.getDisciplineId());
-                    return Participation.builder()
-                            .challenge(challenge)
-                            .shooter(shooter)
-                            .category(category)
-                            .discipline(discipline)
-                            .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
-                            .paid(disciplineInformation.isPaid())
-                            .outrank(disciplineInformation.isOutrank())
-                            .build();
-                }).collect(Collectors.toSet());
-
-        try {
-            participationRepository.saveAll(participations);
-        } catch (DataIntegrityViolationException exception) {
-            if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
-                throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
-            }
-            throw exception;
-        }
-
-        GetParticipationsResponse response = GetParticipationsResponse.builder()
-                .participations(
-                        participations.stream()
-                            .map(challengeMapper::mapParticipationToResponse)
-                            .collect(Collectors.toSet())
-                ).build();
-        log.info("Participations created");
-        return response;
-    }
-
-    private void checkAuthorizedDisciplines(Challenge challenge, Set<CreateDisciplineParticipationRequest> requestedDisciplinesInformation) {
-        Set<Long> challengeDisciplineIds = challenge.getDisciplines().stream()
-                .map(Discipline::getId)
-                .collect(Collectors.toSet());
-        Set<Long> requestedDisciplineIds = requestedDisciplinesInformation.stream()
-                .map(CreateDisciplineParticipationRequest::getDisciplineId)
-                .collect(Collectors.toSet());
-        if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
-            throw new ForbiddenException(ChallengeError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
-        }
-    }
-
-    private void checkDisciplineRankedInformation() {
-        // TODO Check only one ranked for each discipline (get participation for challenge, shooter, category, discipline and outrank==false)
     }
 
 }

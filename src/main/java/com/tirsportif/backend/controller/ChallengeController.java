@@ -5,6 +5,7 @@ import com.tirsportif.backend.dto.CreateParticipationsRequest;
 import com.tirsportif.backend.dto.GetChallengeResponse;
 import com.tirsportif.backend.dto.GetParticipationsResponse;
 import com.tirsportif.backend.service.ChallengeService;
+import com.tirsportif.backend.service.ParticipationService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,11 @@ import javax.validation.Valid;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
+    private final ParticipationService participationService;
 
-    public ChallengeController(ChallengeService challengeService) {
+    public ChallengeController(ChallengeService challengeService, ParticipationService participationService) {
         this.challengeService = challengeService;
+        this.participationService = participationService;
     }
 
     @PostMapping
@@ -43,7 +46,13 @@ public class ChallengeController {
     @PostMapping(value = "/{challengeId}/participation")
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetParticipationsResponse createParticipation(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
-        return challengeService.createParticipations(challengeId, request);
+        return participationService.createParticipations(challengeId, request);
+    }
+
+    @DeleteMapping(value = "/{challengeId}/participation/{participationId}")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public void deleteParticipation(@PathVariable Long challengeId, @PathVariable Long participationId) {
+        participationService.deleteParticipation(challengeId, participationId);
     }
 
 }
