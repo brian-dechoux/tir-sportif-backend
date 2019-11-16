@@ -2,6 +2,7 @@ package com.tirsportif.backend.dto;
 
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -13,6 +14,7 @@ public class CreateClubRequest {
     String name;
 
     @NotNull
+    @Valid
     CreateAddressRequest address;
 
 }

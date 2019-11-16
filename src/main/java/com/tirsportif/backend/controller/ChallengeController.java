@@ -36,6 +36,12 @@ public class ChallengeController {
         return challengeService.getChallenge(challengeId);
     }
 
+    @PutMapping(value = "/{challengeId}")
+    @PreAuthorize("authorizedFor('ADMIN')")
+    public GetChallengeResponse updateChallenge(@Valid @RequestBody CreateChallengeRequest request) {
+        return challengeService.createChallenge(request);
+    }
+
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
