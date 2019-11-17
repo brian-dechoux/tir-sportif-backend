@@ -15,7 +15,9 @@ public class ResolvedUpdateClubRequest {
     public static ResolvedUpdateClubRequest ofRawRequest(UpdateClubRequest request, Country resolvedCountry) {
         return new ResolvedUpdateClubRequest(
             request.getName(),
-            ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), resolvedCountry)
+            request.getAddress() != null && resolvedCountry != null ?
+                    ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), resolvedCountry) :
+                    null
         );
     }
 

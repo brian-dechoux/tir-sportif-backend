@@ -22,8 +22,8 @@ public class ClubController {
 
     @PostMapping
     @PreAuthorize("authorizedFor('ADMIN')")
-    public void createClub(@Valid @RequestBody CreateClubRequest request) {
-        clubService.createClub(request);
+    public GetClubResponse createClub(@Valid @RequestBody CreateClubRequest request) {
+        return clubService.createClub(request);
     }
 
     @GetMapping(value = "/{clubId}")
@@ -43,8 +43,8 @@ public class ClubController {
 
     @PutMapping(value = "/{clubId}")
     @PreAuthorize("authorizedFor('ADMIN')")
-    public void updateClub(@PathVariable Long clubId, @Valid @RequestBody UpdateClubRequest request) {
-        clubService.updateClub(clubId, request);
+    public GetClubResponse updateClub(@PathVariable Long clubId, @Valid @RequestBody UpdateClubRequest request) {
+       return  clubService.updateClub(clubId, request);
     }
 
 }

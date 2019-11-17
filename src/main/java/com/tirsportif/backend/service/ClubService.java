@@ -37,14 +37,16 @@ public class ClubService extends AbstractService {
                 .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
-    // TODO return created club
-    public void createClub(CreateClubRequest request) {
+    public GetClubResponse createClub(CreateClubRequest request) {
         log.info("Creating club named: {}", request.getName());
         Country country = findCountryById(request.getAddress().getCountryId());
         ResolvedCreateClubRequest resolvedCreateAddressRequest = ResolvedCreateClubRequest.ofRawRequest(request, country);
         Club club = clubMapper.mapCreateClubDtoToClub(resolvedCreateAddressRequest);
-        clubRepository.save(club);
+        club = clubRepository.save(club);
+
+        GetClubResponse response = clubMapper.mapClubToResponse(club);
         log.info("Club created");
+        return response;
     }
 
     public GetClubResponse getClubById(Long id) {
@@ -65,9 +67,8 @@ public class ClubService extends AbstractService {
         return responses;
     }
 
-    // TODO check ChallengeService.updateChallenge way of doing things
-    // TODO return updated club
-    public void updateClub(Long id, UpdateClubRequest request) {
+    // TODO See ChallengeService.update, better way of handling
+    public GetClubResponse updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());
         Club club = clubRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
@@ -76,8 +77,12 @@ public class ClubService extends AbstractService {
                 .map(this::findCountryById)
                 .orElse(null);
         ResolvedUpdateClubRequest resolvedUpdateClubRequest = ResolvedUpdateClubRequest.ofRawRequest(request, country);
-        clubRepository.save(club);
-        log.info("Updated club");
+        Club updated = clubMapper.mapUpdateClubDtoToClub(club, resolvedUpdateClubRequest);
+        updated = clubRepository.save(updated);
+
+        GetClubResponse response = clubMapper.mapClubToResponse(updated);
+        log.info("Club updated");
+        return response;
     }
 
 }
