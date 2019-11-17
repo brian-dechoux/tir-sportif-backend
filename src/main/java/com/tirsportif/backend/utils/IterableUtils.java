@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * All utility handling {@link Iterable} class.
+ * All utility methods handling {@link Iterable} class.
  */
 public final class IterableUtils {
 

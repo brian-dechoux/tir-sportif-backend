@@ -1,21 +1,21 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.CreateChallengeRequest;
-import com.tirsportif.backend.dto.GetChallengeResponse;
-import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
-import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.cache.CountryStore;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
 import com.tirsportif.backend.property.ApiProperties;
-import com.tirsportif.backend.repository.*;
-import com.tirsportif.backend.utils.IterableUtils;
+import com.tirsportif.backend.repository.CategoryRepository;
+import com.tirsportif.backend.repository.ChallengeRepository;
+import com.tirsportif.backend.repository.ClubRepository;
+import com.tirsportif.backend.repository.DisciplineRepository;
+import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -27,66 +27,44 @@ public class ChallengeService extends AbstractService {
     private final ClubRepository clubRepository;
     private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
-    private final ShooterRepository shooterRepository;
     private final CountryStore countryStore;
 
-    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, CountryStore countryStore) {
+    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, CountryStore countryStore) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
         this.clubRepository = clubRepository;
         this.categoryRepository = categoryRepository;
         this.disciplineRepository = disciplineRepository;
-        this.shooterRepository = shooterRepository;
         this.countryStore = countryStore;
     }
 
     private Country findCountryById(Long id) {
-        return countryStore.getCountryById(id)
-                .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+        return RepositoryUtils.findById(countryStore::getCountryById, id);
     }
 
     private Club findClubById(Long clubId) {
-        return clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, clubId.toString()));
+        return RepositoryUtils.findById(clubRepository::findById, clubId);
     }
 
     private Challenge findChallengeById(Long challengeId) {
-        return challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, challengeId.toString()));
-    }
-
-    private Shooter findShooterById(Long shooterId) {
-        return shooterRepository.findById(shooterId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
-    }
-
-    private Category findCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
-    }
-
-    private Discipline findDisciplineById(Long disciplineId) {
-        return disciplineRepository.findById(disciplineId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, disciplineId.toString()));
+        return RepositoryUtils.findById(challengeRepository::findById, challengeId);
     }
 
     private Set<Category> findCategoriesByIds(Set<Long> categoryIds) {
-        Set<Category> categories = IterableUtils.toSet(categoryRepository.findAllById(categoryIds));
-        if (categories.size() != categoryIds.size()) {
-            throw new NotFoundException(GenericClientError.RESOURCES_NOT_FOUND);
-        }
-        return categories;
+        return RepositoryUtils.findByIds(categoryRepository::findAllById, categoryIds);
     }
 
     private Set<Discipline> findDisciplinesByIds(Set<Long> disciplineIds) {
-        Set<Discipline> disciplines = IterableUtils.toSet(disciplineRepository.findAllById(disciplineIds));
-        if (disciplines.size() != disciplineIds.size()) {
-            throw new NotFoundException(GenericClientError.RESOURCES_NOT_FOUND);
-        }
-        return disciplines;
+        return RepositoryUtils.findByIds(disciplineRepository::findAllById, disciplineIds);
     }
 
+    /**
+     * Create an empty challenge.
+     *
+     * @param request
+     * @return Created challenge
+     */
     public GetChallengeResponse createChallenge(CreateChallengeRequest request) {
         log.info("Creating challenge named : {}", request.getName());
         Country country = findCountryById(request.getAddress().getCountryId());
@@ -103,6 +81,12 @@ public class ChallengeService extends AbstractService {
         return response;
     }
 
+    /**
+     * Get a single challenge.
+     *
+     * @param challengeId
+     * @return Challenge's information
+     */
     public GetChallengeResponse getChallenge(Long challengeId) {
         log.info("Looking for a challenge with ID : {}", challengeId);
         Challenge challenge = findChallengeById(challengeId);
@@ -111,6 +95,12 @@ public class ChallengeService extends AbstractService {
         return response;
     }
 
+    /**
+     * Get all challenges.
+     *
+     * @param page Page number
+     * @return Paginated challenges
+     */
     public Page<GetChallengeResponse> getChallenges(int page) {
         log.info("Looking for all challenges");
         PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
@@ -118,6 +108,34 @@ public class ChallengeService extends AbstractService {
                 .map(challengeMapper::mapChallengeToResponse);
         log.info("Found {} clubs", responses.getSize());
         return responses;
+    }
+
+    /**
+     * Update an existing challenge's information.
+     *
+     * @param request
+     * @return Updated challenge
+     */
+    public GetChallengeResponse updateChallenge(Long challengeId, UpdateChallengeRequest request) {
+        log.info("Updating challenge named : {}", request.getName());
+        Challenge challenge = findChallengeById(challengeId);
+        Optional<Country> optCountry = Optional.ofNullable(request.getAddress())
+                .map(CreateAddressRequest::getCountryId)
+                .flatMap(countryStore::getCountryById);
+        Optional<Club> optClub = Optional.ofNullable(request.getOrganiserClubId())
+                .flatMap(clubRepository::findById);
+        Optional<Set<Category>> optCategories = Optional.ofNullable(request.getCategoryIds())
+                .map(this::findCategoriesByIds);
+        Optional<Set<Discipline>> optDisciplines = Optional.ofNullable(request.getDisciplineIds())
+                .map(this::findDisciplinesByIds);
+
+        ResolvedUpdateChallengeRequest resolvedUpdateChallengeRequest = ResolvedUpdateChallengeRequest.ofRawRequest(request, optCountry, optClub, optCategories, optDisciplines);
+        Challenge updated = challengeMapper.mapUpdateChallengeDtoToChallenge(challenge, resolvedUpdateChallengeRequest);
+        updated = challengeRepository.save(updated);
+
+        GetChallengeResponse response = challengeMapper.mapChallengeToResponse(updated);
+        log.info("Challenge updated");
+        return response;
     }
 
 }

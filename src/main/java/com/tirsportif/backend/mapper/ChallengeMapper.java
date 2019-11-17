@@ -3,6 +3,7 @@ package com.tirsportif.backend.mapper;
 import com.tirsportif.backend.dto.GetChallengeResponse;
 import com.tirsportif.backend.dto.GetParticipationResponse;
 import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
+import com.tirsportif.backend.dto.ResolvedUpdateChallengeRequest;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Participation;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,35 @@ public class ChallengeMapper {
         challenge.setOrganiserClub(request.getOrganiserClub());
         challenge.setCategories(request.getCategories());
         challenge.setDisciplines(request.getDisciplines());
+        return challenge;
+    }
+
+    public Challenge mapUpdateChallengeDtoToChallenge(Challenge challenge, ResolvedUpdateChallengeRequest request) {
+        challenge.setName(
+                request.getName()
+                        .orElse(challenge.getName())
+        );
+        challenge.setStartDate(
+                request.getStartDate()
+                        .orElse(challenge.getStartDate())
+        );
+        challenge.setAddress(
+                request.getAddress()
+                        .map(addressMapper::mapAddressDtoToAddress)
+                        .orElse(challenge.getAddress())
+        );
+        challenge.setOrganiserClub(
+                request.getOrganiserClub()
+                        .orElse(challenge.getOrganiserClub())
+        );
+        challenge.setCategories(
+                request.getCategories()
+                        .orElse(challenge.getCategories())
+        );
+        challenge.setDisciplines(
+                request.getDisciplines()
+                        .orElse(challenge.getDisciplines())
+        );
         return challenge;
     }
 

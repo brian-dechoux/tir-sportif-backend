@@ -1,4 +1,4 @@
-package com.tirsportif.backend.service;
+package com.tirsportif.backend.cache;
 
 import com.tirsportif.backend.model.Country;
 import com.tirsportif.backend.repository.CountryRepository;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Component
-public class CountryStore {
+public class CountryStore implements Store {
 
     private final Map<Long,Country> countriesCache;
 

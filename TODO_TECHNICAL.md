@@ -12,3 +12,4 @@
 - Docker JAVA 11 alpine when prod ready (check online, last check 01/11/19 not ready)
 - Postgres over MySQL ?
 - `minValue` and `maxValue` for disciplines ?
+- Use `RepositoryUtils` everywhere in services

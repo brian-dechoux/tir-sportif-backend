@@ -1,5 +1,6 @@
 package com.tirsportif.backend.service;
 
+import com.tirsportif.backend.cache.CountryStore;
 import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestException;
@@ -64,6 +65,7 @@ public class ClubService extends AbstractService {
         return responses;
     }
 
+    // TODO check ChallengeService.updateChallenge way of doing things
     // TODO return updated club
     public void updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());

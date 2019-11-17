@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 
 /**
- * All utility classes handling old {@link java.util.Date} from new {@link java.time} classes.
+ * All utility methods handling old {@link java.util.Date} from new {@link java.time} classes.
  */
 public final class DateUtils {
 

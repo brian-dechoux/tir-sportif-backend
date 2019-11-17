@@ -1,9 +1,6 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.CreateChallengeRequest;
-import com.tirsportif.backend.dto.CreateParticipationsRequest;
-import com.tirsportif.backend.dto.GetChallengeResponse;
-import com.tirsportif.backend.dto.GetParticipationsResponse;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.service.ChallengeService;
 import com.tirsportif.backend.service.ParticipationService;
 import org.springframework.data.domain.Page;
@@ -38,8 +35,8 @@ public class ChallengeController {
 
     @PutMapping(value = "/{challengeId}")
     @PreAuthorize("authorizedFor('ADMIN')")
-    public GetChallengeResponse updateChallenge(@Valid @RequestBody CreateChallengeRequest request) {
-        return challengeService.createChallenge(request);
+    public GetChallengeResponse updateChallenge(@PathVariable Long challengeId, @Valid @RequestBody UpdateChallengeRequest request) {
+        return challengeService.updateChallenge(challengeId, request);
     }
 
     @GetMapping
