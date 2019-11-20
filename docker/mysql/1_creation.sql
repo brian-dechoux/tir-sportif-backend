@@ -39,7 +39,8 @@ CREATE TABLE `price` (
   `type` ENUM('LICENSE', 'CHALLENGE'),
   `forLicenseeOnly` boolean,
   `value` float,
-  `clubId` int NOT NULL
+  `clubId` int NOT NULL,
+  `active` boolean
 );
 
 CREATE TABLE `shooter` (
@@ -123,6 +124,15 @@ CREATE TABLE `shotResult` (
   `participationId` int NOT NULL
 );
 
+CREATE TABLE `bill` (
+  `id` int  PRIMARY KEY AUTO_INCREMENT,
+  `value` float NOT NULL,
+  `paid` boolean NOT NULL,
+  `participationId` int,
+  `licenseeId` int,
+  `priceId` int NOT NULL
+);
+
 ALTER TABLE `user` ADD FOREIGN KEY (`authorityId`) REFERENCES `authority` (`id`);
 
 ALTER TABLE `address` ADD FOREIGN KEY (`countryId`) REFERENCES `country` (`id`);
@@ -132,9 +142,7 @@ ALTER TABLE `club` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
 ALTER TABLE `price` ADD FOREIGN KEY (`clubId`) REFERENCES `club` (`id`);
 
 ALTER TABLE `shooter` ADD FOREIGN KEY (`clubId`) REFERENCES `club` (`id`);
-
 ALTER TABLE `shooter` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
-
 ALTER TABLE `shooter` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `licensee` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`);
@@ -142,26 +150,22 @@ ALTER TABLE `licensee` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`)
 ALTER TABLE `challenge` ADD FOREIGN KEY (`organiserClubId`) REFERENCES `club` (`id`);
 
 ALTER TABLE `categoriesDisciplinesParameters` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
-
 ALTER TABLE `categoriesDisciplinesParameters` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
 ALTER TABLE `challengeDisciplines` ADD FOREIGN KEY (`challengeId`) REFERENCES `challenge` (`id`);
-
 ALTER TABLE `challengeDisciplines` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
 ALTER TABLE `challengeCategories` ADD FOREIGN KEY (`challengeId`) REFERENCES `challenge` (`id`);
-
 ALTER TABLE `challengeCategories` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `participation` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`);
-
 ALTER TABLE `participation` ADD FOREIGN KEY (`challengeId`) REFERENCES `challenge` (`id`);
-
 ALTER TABLE `participation` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
-
 ALTER TABLE `participation` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
-ALTER TABLE `shotResult` ADD FOREIGN KEY (`participationId`) REFERENCES `participation` (`id`);
+ALTER TABLE `bill` ADD FOREIGN KEY (`participationId`) REFERENCES `participation` (`id`);
+ALTER TABLE `bill` ADD FOREIGN KEY (`licenseeId`) REFERENCES `licensee` (`id`);
+ALTER TABLE `bill` ADD FOREIGN KEY (`priceId`) REFERENCES `price` (`id`);
 
 CREATE UNIQUE INDEX `participationDisciplineOnlyOneRankedUniqueIndex`
 ON `participation` (challengeId, shooterId, categoryId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));
