@@ -1,5 +1,6 @@
 package com.tirsportif.backend.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,12 +10,17 @@ import javax.validation.constraints.Positive;
 @Data
 @NoArgsConstructor
 @Entity(name = "bill")
+@Builder
 public class Bill {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
+    /**
+     * Uncorrelated value from the single price.
+     * Other factors may be implied in calculation.
+     */
     @Positive
     double value;
 

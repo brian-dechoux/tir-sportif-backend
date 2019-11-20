@@ -43,6 +43,7 @@ public class Participation {
     @NotNull
     boolean useElectronicTarget;
 
+    // FIXME this is related to bill not to participation
     @NotNull
     boolean paid;
 
