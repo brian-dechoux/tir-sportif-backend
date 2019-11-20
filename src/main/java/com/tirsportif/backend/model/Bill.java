@@ -2,35 +2,34 @@ package com.tirsportif.backend.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "price")
-public class Price {
+@Entity(name = "bill")
+public class Bill {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
-    @NonNull
-    @NotNull
-    @Enumerated(value = EnumType.STRING)
-    PriceType type;
-
-    boolean forLicenseeOnly;
-
     @Positive
     double value;
 
-    @ManyToOne
-    @JoinColumn(name = "clubId")
-    Club club;
+    boolean paid;
 
-    boolean active;
+    @ManyToOne
+    @JoinColumn(name = "participationId")
+    Participation participation;
+
+    @ManyToOne
+    @JoinColumn(name = "licenseeId")
+    Licensee licensee;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "priceId")
+    Price price;
 
 }
