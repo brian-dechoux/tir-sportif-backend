@@ -112,7 +112,6 @@ CREATE TABLE `participation` (
   `categoryId` int NOT NULL,
   `disciplineId` int NOT NULL,
   `useElectronicTarget` boolean,
-  `paid` boolean,
   `outRank` boolean
 );
 

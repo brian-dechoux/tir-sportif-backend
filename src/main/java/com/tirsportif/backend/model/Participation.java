@@ -43,7 +43,12 @@ public class Participation {
     @NotNull
     boolean useElectronicTarget;
 
-    // FIXME this is related to bill not to participation
+    /**
+     * This attribute has a short lifespan, thus not persisted in database.
+     * It's used to generate the bill after this instance creation.
+     * Then, the attribute is passed along to the {@link Bill} instance.
+     */
+    @Transient
     @NotNull
     boolean paid;
 

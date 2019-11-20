@@ -6,13 +6,6 @@ import lombok.Value;
 @Value
 public class ParticipationCreated {
 
-    public ParticipationCreated(Participation participation) {
-        this.participation = participation;
-        this.paid = participation.isPaid();
-    }
-
     Participation participation;
-
-    boolean paid;
 
 }

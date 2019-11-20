@@ -87,8 +87,8 @@ public class ParticipationService extends AbstractService {
                 ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
         */
 
+        // TODO Check also categories...
         checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
-
 
         Set<Participation> participations = request.getDisciplinesInformation().stream()
                 .map(disciplineInformation -> {
@@ -98,8 +98,8 @@ public class ParticipationService extends AbstractService {
                             .shooter(shooter)
                             .category(category)
                             .discipline(discipline)
-                            .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
                             .paid(disciplineInformation.isPaid())
+                            .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
                             .outrank(disciplineInformation.isOutrank())
                             .build();
                 }).collect(Collectors.toSet());
