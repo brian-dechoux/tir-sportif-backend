@@ -3,15 +3,17 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.dto.CreateDisciplineParticipationRequest;
 import com.tirsportif.backend.dto.CreateParticipationsRequest;
 import com.tirsportif.backend.dto.GetParticipationsResponse;
-import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.GenericClientError;
+import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.exception.ForbiddenException;
 import com.tirsportif.backend.exception.NotFoundException;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
+import com.tirsportif.backend.model.event.ParticipationCreated;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +31,9 @@ public class ParticipationService extends AbstractService {
     private final ShooterRepository shooterRepository;
     private final ParticipationRepository participationRepository;
     private final ShotResultRepository shotResultRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ParticipationService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository) {
+    public ParticipationService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ApplicationEventPublisher applicationEventPublisher) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
@@ -39,6 +42,7 @@ public class ParticipationService extends AbstractService {
         this.shooterRepository = shooterRepository;
         this.participationRepository = participationRepository;
         this.shotResultRepository = shotResultRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     private Challenge findChallengeById(Long challengeId) {
@@ -116,6 +120,12 @@ public class ParticipationService extends AbstractService {
                                 .collect(Collectors.toSet())
                 ).build();
         log.info("Participations created");
+
+        log.info("Sending participations to billing service...");
+        participations.stream()
+                .map(ParticipationCreated::new)
+                .forEach(applicationEventPublisher::publishEvent);
+
         return response;
     }
 

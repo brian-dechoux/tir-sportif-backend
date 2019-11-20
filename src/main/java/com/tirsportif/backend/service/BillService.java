@@ -6,11 +6,14 @@ import com.tirsportif.backend.model.Bill;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.Price;
 import com.tirsportif.backend.model.PriceType;
+import com.tirsportif.backend.model.event.ParticipationCreated;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.BillRepository;
 import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.PriceRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,14 +31,18 @@ public class BillService extends AbstractService {
         this.licenseeRepository = licenseeRepository;
     }
 
-    // TODO async event ?
-    public void generateBill(Participation participation) {
+    @Async
+    @EventListener(value = ParticipationCreated.class)
+    public void generateBill(ParticipationCreated event) {
+        Participation participation = event.getParticipation();
         log.info("Generating bill for participation with ID: {}", participation.getId());
+
         boolean forLicensee = licenseeRepository.findByShooterId(participation.getShooter().getId()).isPresent();
         Price price = priceRepository.findByTypeAndForLicenseeOnly(PriceType.CHALLENGE, forLicensee)
                 .orElseThrow(() -> new InternalServerErrorException(BillError.NO_PRICE_FOR_PARAMETERS, PriceType.CHALLENGE.name(), Boolean.toString(forLicensee)));
         Bill bill  = Bill.builder()
                 .value(price.getValue())
+                .paid(event.isPaid())
                 .participation(participation)
                 .price(price)
                 .build();
