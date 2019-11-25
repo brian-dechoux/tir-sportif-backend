@@ -20,11 +20,11 @@ import javax.validation.constraints.Positive;
 public class ShotResult {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     /**
-     * ID of the serie.
+     * Number of the serie.
      */
     @NotNull
     @Positive
@@ -36,11 +36,11 @@ public class ShotResult {
      * If null, we consider it as a whole serie result.
      */
     @Positive
-    int order;
+    Integer order;
 
     @NotNull
     @Positive
-    int points;
+    double points;
 
     @NonNull
     @NotNull

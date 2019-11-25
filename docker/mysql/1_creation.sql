@@ -74,6 +74,8 @@ CREATE TABLE `discipline` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
+  `nbSeries` int NOT NULL,
+  `nbShotsPerSerie` int NOT NULL,
   `isDecimalResult` boolean NOT NULL
 );
 
@@ -119,7 +121,7 @@ CREATE TABLE `shotResult` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `serieId` int NOT NULL,
   `order` int,
-  `points` int NOT NULL,
+  `points` float NOT NULL,
   `participationId` int NOT NULL
 );
 

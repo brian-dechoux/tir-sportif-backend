@@ -1,2 +1,2 @@
-INSERT INTO discipline (label,code,isDecimalResult) VALUES ('Pistolet', 'PT', 1);
-INSERT INTO discipline (label,code,isDecimalResult) VALUES ('Carabine', 'CB', 1);
+INSERT INTO discipline (label,code,nbSeries,nbShotsPerSerie,isDecimalResult) VALUES ('Pistolet', 'PT', 10, 10, 1);
+INSERT INTO discipline (label,code,nbSeries,nbShotsPerSerie,isDecimalResult) VALUES ('Carabine', 'CB', 10, 10, 1);
