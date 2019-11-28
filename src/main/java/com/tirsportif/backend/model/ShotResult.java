@@ -28,7 +28,7 @@ public class ShotResult {
      */
     @NotNull
     @Positive
-    int serie;
+    int serieNumber;
 
     /**
      * Order of the shot.
@@ -36,7 +36,7 @@ public class ShotResult {
      * If null, we consider it as a whole serie result.
      */
     @Positive
-    Integer order;
+    Integer shotNumber;
 
     @NotNull
     @Positive

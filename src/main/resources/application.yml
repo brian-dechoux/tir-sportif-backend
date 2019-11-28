@@ -4,8 +4,11 @@
 
 spring:
 
-  ### Naming convention for database columns: CamelCase
-  jpa.hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  jpa:
+    ### Naming convention for database columns: CamelCase
+    hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    ### Anti pattern, even logged by SpringBoot. See: https://stackoverflow.com/a/48222934/4675568
+    open-in-view: false
 
   liquibase.enabled: ${SPRING_LIQUIBASE_ENABLED}
 

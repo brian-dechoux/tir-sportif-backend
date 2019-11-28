@@ -119,8 +119,8 @@ CREATE TABLE `participation` (
 
 CREATE TABLE `shotResult` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
-  `serieId` int NOT NULL,
-  `order` int,
+  `serieNumber` int NOT NULL,
+  `shotNumber` int,
   `points` float NOT NULL,
   `participationId` int NOT NULL
 );
@@ -170,3 +170,6 @@ ALTER TABLE `bill` ADD FOREIGN KEY (`priceId`) REFERENCES `price` (`id`);
 
 CREATE UNIQUE INDEX `participationDisciplineOnlyOneRankedUniqueIndex`
 ON `participation` (challengeId, shooterId, categoryId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));
+
+CREATE UNIQUE INDEX `shotResultUniqueIndex`
+ON `shotResult` (`serieNumber`, `orderNumber`, `participationId`);

@@ -41,6 +41,8 @@ public class Discipline {
     @NotNull
     boolean isDecimalResult;
 
+    // TODO add min/max score
+
     @ManyToMany(mappedBy = "disciplines")
     Set<Challenge> challenges;
 

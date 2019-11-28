@@ -13,3 +13,4 @@
 - Postgres over MySQL ?
 - `minValue` and `maxValue` for disciplines ?
 - Use `RepositoryUtils` everywhere in services
+- Remove try/catches in services handling sql data integrity violation ? 
