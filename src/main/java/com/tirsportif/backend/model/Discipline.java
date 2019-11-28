@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Set;
 
 @Data
@@ -41,7 +42,12 @@ public class Discipline {
     @NotNull
     boolean isDecimalResult;
 
-    // TODO add min/max score
+    @PositiveOrZero
+    @NotNull
+    double minPointsValue;
+
+    @NotNull
+    double maxPointsValue;
 
     @ManyToMany(mappedBy = "disciplines")
     Set<Challenge> challenges;

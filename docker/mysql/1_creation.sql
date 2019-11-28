@@ -76,7 +76,9 @@ CREATE TABLE `discipline` (
   `code` varchar(255) NOT NULL,
   `nbSeries` int NOT NULL,
   `nbShotsPerSerie` int NOT NULL,
-  `isDecimalResult` boolean NOT NULL
+  `isDecimalResult` boolean NOT NULL,
+  `minPointsValue` float NOT NULL,
+  `minPointsValue` float NOT NULL
 );
 
 CREATE TABLE `categoriesDisciplinesParameters` (
@@ -167,6 +169,9 @@ ALTER TABLE `participation` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipl
 ALTER TABLE `bill` ADD FOREIGN KEY (`participationId`) REFERENCES `participation` (`id`);
 ALTER TABLE `bill` ADD FOREIGN KEY (`licenseeId`) REFERENCES `licensee` (`id`);
 ALTER TABLE `bill` ADD FOREIGN KEY (`priceId`) REFERENCES `price` (`id`);
+
+ALTER TABLE `discipline` ADD CONSTRAINT `minPointsValueLighterThanMaxPointsValueIndex`
+CHECK (minPointsValue <= maxPointsValue);
 
 CREATE UNIQUE INDEX `participationDisciplineOnlyOneRankedUniqueIndex`
 ON `participation` (challengeId, shooterId, categoryId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));

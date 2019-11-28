@@ -58,14 +58,23 @@ public class ShotResultService extends AbstractService {
         if (request.getSerieNumber() > discipline.getNbSeries()) {
             throw new BadRequestException(ShotResultError.INVALID_SERIE_NUMBER, Integer.toString(serieNumber), Integer.toString(expectedNbSeries));
         }
+
         Integer shotNumber = request.getShotNumber();
         int expectedNbShots = discipline.getNbShotsPerSerie();
         if (shotNumber != null && (shotNumber > expectedNbShots)) {
             throw new BadRequestException(ShotResultError.INVALID_SHOT_NUMBER, Integer.toString(shotNumber), Integer.toString(expectedNbShots));
         }
+
         double points = request.getPoints();
         if (!discipline.isDecimalResult() && ((points % 1) != 0)) {
             throw new BadRequestException(ShotResultError.INVALID_POINTS_VALUE, Double.toString(points));
+        }
+
+        double actualPoints = request.getPoints();
+        double minPtsValue = discipline.getMinPointsValue();
+        double maxPtsValue = discipline.getMaxPointsValue();
+        if (minPtsValue > actualPoints || maxPtsValue < actualPoints) {
+            throw new BadRequestException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
         }
     }
 
