@@ -1,6 +1,6 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.model.JwtTokenRedis;
+import com.tirsportif.backend.model.redis.JwtTokenRedis;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.model.redis.JwtTokenKey;
 import com.tirsportif.backend.property.JwtProperties;

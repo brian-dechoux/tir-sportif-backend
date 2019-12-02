@@ -14,3 +14,5 @@
 - `minValue` and `maxValue` for disciplines ?
 - Use `RepositoryUtils` everywhere in services
 - Remove try/catches in services handling sql data integrity violation ? 
+- Use Immutable DTOs: http://dolszewski.com/spring/how-to-bind-requestparam-to-object/
+- Java 13

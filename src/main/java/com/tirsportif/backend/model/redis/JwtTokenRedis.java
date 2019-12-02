@@ -1,6 +1,5 @@
-package com.tirsportif.backend.model;
+package com.tirsportif.backend.model.redis;
 
-import com.tirsportif.backend.model.redis.JwtTokenKey;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
