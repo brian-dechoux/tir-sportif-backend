@@ -47,6 +47,7 @@ public class AuthenticationService {
         log.debug("Setting Spring authentication up");
         SecurityContextHolder.getContext().setAuthentication(user);
 
+        log.info("Authenticated");
         log.debug("END AuthenticationService.login");
         return new AuthenticationResponse(jwtToken);
     }

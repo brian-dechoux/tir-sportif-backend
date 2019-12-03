@@ -16,3 +16,4 @@
 - Remove try/catches in services handling sql data integrity violation ? 
 - Use Immutable DTOs: http://dolszewski.com/spring/how-to-bind-requestparam-to-object/
 - Java 13
+- https://security.stackexchange.com/a/179507/123909
