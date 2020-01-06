@@ -7,7 +7,7 @@ import lombok.Value;
 public class ErrorResponse {
 
     @NonNull
-    String error;
+    String code;
 
     @NonNull
     String message;
