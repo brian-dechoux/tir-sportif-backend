@@ -6,8 +6,8 @@ import com.tirsportif.backend.dto.GetShooterResultsResponse;
 import com.tirsportif.backend.dto.ResolvedAddShotResultRequest;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.ShotResultError;
-import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.ForbiddenException;
+import com.tirsportif.backend.exception.BadRequestErrorException;
+import com.tirsportif.backend.exception.ForbiddenErrorException;
 import com.tirsportif.backend.mapper.ShotResultMapper;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
@@ -55,7 +55,7 @@ public class ShotResultService extends AbstractService {
 
     private void checkParticipationMatchesChallenge(Participation participation, Challenge challenge) {
         if (!participation.getChallenge().getId().equals(challenge.getId())) {
-            throw new BadRequestException(ParticipationError.PARTICIPATION_DOES_NOT_MATCH_CHALLENGE, participation.getChallenge().getId().toString(), challenge.getId().toString());
+            throw new BadRequestErrorException(ParticipationError.PARTICIPATION_DOES_NOT_MATCH_CHALLENGE, participation.getChallenge().getId().toString(), challenge.getId().toString());
         }
     }
 
@@ -63,25 +63,25 @@ public class ShotResultService extends AbstractService {
         int serieNumber = request.getSerieNumber();
         int expectedNbSeries = discipline.getNbSeries();
         if (request.getSerieNumber() > discipline.getNbSeries()) {
-            throw new BadRequestException(ShotResultError.INVALID_SERIE_NUMBER, Integer.toString(serieNumber), Integer.toString(expectedNbSeries));
+            throw new BadRequestErrorException(ShotResultError.INVALID_SERIE_NUMBER, Integer.toString(serieNumber), Integer.toString(expectedNbSeries));
         }
 
         Integer shotNumber = request.getShotNumber();
         int expectedNbShots = discipline.getNbShotsPerSerie();
         if (shotNumber != null && (shotNumber > expectedNbShots)) {
-            throw new BadRequestException(ShotResultError.INVALID_SHOT_NUMBER, Integer.toString(shotNumber), Integer.toString(expectedNbShots));
+            throw new BadRequestErrorException(ShotResultError.INVALID_SHOT_NUMBER, Integer.toString(shotNumber), Integer.toString(expectedNbShots));
         }
 
         double points = request.getPoints();
         if (!discipline.isDecimalResult() && ((points % 1) != 0)) {
-            throw new BadRequestException(ShotResultError.INVALID_POINTS_VALUE, Double.toString(points));
+            throw new BadRequestErrorException(ShotResultError.INVALID_POINTS_VALUE, Double.toString(points));
         }
 
         double actualPoints = request.getPoints();
         double minPtsValue = discipline.getMinPointsValue();
         double maxPtsValue = discipline.getMaxPointsValue();
         if (minPtsValue > actualPoints || maxPtsValue < actualPoints) {
-            throw new BadRequestException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
+            throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
         }
     }
 
@@ -109,7 +109,7 @@ public class ShotResultService extends AbstractService {
             shotResultRepository.save(shotResult);
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.SHOT_RESULT_UNIQUE.getCauseMessagePart())) {
-                throw new ForbiddenException(ShotResultError.SHOT_RESULT_MUST_BE_UNIQUE);
+                throw new ForbiddenErrorException(ShotResultError.SHOT_RESULT_MUST_BE_UNIQUE);
             }
             throw exception;
         }

@@ -3,8 +3,8 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.cache.CountryStore;
 import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.exception.BadRequestErrorException;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.ClubMapper;
 import com.tirsportif.backend.model.Club;
 import com.tirsportif.backend.model.Country;
@@ -34,7 +34,7 @@ public class ClubService extends AbstractService {
 
     private Country findCountryById(Long id) {
         return countryStore.getCountryById(id)
-                .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new BadRequestErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
     public GetClubResponse createClub(CreateClubRequest request) {
@@ -52,7 +52,7 @@ public class ClubService extends AbstractService {
     public GetClubResponse getClubById(Long id) {
         log.info("Looking for club with ID: {}", id);
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
         GetClubResponse response = clubMapper.mapClubToResponse(club);
         log.info("Found club");
         return response;
@@ -71,7 +71,7 @@ public class ClubService extends AbstractService {
     public GetClubResponse updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
         Country country = Optional.ofNullable(request.getAddress())
                 .map(CreateAddressRequest::getCountryId)
                 .map(this::findCountryById)

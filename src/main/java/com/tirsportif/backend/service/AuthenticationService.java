@@ -3,7 +3,7 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.dto.AuthenticationRequest;
 import com.tirsportif.backend.dto.AuthenticationResponse;
 import com.tirsportif.backend.error.AuthenticationError;
-import com.tirsportif.backend.exception.UnauthorizedException;
+import com.tirsportif.backend.exception.UnauthorizedErrorException;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +32,10 @@ public class AuthenticationService {
         log.info("Authenticating user by username/password, for username: {}", username);
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UnauthorizedException(AuthenticationError.WRONG_USERNAME));
+                .orElseThrow(() -> new UnauthorizedErrorException(AuthenticationError.WRONG_USERNAME));
 
         if (!passwordService.passwordsMatch(authenticationRequest.getPassword(), user.getPassword())) {
-            throw new UnauthorizedException(AuthenticationError.WRONG_PASSWORD);
+            throw new UnauthorizedErrorException(AuthenticationError.WRONG_PASSWORD);
         }
 
         log.debug("Generating token");

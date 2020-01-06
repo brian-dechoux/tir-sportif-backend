@@ -1,8 +1,8 @@
 package com.tirsportif.backend.utils;
 
 import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.exception.BadRequestErrorException;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +24,7 @@ public final class RepositoryUtils {
      */
     public static <I,R> R findById(Function<I, Optional<R>> getFunction, I id) {
         return getFunction.apply(id)
-                .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new BadRequestErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
     /**
@@ -39,7 +39,7 @@ public final class RepositoryUtils {
     public static <I,R> Set<R> findByIds(Function<Iterable<I>, Iterable<R>> getFunction, Set<I> ids) {
         Set<R> models = IterableUtils.toSet(getFunction.apply(ids));
         if (models.size() != ids.size()) {
-            throw new NotFoundException(GenericClientError.RESOURCES_NOT_FOUND);
+            throw new NotFoundErrorException(GenericClientError.RESOURCES_NOT_FOUND);
         }
         return models;
     }

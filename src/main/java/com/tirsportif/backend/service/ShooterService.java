@@ -5,8 +5,8 @@ import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
 import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.BadRequestException;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.exception.BadRequestErrorException;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.ShooterMapper;
 import com.tirsportif.backend.model.Category;
 import com.tirsportif.backend.model.Club;
@@ -42,22 +42,22 @@ public class ShooterService extends AbstractService {
 
     private Country findCountryById(Long id) {
         return countryStore.getCountryById(id)
-                .orElseThrow(() -> new BadRequestException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new BadRequestErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
     private Shooter findShooterById(Long shooterId) {
         return shooterRepository.findById(shooterId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
     }
 
     private Club findClubById(Long clubId) {
         return clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, clubId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, clubId.toString()));
     }
 
     private Category findCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
     }
 
     public GetShooterResponse createShooter(CreateShooterRequest request) {
@@ -80,7 +80,7 @@ public class ShooterService extends AbstractService {
     public GetShooterResponse getShooterById(Long id) {
         log.info("Looking for shooter with ID: {}", id);
         Shooter shooter = shooterRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
         log.info("Found shooter");
         return response;

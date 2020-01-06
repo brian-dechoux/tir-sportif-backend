@@ -5,8 +5,8 @@ import com.tirsportif.backend.dto.CreateParticipationsRequest;
 import com.tirsportif.backend.dto.GetParticipationsResponse;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.error.ParticipationError;
-import com.tirsportif.backend.exception.ForbiddenException;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.exception.ForbiddenErrorException;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
 import com.tirsportif.backend.model.event.ParticipationCreated;
@@ -47,22 +47,22 @@ public class ParticipationService extends AbstractService {
 
     private Challenge findChallengeById(Long challengeId) {
         return challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, challengeId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, challengeId.toString()));
     }
 
     private Shooter findShooterById(Long shooterId) {
         return shooterRepository.findById(shooterId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
     }
 
     private Category findCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
     }
 
     private Discipline findDisciplineById(Long disciplineId) {
         return disciplineRepository.findById(disciplineId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, disciplineId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, disciplineId.toString()));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ParticipationService extends AbstractService {
             participationRepository.saveAll(participations);
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
-                throw new ForbiddenException(ParticipationError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
+                throw new ForbiddenErrorException(ParticipationError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
             }
             throw exception;
         }
@@ -137,7 +137,7 @@ public class ParticipationService extends AbstractService {
                 .map(CreateDisciplineParticipationRequest::getDisciplineId)
                 .collect(Collectors.toSet());
         if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
-            throw new ForbiddenException(ParticipationError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
+            throw new ForbiddenErrorException(ParticipationError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
         }
     }
 
@@ -162,13 +162,13 @@ public class ParticipationService extends AbstractService {
     private void checkExistingParticipationForChallenge(Long participationId, Long challengeId) {
         if (!participationRepository.existsByChallengeIdAndId(challengeId, participationId)) {
             String ids = "ChallengeId: "+challengeId.toString()+", Id: "+participationId.toString();
-            throw new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, ids);
+            throw new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, ids);
         }
     }
 
     private void checkNoExistingShotResultsForParticipation(Long participationId) {
         if (shotResultRepository.existsByParticipationId(participationId)) {
-            throw new ForbiddenException(ParticipationError.EXISTING_SHOT_RESULTS_FOR_PARTICIPATION, participationId.toString());
+            throw new ForbiddenErrorException(ParticipationError.EXISTING_SHOT_RESULTS_FOR_PARTICIPATION, participationId.toString());
         }
     }
 

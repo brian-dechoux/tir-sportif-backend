@@ -1,15 +1,20 @@
 package com.tirsportif.backend.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tirsportif.backend.dto.ErrorResponse;
 import com.tirsportif.backend.error.AuthenticationError;
 import com.tirsportif.backend.error.SystemError;
+import com.tirsportif.backend.exception.ErrorException;
 import com.tirsportif.backend.exception.InternalServerErrorException;
-import com.tirsportif.backend.exception.UnauthorizedException;
+import com.tirsportif.backend.exception.UnauthorizedErrorException;
 import com.tirsportif.backend.model.User;
 import com.tirsportif.backend.model.redis.JwtTokenKey;
 import com.tirsportif.backend.repository.UserRepository;
 import com.tirsportif.backend.service.JwtTokenManager;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -31,11 +36,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenManager jwtTokenManager;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
-    public JwtRequestFilter(RedisTemplate<String, String> redisTemplate, JwtTokenManager jwtTokenManager, UserRepository userRepository) {
+    public JwtRequestFilter(RedisTemplate<String, String> redisTemplate, JwtTokenManager jwtTokenManager, UserRepository userRepository, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.jwtTokenManager = jwtTokenManager;
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -43,28 +50,43 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestTokenHeader = request.getHeader("Authorization");
         String username, jwtToken;
 
-        if (requestTokenHeader != null) {
-            if (requestTokenHeader.startsWith("Bearer ")) {
-                jwtToken = requestTokenHeader.substring(7);
-                try {
+        try {
+            if (requestTokenHeader != null) {
+                if (requestTokenHeader.startsWith("Bearer ")) {
+                    jwtToken = requestTokenHeader.substring(7);
                     username = Optional.ofNullable(redisTemplate.opsForValue().get(new JwtTokenKey(jwtToken).getFormattedKey()))
-                            .orElseThrow(() -> new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN));
-                } catch (ExpiredJwtException e) {
-                    throw new UnauthorizedException(AuthenticationError.EXPIRED_TOKEN);
+                            .orElseThrow(() -> new UnauthorizedErrorException(AuthenticationError.UNKNOWN_TOKEN));
+                } else {
+                    throw new UnauthorizedErrorException(AuthenticationError.WRONG_FORMAT_TOKEN);
                 }
-            } else {
-                throw new UnauthorizedException(AuthenticationError.WRONG_FORMAT_TOKEN);
+
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    User user = userRepository.findByUsername(username)
+                            .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR, "Cannot find user with username: " + username));
+                    if (jwtTokenManager.validateToken(jwtToken, user)) {
+                        SecurityContextHolder.getContext().setAuthentication(user);
+                    }
+                }
             }
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                User user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR, "Cannot find user with username: "+ username));
-                if (jwtTokenManager.validateToken(jwtToken, user)) {
-                    SecurityContextHolder.getContext().setAuthentication(user);
-                }
-            }
+            chain.doFilter(request, response);
+
+        } catch (ExpiredJwtException e) {
+            handleException(new UnauthorizedErrorException(AuthenticationError.EXPIRED_TOKEN), HttpServletResponse.SC_UNAUTHORIZED, response);
+        } catch (UnauthorizedErrorException e) {
+            handleException(e, HttpServletResponse.SC_UNAUTHORIZED, response);
+        } catch (ErrorException e) {
+            handleException(e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
+        } catch (Exception e) {
+            handleException(new InternalServerErrorException(SystemError.TECHNICAL_ERROR, e.getMessage()), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
         }
+    }
 
-        chain.doFilter(request, response);
+    private void handleException(ErrorException e, int httpErrorCode, HttpServletResponse response) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(e.getCode(), e.getMessage());
+        String error = objectMapper.writeValueAsString(errorResponse);
+        response.setStatus(httpErrorCode);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(error);
     }
 }

@@ -4,7 +4,7 @@ import com.tirsportif.backend.dto.CreateLicenseeRequest;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
 import com.tirsportif.backend.dto.ResolvedCreateLicenseeRequest;
 import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.NotFoundException;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.LicenseeMapper;
 import com.tirsportif.backend.model.Licensee;
 import com.tirsportif.backend.model.Shooter;
@@ -36,12 +36,12 @@ public class LicenseeService extends AbstractService {
 
     private Licensee findLicenseeById(Long licenseeId) {
         return licenseeRepository.findById(licenseeId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, licenseeId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, licenseeId.toString()));
     }
 
     private Shooter findShooterById(Long shooterId) {
         return shooterRepository.findById(shooterId)
-                .orElseThrow(() -> new NotFoundException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
     }
 
     public GetLicenseeResponse createLicensee(CreateLicenseeRequest request) {
