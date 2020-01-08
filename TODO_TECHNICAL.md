@@ -17,3 +17,4 @@
 - Use Immutable DTOs: http://dolszewski.com/spring/how-to-bind-requestparam-to-object/
 - Java 13
 - https://security.stackexchange.com/a/179507/123909
+- https://stackoverflow.com/a/51948296/4675568
