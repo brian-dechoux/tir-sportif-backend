@@ -8,10 +8,10 @@
         <version>2.1.7.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.sumi</groupId>
-    <artifactId>tir-sportif-backend</artifactId>
+    <groupId>com.tir-sportif</groupId>
+    <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backend</name>
+    <name>tir-sportif-backend</name>
     <description>tir sportif backend</description>
     <packaging>jar</packaging>
 

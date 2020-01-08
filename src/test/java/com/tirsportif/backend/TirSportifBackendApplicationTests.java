@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-public class BackendApplicationTests {
+public class TirSportifBackendApplicationTests {
 
 	@Test
 	public void contextLoads() {
