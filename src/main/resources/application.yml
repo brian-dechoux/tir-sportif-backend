@@ -36,9 +36,6 @@ server:
     key-store-password: ${SERVER_SSL_PASSWORD}
     key-alias: ${SERVER_SSL_ALIAS}
 
-# FIXME https://stackoverflow.com/a/54449027/4675568
-security.require-ssl: true
-
 ## Custom app configs
 tir-sportif:
 
