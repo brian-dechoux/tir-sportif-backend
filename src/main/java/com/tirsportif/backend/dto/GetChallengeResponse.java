@@ -3,7 +3,7 @@ package com.tirsportif.backend.dto;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Value
@@ -16,7 +16,7 @@ public class GetChallengeResponse {
     String name;
 
     @NonNull
-    OffsetDateTime startDate;
+    LocalDateTime startDate;
 
     @NonNull
     GetAddressResponse address;

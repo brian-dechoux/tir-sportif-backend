@@ -7,7 +7,7 @@ import com.tirsportif.backend.model.Discipline;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,7 +18,7 @@ public class ResolvedUpdateChallengeRequest {
 
     Optional<String> name;
 
-    Optional<OffsetDateTime> startDate;
+    Optional<LocalDateTime> startDate;
 
     Optional<ResolvedCreateAddressRequest> address;
 

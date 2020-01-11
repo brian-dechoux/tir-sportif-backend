@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -24,8 +24,7 @@ public class Challenge {
 
     @NonNull
     @NotNull
-    @Column(name = "startDate", columnDefinition = "TIME WITH TIME ZONE")
-    OffsetDateTime startDate;
+    LocalDateTime startDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId")
