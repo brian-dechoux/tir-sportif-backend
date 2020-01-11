@@ -3,7 +3,7 @@ package com.tirsportif.backend.dto;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Value
 public class GetChallengeListElementResponse {
@@ -15,7 +15,7 @@ public class GetChallengeListElementResponse {
     String name;
 
     @NonNull
-    Timestamp startDate;
+    LocalDateTime startDate;
 
     @NonNull
     String city;

@@ -1,6 +1,6 @@
 package com.tirsportif.backend.model.projection;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public interface ChallengeListElement {
 
@@ -8,7 +8,7 @@ public interface ChallengeListElement {
 
     String getName();
 
-    Timestamp getStartDate();
+    LocalDateTime getStartDate();
 
     String getCity();
 
