@@ -1,11 +1,9 @@
 package com.tirsportif.backend.mapper;
 
-import com.tirsportif.backend.dto.GetChallengeResponse;
-import com.tirsportif.backend.dto.GetParticipationResponse;
-import com.tirsportif.backend.dto.ResolvedCreateChallengeRequest;
-import com.tirsportif.backend.dto.ResolvedUpdateChallengeRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Participation;
+import com.tirsportif.backend.model.projection.ChallengeListElement;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -75,11 +73,21 @@ public class ChallengeMapper {
                 addressMapper.mapAddressToDto(challenge.getAddress()),
                 clubMapper.mapClubToResponse(challenge.getOrganiserClub()),
                 challenge.getCategories().stream()
-                    .map(categoryMapper::mapCategoryToResponse)
-                    .collect(Collectors.toSet()),
+                        .map(categoryMapper::mapCategoryToResponse)
+                        .collect(Collectors.toSet()),
                 challenge.getDisciplines().stream()
                         .map(disciplineMapper::mapDisciplineToResponse)
                         .collect(Collectors.toSet())
+        );
+    }
+
+    public GetChallengeListElementResponse mapChallengeListElementToResponse(ChallengeListElement challengeListElement) {
+        return new GetChallengeListElementResponse(
+                challengeListElement.getId(),
+                challengeListElement.getName(),
+                challengeListElement.getStartDate(),
+                challengeListElement.getCity(),
+                challengeListElement.getNbShooters()
         );
     }
 

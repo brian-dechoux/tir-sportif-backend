@@ -57,7 +57,7 @@ public class ChallengeController {
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public Page<GetChallengeResponse> getChallenges(@RequestParam("page") int page) {
+    public Page<GetChallengeListElementResponse> getChallenges(@RequestParam("page") int page) {
         return challengeService.getChallenges(page);
     }
 

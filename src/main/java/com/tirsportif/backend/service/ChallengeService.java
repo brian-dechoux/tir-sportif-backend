@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -87,6 +88,7 @@ public class ChallengeService extends AbstractService {
      * @param challengeId
      * @return Challenge's information
      */
+    @Transactional
     public GetChallengeResponse getChallenge(Long challengeId) {
         log.info("Looking for a challenge with ID : {}", challengeId);
         Challenge challenge = findChallengeById(challengeId);
@@ -101,12 +103,12 @@ public class ChallengeService extends AbstractService {
      * @param page Page number
      * @return Paginated challenges
      */
-    public Page<GetChallengeResponse> getChallenges(int page) {
+    public Page<GetChallengeListElementResponse> getChallenges(int page) {
         log.info("Looking for all challenges");
         PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
-        Page<GetChallengeResponse> responses = challengeRepository.findAll(pageRequest)
-                .map(challengeMapper::mapChallengeToResponse);
-        log.info("Found {} clubs", responses.getSize());
+        Page<GetChallengeListElementResponse> responses = challengeRepository.findAllAsListElements(pageRequest)
+                .map(challengeMapper::mapChallengeListElementToResponse);
+        log.info("Found {} challenges", responses.getNumberOfElements());
         return responses;
     }
 

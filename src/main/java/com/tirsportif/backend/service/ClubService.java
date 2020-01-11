@@ -63,7 +63,7 @@ public class ClubService extends AbstractService {
         PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
         Page<GetClubResponse> responses = clubRepository.findAll(pageRequest)
                 .map(clubMapper::mapClubToResponse);
-        log.info("Found {} clubs", responses.getSize());
+        log.info("Found {} clubs", responses.getNumber());
         return responses;
     }
 
