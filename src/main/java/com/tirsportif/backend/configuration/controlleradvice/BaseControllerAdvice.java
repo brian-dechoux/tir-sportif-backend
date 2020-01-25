@@ -1,10 +1,9 @@
-package com.tirsportif.backend.configuration;
+package com.tirsportif.backend.configuration.controlleradvice;
 
 import com.tirsportif.backend.dto.ErrorResponse;
 import com.tirsportif.backend.exception.ErrorException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-abstract class BaseControllerAdvice extends ResponseEntityExceptionHandler {
+abstract class BaseControllerAdvice {
 
     ErrorResponse buildErrorResponse(ErrorException errorException) {
         return new ErrorResponse(errorException.getCode(), errorException.getMessage());

@@ -1,4 +1,4 @@
-package com.tirsportif.backend.configuration;
+package com.tirsportif.backend.configuration.controlleradvice;
 
 import com.tirsportif.backend.dto.ErrorResponse;
 import com.tirsportif.backend.error.SystemError;
@@ -7,6 +7,7 @@ import com.tirsportif.backend.exception.ForbiddenErrorException;
 import com.tirsportif.backend.exception.InternalServerErrorException;
 import com.tirsportif.backend.exception.UnauthorizedErrorException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
+@Order(2)
 @ControllerAdvice
 public class CustomControllerAdvice extends BaseControllerAdvice {
 
