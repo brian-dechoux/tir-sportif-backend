@@ -42,6 +42,7 @@ tir-sportif:
   api:
     ### Default pages size
     pagination-size: 10
+    url: ${TIRSPORTIF_API_URL}
 
   jwt:
     secret: ${TIRSPORTIF_JWT_SECRET}
@@ -81,9 +82,9 @@ server:
 ## Custom app configs
 tir-sportif:
 
-  api.url: https://localhost:8443
+  api:
+    url: https://localhost:8443
 
   jwt:
     secret: springfield1911EMP
-    ### Minutes
-    validity: 3600000
+    validity: 36000000 # 60min
