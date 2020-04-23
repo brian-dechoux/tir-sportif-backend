@@ -5,6 +5,7 @@ import com.tirsportif.backend.dto.GetClubResponse;
 import com.tirsportif.backend.dto.UpdateClubRequest;
 import com.tirsportif.backend.service.ClubService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class ClubController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('ADMIN')")
     public GetClubResponse createClub(@Valid @RequestBody CreateClubRequest request) {
         return clubService.createClub(request);

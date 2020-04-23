@@ -4,6 +4,7 @@ import com.tirsportif.backend.dto.AssociateLicenseeToShooterRequest;
 import com.tirsportif.backend.dto.CreateLicenseeRequest;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
 import com.tirsportif.backend.service.LicenseeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class LicenseeController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetLicenseeResponse createLicensee(@Valid @RequestBody CreateLicenseeRequest request) {
         // TODO club should be resolved automatically, because a licensee can only be created in scope of own club

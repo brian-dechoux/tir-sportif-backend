@@ -5,6 +5,7 @@ import com.tirsportif.backend.service.ChallengeService;
 import com.tirsportif.backend.service.ParticipationService;
 import com.tirsportif.backend.service.ShotResultService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class ChallengeController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetChallengeResponse createChallenge(@Valid @RequestBody CreateChallengeRequest request) {
         return challengeService.createChallenge(request);
@@ -57,11 +59,12 @@ public class ChallengeController {
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public Page<GetChallengeListElementResponse> getChallenges(@RequestParam("page") int page) {
-        return challengeService.getChallenges(page);
+    public Page<GetChallengeListElementResponse> getChallenges(@RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return challengeService.getChallenges(page, rowsPerPage);
     }
 
     @PostMapping(value = "/{challengeId}/participations")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetParticipationsResponse createParticipations(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
         return participationService.createParticipations(challengeId, request);
@@ -74,6 +77,7 @@ public class ChallengeController {
     }
 
     @PostMapping(value = "/{challengeId}/participations/{participationId}/shot-result")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
     public void addShotResult(@PathVariable Long challengeId, @PathVariable Long participationId, @Valid @RequestBody AddShotResultRequest request) {
         shotResultService.addShotResult(challengeId, participationId, request);

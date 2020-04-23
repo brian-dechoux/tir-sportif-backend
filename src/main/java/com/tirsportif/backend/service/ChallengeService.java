@@ -103,9 +103,9 @@ public class ChallengeService extends AbstractService {
      * @param page Page number
      * @return Paginated challenges
      */
-    public Page<GetChallengeListElementResponse> getChallenges(int page) {
+    public Page<GetChallengeListElementResponse> getChallenges(int page, int rowsPerPage) {
         log.info("Looking for all challenges");
-        PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
         Page<GetChallengeListElementResponse> responses = challengeRepository.findAllAsListElements(pageRequest)
                 .map(challengeMapper::mapChallengeListElementToResponse);
         log.info("Found {} challenges", responses.getNumberOfElements());
