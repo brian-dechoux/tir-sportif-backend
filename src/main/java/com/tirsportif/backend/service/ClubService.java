@@ -15,7 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -59,12 +62,21 @@ public class ClubService extends AbstractService {
     }
 
     public Page<GetClubResponse> getClubs(int page) {
-        log.info("Looking for all clubs");
+        log.info("Searching for clubs");
         PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
         Page<GetClubResponse> responses = clubRepository.findAll(pageRequest)
                 .map(clubMapper::mapClubToResponse);
         log.info("Found {} clubs", responses.getNumber());
         return responses;
+    }
+
+    public List<GetClubResponse> getClubs() {
+        log.info("Looking for all clubs");
+        List<GetClubResponse> clubs = StreamSupport.stream(clubRepository.findAll().spliterator(), false)
+                .map(clubMapper::mapClubToResponse)
+                .collect(Collectors.toList());
+        log.info("Found {} clubs", clubs.size());
+        return clubs;
     }
 
     // TODO See ChallengeService.update, better way of handling

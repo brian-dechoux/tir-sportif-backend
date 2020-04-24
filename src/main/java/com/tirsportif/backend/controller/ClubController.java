@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/clubs", produces = "application/json;charset=UTF-8")
@@ -35,12 +36,19 @@ public class ClubController {
         return clubService.getClubById(clubId);
     }
 
-    @GetMapping
+    @GetMapping("/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
     public Page<GetClubResponse> getClubs(@RequestParam("page") int page) {
         // TODO Exclude current club (Briey) as it's MyClub. Depends on connected user.
         return clubService.getClubs(page);
+    }
+
+    @GetMapping
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public List<GetClubResponse> getClubs() {
+        return clubService.getClubs();
     }
 
     @PutMapping(value = "/{clubId}")
