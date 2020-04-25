@@ -30,8 +30,6 @@ public class Category {
     @NotNull
     String code;
 
-    @NonNull
-    @NotNull
     @Enumerated(value = EnumType.STRING)
     Gender gender;
 

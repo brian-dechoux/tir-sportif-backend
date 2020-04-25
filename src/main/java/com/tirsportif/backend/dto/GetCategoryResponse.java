@@ -16,7 +16,6 @@ public class GetCategoryResponse {
     @NonNull
     String code;
 
-    @NonNull
     Gender gender;
 
     Integer ageMin;
