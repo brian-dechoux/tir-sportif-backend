@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,7 @@ public class ParticipationService extends AbstractService {
      * @param request, Creation request with challenge, shooter, category, and multiple disciplines
      * @return Generated participations
      */
+    @Transactional
     public GetParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
         log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
         Challenge challenge = findChallengeById(challengeId);

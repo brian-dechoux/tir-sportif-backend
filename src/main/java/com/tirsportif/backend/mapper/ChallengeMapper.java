@@ -113,6 +113,7 @@ public class ChallengeMapper {
 
     public GetParticipationResponse mapParticipationToResponse(Participation participation) {
         return GetParticipationResponse.builder()
+                .id(participation.getId())
                 .shooter(shooterMapper.mapShooterToResponse(participation.getShooter()))
                 .category(categoryMapper.mapCategoryToResponse(participation.getCategory()))
                 .discipline(disciplineMapper.mapDisciplineToResponse(participation.getDiscipline()))

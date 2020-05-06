@@ -34,7 +34,7 @@ public class ChallengeController {
 
     @GetMapping(value = "/{challengeId}")
     @PreAuthorize("authorizedFor('VIEW')")
-    public GetChallengeWithParticipationsResponse getChallenge(@PathVariable Long challengeId) {
+    public GetChallengeResponse getChallenge(@PathVariable Long challengeId) {
         return challengeService.getChallenge(challengeId);
     }
 
@@ -61,6 +61,13 @@ public class ChallengeController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public Page<GetChallengeListElementResponse> getChallenges(@RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
         return challengeService.getChallenges(page, rowsPerPage);
+    }
+
+    @GetMapping(value = "/{challengeId}/participations")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public Page<GetParticipationResponse> getParticipations(@PathVariable Long challengeId, @RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return challengeService.getParticipations(challengeId, page, rowsPerPage);
     }
 
     @PostMapping(value = "/{challengeId}/participations")

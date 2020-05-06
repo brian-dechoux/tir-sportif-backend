@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,10 +51,6 @@ public class ChallengeService extends AbstractService {
         return RepositoryUtils.findById(challengeRepository::findById, challengeId);
     }
 
-    private Set<Participation> findParticipationsByChallengeId(Long challengeId) {
-        return RepositoryUtils.findAllById(participationRepository::findByChallengeId, challengeId);
-    }
-
     private Set<Category> findCategoriesByIds(Set<Long> categoryIds) {
         return RepositoryUtils.findByIds(categoryRepository::findAllById, categoryIds);
     }
@@ -90,11 +87,11 @@ public class ChallengeService extends AbstractService {
      * @param challengeId
      * @return Challenge's information
      */
-    public GetChallengeWithParticipationsResponse getChallenge(Long challengeId) {
+    @Transactional
+    public GetChallengeResponse getChallenge(Long challengeId) {
         log.info("Looking for a challenge with ID : {}", challengeId);
         Challenge challenge = findChallengeById(challengeId);
-        Set<Participation> participations = findParticipationsByChallengeId(challengeId);
-        GetChallengeWithParticipationsResponse response = challengeMapper.mapChallengeAndParticipationsToResponse(challenge, participations);
+        GetChallengeResponse response = challengeMapper.mapChallengeToResponse(challenge);
         log.info("Found challenge");
         return response;
     }
@@ -110,6 +107,23 @@ public class ChallengeService extends AbstractService {
         PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
         Page<GetChallengeListElementResponse> responses = challengeRepository.findAllAsListElements(pageRequest)
                 .map(challengeMapper::mapChallengeListElementToResponse);
+        log.info("Found {} participations", responses.getNumberOfElements());
+        return responses;
+    }
+
+    /**
+     * Get all participations for a specific challenge.
+     *
+     * @param challengeId Challenge ID
+     * @param page Page number
+     * @return Paginated challenges
+     */
+    public Page<GetParticipationResponse> getParticipations(Long challengeId, int page, int rowsPerPage) {
+        log.info("Looking for all participations to challenge with ID: {}", challengeId);
+        findChallengeById(challengeId);
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
+        Page<GetParticipationResponse> responses = participationRepository.findByChallengeId(challengeId, pageRequest)
+                .map(challengeMapper::mapParticipationToResponse);
         log.info("Found {} challenges", responses.getNumberOfElements());
         return responses;
     }
