@@ -7,7 +7,7 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Data
@@ -19,7 +19,7 @@ public class CreateChallengeRequest {
 
     @NotNull
     @Future
-    LocalDateTime startDate;
+    OffsetDateTime startDate;
 
     @NotNull
     @Valid

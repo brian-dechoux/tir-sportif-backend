@@ -3,7 +3,7 @@ package com.tirsportif.backend.dto;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Value
 public class GetChallengeListElementResponse {
@@ -15,7 +15,7 @@ public class GetChallengeListElementResponse {
     String name;
 
     @NonNull
-    LocalDateTime startDate;
+    OffsetDateTime startDate;
 
     @NonNull
     String city;

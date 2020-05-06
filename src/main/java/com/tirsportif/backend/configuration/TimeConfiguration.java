@@ -9,9 +9,11 @@ import java.time.ZoneId;
 @Configuration
 public class TimeConfiguration {
 
+    public static final ZoneId CURRENT_ZONE = ZoneId.of("Europe/Paris");
+
     @Bean
     public Clock clock() {
-        return Clock.system(ZoneId.of("Europe/Paris"));
+        return Clock.system(CURRENT_ZONE);
     }
 
 }

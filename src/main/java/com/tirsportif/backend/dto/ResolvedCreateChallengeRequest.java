@@ -7,7 +7,7 @@ import com.tirsportif.backend.model.Discipline;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Value
@@ -17,7 +17,7 @@ public class ResolvedCreateChallengeRequest {
     String name;
 
     @NonNull
-    LocalDateTime startDate;
+    OffsetDateTime startDate;
 
     @NonNull
     ResolvedCreateAddressRequest address;
