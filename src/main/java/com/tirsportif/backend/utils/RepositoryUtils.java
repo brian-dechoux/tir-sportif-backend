@@ -36,6 +36,23 @@ public final class RepositoryUtils {
      * @param <R>           Model instance type
      * @return Model from database
      */
+    public static <I,R> Set<R> findAllById(Function<I, Iterable<R>> getFunction, I id) {
+        Set<R> models = IterableUtils.toSet(getFunction.apply(id));
+        if (models.isEmpty()) {
+            throw new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND);
+        }
+        return models;
+    }
+
+    /**
+     * Apply a repository getAll() function, throwing if ids parameter size differs from results, returning if not.
+     *
+     * @param getFunction   Repository get() function
+     * @param ids           Ids of the elements to retrieve
+     * @param <I>           Id type
+     * @param <R>           Model instance type
+     * @return Model from database
+     */
     public static <I,R> Set<R> findByIds(Function<Iterable<I>, Iterable<R>> getFunction, Set<I> ids) {
         Set<R> models = IterableUtils.toSet(getFunction.apply(ids));
         if (models.size() != ids.size()) {

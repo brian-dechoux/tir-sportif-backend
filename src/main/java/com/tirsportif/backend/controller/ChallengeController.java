@@ -34,7 +34,7 @@ public class ChallengeController {
 
     @GetMapping(value = "/{challengeId}")
     @PreAuthorize("authorizedFor('VIEW')")
-    public GetChallengeResponse getChallenge(@PathVariable Long challengeId) {
+    public GetChallengeWithParticipationsResponse getChallenge(@PathVariable Long challengeId) {
         return challengeService.getChallenge(challengeId);
     }
 

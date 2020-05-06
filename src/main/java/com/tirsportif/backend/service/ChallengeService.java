@@ -5,16 +5,12 @@ import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.model.*;
 import com.tirsportif.backend.property.ApiProperties;
-import com.tirsportif.backend.repository.CategoryRepository;
-import com.tirsportif.backend.repository.ChallengeRepository;
-import com.tirsportif.backend.repository.ClubRepository;
-import com.tirsportif.backend.repository.DisciplineRepository;
+import com.tirsportif.backend.repository.*;
 import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -28,15 +24,17 @@ public class ChallengeService extends AbstractService {
     private final ClubRepository clubRepository;
     private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
+    private final ParticipationRepository participationRepository;
     private final CountryStore countryStore;
 
-    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, CountryStore countryStore) {
+    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, CountryStore countryStore) {
         super(apiProperties);
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
         this.clubRepository = clubRepository;
         this.categoryRepository = categoryRepository;
         this.disciplineRepository = disciplineRepository;
+        this.participationRepository = participationRepository;
         this.countryStore = countryStore;
     }
 
@@ -50,6 +48,10 @@ public class ChallengeService extends AbstractService {
 
     private Challenge findChallengeById(Long challengeId) {
         return RepositoryUtils.findById(challengeRepository::findById, challengeId);
+    }
+
+    private Set<Participation> findParticipationsByChallengeId(Long challengeId) {
+        return RepositoryUtils.findAllById(participationRepository::findByChallengeId, challengeId);
     }
 
     private Set<Category> findCategoriesByIds(Set<Long> categoryIds) {
@@ -88,11 +90,11 @@ public class ChallengeService extends AbstractService {
      * @param challengeId
      * @return Challenge's information
      */
-    @Transactional
-    public GetChallengeResponse getChallenge(Long challengeId) {
+    public GetChallengeWithParticipationsResponse getChallenge(Long challengeId) {
         log.info("Looking for a challenge with ID : {}", challengeId);
         Challenge challenge = findChallengeById(challengeId);
-        GetChallengeResponse response = challengeMapper.mapChallengeToResponse(challenge);
+        Set<Participation> participations = findParticipationsByChallengeId(challengeId);
+        GetChallengeWithParticipationsResponse response = challengeMapper.mapChallengeAndParticipationsToResponse(challenge, participations);
         log.info("Found challenge");
         return response;
     }

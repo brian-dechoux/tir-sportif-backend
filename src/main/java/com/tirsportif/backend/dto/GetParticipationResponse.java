@@ -14,9 +14,6 @@ public class GetParticipationResponse {
     GetShooterResponse shooter;
 
     @NonNull
-    GetChallengeResponse challenge;
-
-    @NonNull
     GetCategoryResponse category;
 
     @NonNull

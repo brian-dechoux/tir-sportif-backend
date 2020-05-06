@@ -6,6 +6,7 @@ import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.projection.ChallengeListElement;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -81,6 +82,25 @@ public class ChallengeMapper {
         );
     }
 
+    public GetChallengeWithParticipationsResponse mapChallengeAndParticipationsToResponse(Challenge challenge, Set<Participation> participations) {
+        return new GetChallengeWithParticipationsResponse(
+                challenge.getId(),
+                challenge.getName(),
+                challenge.getStartDate(),
+                addressMapper.mapAddressToDto(challenge.getAddress()),
+                clubMapper.mapClubToResponse(challenge.getOrganiserClub()),
+                challenge.getCategories().stream()
+                        .map(categoryMapper::mapCategoryToResponse)
+                        .collect(Collectors.toSet()),
+                challenge.getDisciplines().stream()
+                        .map(disciplineMapper::mapDisciplineToResponse)
+                        .collect(Collectors.toSet()),
+                participations.stream()
+                        .map(this::mapParticipationToResponse)
+                        .collect(Collectors.toSet())
+        );
+    }
+
     public GetChallengeListElementResponse mapChallengeListElementToResponse(ChallengeListElement challengeListElement) {
         return new GetChallengeListElementResponse(
                 challengeListElement.getId(),
@@ -93,7 +113,6 @@ public class ChallengeMapper {
 
     public GetParticipationResponse mapParticipationToResponse(Participation participation) {
         return GetParticipationResponse.builder()
-                .challenge(mapChallengeToResponse(participation.getChallenge()))
                 .shooter(shooterMapper.mapShooterToResponse(participation.getShooter()))
                 .category(categoryMapper.mapCategoryToResponse(participation.getCategory()))
                 .discipline(disciplineMapper.mapDisciplineToResponse(participation.getDiscipline()))
