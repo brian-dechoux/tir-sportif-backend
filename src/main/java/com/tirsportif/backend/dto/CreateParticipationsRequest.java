@@ -14,10 +14,6 @@ public class CreateParticipationsRequest {
     @Positive
     Long shooterId;
 
-    @NotNull
-    @Positive
-    Long categoryId;
-
     @Valid
     Set<CreateDisciplineParticipationRequest> disciplinesInformation;
 

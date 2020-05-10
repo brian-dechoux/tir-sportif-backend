@@ -31,12 +31,6 @@ public class Participation {
     @NonNull
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "categoryId")
-    Category category;
-
-    @NonNull
-    @NotNull
-    @ManyToOne
     @JoinColumn(name = "disciplineId")
     Discipline discipline;
 

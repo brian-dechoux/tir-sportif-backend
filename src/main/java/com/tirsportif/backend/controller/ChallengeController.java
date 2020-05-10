@@ -73,8 +73,8 @@ public class ChallengeController {
     @PostMapping(value = "/{challengeId}/participations")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetParticipationsResponse createParticipations(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
-        return participationService.createParticipations(challengeId, request);
+    public void createParticipations(@PathVariable Long challengeId, @Valid @RequestBody CreateParticipationsRequest request) {
+        participationService.createParticipations(challengeId, request);
     }
 
     @DeleteMapping(value = "/{challengeId}/participations/{participationId}")

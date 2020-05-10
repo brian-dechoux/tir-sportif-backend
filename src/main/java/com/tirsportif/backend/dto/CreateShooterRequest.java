@@ -23,7 +23,6 @@ public class CreateShooterRequest {
     @Past
     LocalDate birthdate;
 
-    @NotNull
     @Valid
     CreateAddressRequest address;
 

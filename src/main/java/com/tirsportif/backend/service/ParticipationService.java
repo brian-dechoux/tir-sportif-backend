@@ -2,7 +2,6 @@ package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.dto.CreateDisciplineParticipationRequest;
 import com.tirsportif.backend.dto.CreateParticipationsRequest;
-import com.tirsportif.backend.dto.GetParticipationsResponse;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.exception.ForbiddenErrorException;
@@ -73,11 +72,10 @@ public class ParticipationService extends AbstractService {
      * @return Generated participations
      */
     @Transactional
-    public GetParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
+    public void createParticipations(Long challengeId, CreateParticipationsRequest request) {
         log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
         Challenge challenge = findChallengeById(challengeId);
         Shooter shooter = findShooterById(request.getShooterId());
-        Category category = findCategoryById(request.getCategoryId());
 
         /*
         TODO Cache categories and disciplines
@@ -98,7 +96,6 @@ public class ParticipationService extends AbstractService {
                     return Participation.builder()
                             .challenge(challenge)
                             .shooter(shooter)
-                            .category(category)
                             .discipline(discipline)
                             .paid(disciplineInformation.isPaid())
                             .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
@@ -115,20 +112,12 @@ public class ParticipationService extends AbstractService {
             throw exception;
         }
 
-        GetParticipationsResponse response = GetParticipationsResponse.builder()
-                .participations(
-                        participations.stream()
-                                .map(challengeMapper::mapParticipationToResponse)
-                                .collect(Collectors.toSet())
-                ).build();
         log.info("Participations created");
 
         log.info("Sending participations to billing service...");
         participations.stream()
                 .map(ParticipationCreated::new)
                 .forEach(applicationEventPublisher::publishEvent);
-
-        return response;
     }
 
     private void checkAuthorizedDisciplines(Challenge challenge, Set<CreateDisciplineParticipationRequest> requestedDisciplinesInformation) {

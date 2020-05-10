@@ -78,7 +78,7 @@ CREATE TABLE `discipline` (
   `nbShotsPerSerie` int NOT NULL,
   `isDecimalResult` boolean NOT NULL,
   `minPointsValue` float NOT NULL,
-  `minPointsValue` float NOT NULL
+  `maxPointsValue` float NOT NULL
 );
 
 CREATE TABLE `categoriesDisciplinesParameters` (
@@ -113,7 +113,6 @@ CREATE TABLE `participation` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `shooterId` int NOT NULL,
   `challengeId` int NOT NULL,
-  `categoryId` int NOT NULL,
   `disciplineId` int NOT NULL,
   `useElectronicTarget` boolean,
   `outRank` boolean
@@ -163,7 +162,6 @@ ALTER TABLE `challengeCategories` ADD FOREIGN KEY (`categoryId`) REFERENCES `cat
 
 ALTER TABLE `participation` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`);
 ALTER TABLE `participation` ADD FOREIGN KEY (`challengeId`) REFERENCES `challenge` (`id`);
-ALTER TABLE `participation` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 ALTER TABLE `participation` ADD FOREIGN KEY (`disciplineId`) REFERENCES `discipline` (`id`);
 
 ALTER TABLE `bill` ADD FOREIGN KEY (`participationId`) REFERENCES `participation` (`id`);
@@ -174,7 +172,7 @@ ALTER TABLE `discipline` ADD CONSTRAINT `minPointsValueLighterThanMaxPointsValue
 CHECK (minPointsValue <= maxPointsValue);
 
 CREATE UNIQUE INDEX `participationDisciplineOnlyOneRankedUniqueIndex`
-ON `participation` (challengeId, shooterId, categoryId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));
+ON `participation` (challengeId, shooterId, disciplineId, (CASE WHEN outRank = 0 THEN outRank END));
 
 CREATE UNIQUE INDEX `shotResultUniqueIndex`
-ON `shotResult` (`serieNumber`, `orderNumber`, `participationId`);
+ON `shotResult` (`serieNumber`, `shotNumber`, `participationId`);

@@ -115,7 +115,6 @@ public class ChallengeMapper {
         return GetParticipationResponse.builder()
                 .id(participation.getId())
                 .shooter(shooterMapper.mapShooterToResponse(participation.getShooter()))
-                .category(categoryMapper.mapCategoryToResponse(participation.getCategory()))
                 .discipline(disciplineMapper.mapDisciplineToResponse(participation.getDiscipline()))
                 .useElectronicTarget(participation.isUseElectronicTarget())
                 .paid(participation.isPaid())
