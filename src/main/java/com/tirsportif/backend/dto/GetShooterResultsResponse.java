@@ -7,6 +7,6 @@ import java.util.List;
 @Value
 public class GetShooterResultsResponse {
 
-    List<ShooterResultDto> results;
+    List<ParticipationResultsDto> results;
 
 }

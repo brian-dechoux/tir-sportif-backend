@@ -12,22 +12,22 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
 
     boolean existsByParticipationId(Long participationId);
 
-    @Query(value = "SELECT SUM(points) AS totalPoints, shooter.lastname, shooter.firstname FROM shotResult " +
-            "INNER JOIN participation ON shotResult.participationId = participation.id " +
-            "INNER JOIN shooter ON participation.shooterId = shooter.id " +
-            "WHERE participation.challengeId = ?1 " +
-            "AND participation.categoryId = ?2 " +
-            "AND participation.disciplineId = ?3 " +
+    @Query(value = "SELECT SUM(points) AS totalPoints, shooter.lastname, shooter.firstname FROM shotResult AS sr " +
+            "INNER JOIN participation p ON sr.participationId = p.id " +
+            "INNER JOIN shooter s ON p.shooterId = s.id " +
+            "WHERE p.challengeId = ?1 " +
+            "AND p.categoryId = ?2 " +
+            "AND p.disciplineId = ?3 " +
             "GROUP BY lastname, firstname " +
             "ORDER BY totalPoints DESC"
             , nativeQuery = true)
     List<ShotResultForCategoryAndDisciplineProjection> getShotResultsForChallengeAndCategoryAndDiscipline(Long challengeId, Long categoryId, Long disciplineId);
 
-    @Query(value = "SELECT sr.serieNumber, sr.shotNumber, sr.points FROM shotResult AS sr " +
-            "INNER JOIN participation ON sr.participationId = participation.id " +
-            "INNER JOIN shooter ON participation.shooterId = shooter.id " +
-            "WHERE participation.challengeId = ?1 " +
-            "AND participation.shooterId = ?2 "
+    @Query(value = "SELECT p.id, p.outrank, sr.serieNumber, sr.shotNumber, sr.points FROM shotResult AS sr " +
+            "INNER JOIN participation p ON sr.participationId = p.id " +
+            "INNER JOIN shooter s ON p.shooterId = s.id " +
+            "WHERE p.challengeId = ?1 " +
+            "AND p.shooterId = ?2 "
             , nativeQuery = true)
     List<ShotResultForShooterProjection> getShotResultsForChallengeAndShooter(Long challengeId, Long shooterId);
 

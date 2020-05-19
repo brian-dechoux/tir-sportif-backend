@@ -77,8 +77,6 @@ public class ChallengeController {
         return participationService.getParticipations(challengeId, participantId);
     }
 
-    // TODO get participations for a specific shooter
-
     @PostMapping(value = "/{challengeId}/participations")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
@@ -97,6 +95,13 @@ public class ChallengeController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public void addShotResult(@PathVariable Long challengeId, @PathVariable Long participationId, @Valid @RequestBody AddShotResultRequest request) {
         shotResultService.addShotResult(challengeId, participationId, request);
+    }
+
+    @GetMapping(value = "/{challengeId}/participants/{participantId}/shot-results")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterResultsResponse getShooterResults(@PathVariable Long challengeId, @PathVariable Long participantId) {
+        return shotResultService.getResultsForShooter(challengeId, participantId);
     }
 
 }

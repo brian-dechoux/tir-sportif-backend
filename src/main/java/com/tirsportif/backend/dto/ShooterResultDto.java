@@ -7,7 +7,7 @@ public class ShooterResultDto {
 
     int serieNumber;
 
-    int shotNumber;
+    Integer shotNumber;
 
     double points;
 

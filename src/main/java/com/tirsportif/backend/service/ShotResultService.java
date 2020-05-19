@@ -1,9 +1,6 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.AddShotResultRequest;
-import com.tirsportif.backend.dto.GetCategoryAndDisciplineResultsResponse;
-import com.tirsportif.backend.dto.GetShooterResultsResponse;
-import com.tirsportif.backend.dto.ResolvedAddShotResultRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.ShotResultError;
 import com.tirsportif.backend.exception.BadRequestErrorException;
@@ -136,7 +133,7 @@ public class ShotResultService extends AbstractService {
     }
 
     /**
-     * Get results for a shooter.
+     * Get results for a shooter, all participations included, for a challenge.
      *
      * @param challengeId
      * @param shooterId
@@ -145,9 +142,8 @@ public class ShotResultService extends AbstractService {
     public GetShooterResultsResponse getResultsForShooter(Long challengeId, Long shooterId) {
         log.info("Searching shot results for challenge: {}, and for category: {}", challengeId, shooterId);
         List<ShotResultForShooterProjection> results = shotResultRepository.getShotResultsForChallengeAndShooter(challengeId, shooterId);
-        GetShooterResultsResponse response = new GetShooterResultsResponse(
-                results.stream().map(shotResultMapper::mapShooterResultToDto).collect(Collectors.toList())
-        );
+        List<ParticipationResultsDto> participationResults = shotResultMapper.mapShooterResultToDto(results);
+        GetShooterResultsResponse response = new GetShooterResultsResponse(participationResults);
         log.info("Found {} results", results.size());
         return response;
     }
