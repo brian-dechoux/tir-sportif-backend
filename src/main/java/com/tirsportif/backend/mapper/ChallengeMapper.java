@@ -14,14 +14,14 @@ public class ChallengeMapper {
 
     private final AddressMapper addressMapper;
     private final ClubMapper clubMapper;
-    private final ShooterMapper shooterMapper;
     private final CategoryMapper categoryMapper;
+    private final ParticipationMapper participationMapper;
     private final DisciplineMapper disciplineMapper;
 
-    public ChallengeMapper(AddressMapper addressMapper, ClubMapper clubMapper, ShooterMapper shooterMapper, CategoryMapper categoryMapper, DisciplineMapper disciplineMapper) {
+    public ChallengeMapper(AddressMapper addressMapper, ClubMapper clubMapper, ParticipationMapper participationMapper, CategoryMapper categoryMapper, DisciplineMapper disciplineMapper) {
         this.addressMapper = addressMapper;
         this.clubMapper = clubMapper;
-        this.shooterMapper = shooterMapper;
+        this.participationMapper = participationMapper;
         this.categoryMapper = categoryMapper;
         this.disciplineMapper = disciplineMapper;
     }
@@ -96,7 +96,7 @@ public class ChallengeMapper {
                         .map(disciplineMapper::mapDisciplineToResponse)
                         .collect(Collectors.toSet()),
                 participations.stream()
-                        .map(this::mapParticipationToResponse)
+                        .map(participationMapper::mapParticipationToResponse)
                         .collect(Collectors.toSet())
         );
     }
@@ -109,17 +109,6 @@ public class ChallengeMapper {
                 challengeListElement.getCity(),
                 challengeListElement.getNbShooters()
         );
-    }
-
-    public GetParticipationResponse mapParticipationToResponse(Participation participation) {
-        return GetParticipationResponse.builder()
-                .id(participation.getId())
-                .shooter(shooterMapper.mapShooterToResponse(participation.getShooter()))
-                .discipline(disciplineMapper.mapDisciplineToResponse(participation.getDiscipline()))
-                .useElectronicTarget(participation.isUseElectronicTarget())
-                .paid(participation.isPaid())
-                .outrank(participation.isOutrank())
-                .build();
     }
 
 }

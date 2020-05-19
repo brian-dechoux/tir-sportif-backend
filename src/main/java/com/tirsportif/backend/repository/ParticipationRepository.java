@@ -7,11 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 public interface ParticipationRepository extends PagingAndSortingRepository<Participation, Long> {
 
     boolean existsByChallengeIdAndId(Long challengeId, Long participationId);
 
-    Page<Participation> findByChallengeId(Long challengeId, Pageable page);
+    List<Participation> findByChallengeIdAndShooterId(Long challengeId, Long shooterId);
 
     @Query(value = "SELECT DISTINCT(s.id), s.lastname, s.firstname, c.id as clubId, c.name as clubName " +
                 "FROM participation p " +

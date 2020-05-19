@@ -38,8 +38,7 @@ public class Participation {
     boolean useElectronicTarget;
 
     /**
-     * This attribute has a short lifespan, thus not persisted in database.
-     * It's used to generate the bill after this instance creation.
+     * Used to generate the bill after this instance creation.
      * Then, the attribute is passed along to the {@link Bill} instance.
      */
     @Transient

@@ -11,9 +11,6 @@ public class GetParticipationResponse {
     Long id;
 
     @NonNull
-    GetShooterResponse shooter;
-
-    @NonNull
     GetDisciplineResponse discipline;
 
     boolean useElectronicTarget;

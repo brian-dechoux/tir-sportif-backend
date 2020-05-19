@@ -2,21 +2,29 @@ package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.dto.CreateDisciplineParticipationRequest;
 import com.tirsportif.backend.dto.CreateParticipationsRequest;
+import com.tirsportif.backend.dto.GetParticipantResponse;
+import com.tirsportif.backend.dto.GetShooterParticipationsResponse;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.exception.ForbiddenErrorException;
 import com.tirsportif.backend.exception.NotFoundErrorException;
-import com.tirsportif.backend.mapper.ChallengeMapper;
-import com.tirsportif.backend.model.*;
+import com.tirsportif.backend.mapper.ParticipationMapper;
+import com.tirsportif.backend.model.Challenge;
+import com.tirsportif.backend.model.Discipline;
+import com.tirsportif.backend.model.Participation;
+import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.event.ParticipationCreated;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,20 +32,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ParticipationService extends AbstractService {
 
-    private final ChallengeMapper challengeMapper;
+    private final ParticipationMapper participationMapper;
     private final ChallengeRepository challengeRepository;
-    private final CategoryRepository categoryRepository;
     private final DisciplineRepository disciplineRepository;
     private final ShooterRepository shooterRepository;
     private final ParticipationRepository participationRepository;
     private final ShotResultRepository shotResultRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ParticipationService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public ParticipationService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ApplicationEventPublisher applicationEventPublisher) {
         super(apiProperties);
-        this.challengeMapper = challengeMapper;
+        this.participationMapper = participationMapper;
         this.challengeRepository = challengeRepository;
-        this.categoryRepository = categoryRepository;
         this.disciplineRepository = disciplineRepository;
         this.shooterRepository = shooterRepository;
         this.participationRepository = participationRepository;
@@ -55,14 +61,42 @@ public class ParticipationService extends AbstractService {
                 .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
     }
 
-    private Category findCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, categoryId.toString()));
-    }
-
     private Discipline findDisciplineById(Long disciplineId) {
         return disciplineRepository.findById(disciplineId)
                 .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, disciplineId.toString()));
+    }
+
+    /**
+     * Get all participants (distinct shooters from all participations) for a specific challenge.
+     *
+     * @param challengeId Challenge ID
+     * @param page Page number
+     * @return Paginated shooters
+     */
+    public Page<GetParticipantResponse> getParticipants(Long challengeId, int page, int rowsPerPage) {
+        log.info("Looking for all participants to challenge with ID: {}", challengeId);
+        findChallengeById(challengeId);
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
+        Page<GetParticipantResponse> responses = participationRepository.findParticipantsByChallengeId(challengeId, pageRequest)
+                .map(participationMapper::mapParticipantToResponse);
+        log.info("Found {} participants to challenge {}", responses.getNumberOfElements(), challengeId);
+        return responses;
+    }
+
+    /**
+     * Get all participations for a participant (shooter) at a specific challenge.
+     *
+     * @param challengeId Challenge ID
+     * @param participantId Participant ID
+     */
+    public GetShooterParticipationsResponse getParticipations(Long challengeId, Long participantId) {
+        log.info("Looking for all participations to challenge with ID: {} for a shooter with ID: {}", challengeId, participantId);
+        findChallengeById(challengeId);
+        Shooter shooter = findShooterById(participantId);
+        List<Participation> participations = participationRepository.findByChallengeIdAndShooterId(challengeId, participantId);
+        GetShooterParticipationsResponse response = participationMapper.mapShooterAndParticipationsToResponse(shooter, participations);
+        log.info("Found {} participations", response.getParticipations().size());
+        return response;
     }
 
     /**

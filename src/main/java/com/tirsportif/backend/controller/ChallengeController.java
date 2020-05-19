@@ -67,7 +67,14 @@ public class ChallengeController {
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
     public Page<GetParticipantResponse> getParticipants(@PathVariable Long challengeId, @RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
-        return challengeService.getParticipants(challengeId, page, rowsPerPage);
+        return participationService.getParticipants(challengeId, page, rowsPerPage);
+    }
+
+    @GetMapping(value = "/{challengeId}/participants/{participantId}/participations")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterParticipationsResponse getShooterParticipations(@PathVariable Long challengeId, @PathVariable Long participantId) {
+        return participationService.getParticipations(challengeId, participantId);
     }
 
     // TODO get participations for a specific shooter
