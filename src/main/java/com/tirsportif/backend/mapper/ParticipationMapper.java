@@ -3,12 +3,14 @@ package com.tirsportif.backend.mapper;
 import com.tirsportif.backend.dto.GetParticipantResponse;
 import com.tirsportif.backend.dto.GetParticipationResponse;
 import com.tirsportif.backend.dto.GetShooterParticipationsResponse;
+import com.tirsportif.backend.model.Bill;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.projection.Participant;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,11 +35,14 @@ public class ParticipationMapper {
     }
 
     public GetParticipationResponse mapParticipationToResponse(Participation participation) {
+        boolean paid = Optional.ofNullable(participation.getBill())
+                .map(Bill::isPaid)
+                .orElse(false);
         return GetParticipationResponse.builder()
                 .id(participation.getId())
                 .discipline(disciplineMapper.mapDisciplineToResponse(participation.getDiscipline()))
                 .useElectronicTarget(participation.isUseElectronicTarget())
-                .paid(participation.isPaid())
+                .paid(paid)
                 .outrank(participation.isOutrank())
                 .build();
     }

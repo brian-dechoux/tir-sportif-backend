@@ -28,8 +28,8 @@ public class Bill {
 
     boolean paid;
 
-    @ManyToOne
-    @JoinColumn(name = "participationId")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "participationId", referencedColumnName = "id")
     Participation participation;
 
     @ManyToOne

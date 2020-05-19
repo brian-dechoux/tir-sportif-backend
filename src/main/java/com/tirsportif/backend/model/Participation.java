@@ -42,8 +42,10 @@ public class Participation {
      * Then, the attribute is passed along to the {@link Bill} instance.
      */
     @Transient
-    @NotNull
     boolean paid;
+
+    @OneToOne(mappedBy = "participation")
+    Bill bill;
 
     @NotNull
     boolean outrank;
