@@ -28,7 +28,7 @@ public class Bill {
 
     boolean paid;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "participationId", referencedColumnName = "id")
     Participation participation;
 
