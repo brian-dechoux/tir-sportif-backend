@@ -44,16 +44,10 @@ public class ChallengeController {
         return challengeService.updateChallenge(challengeId, request);
     }
 
-    @GetMapping(value = "/{challengeId}/results/category/{categoryId}/discipline/{disciplineId}")
+    @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
     @PreAuthorize("authorizedFor('VIEW')")
     public GetCategoryAndDisciplineResultsResponse getResultsForCategory(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
         return shotResultService.getResultsForCategory(challengeId, categoryId, disciplineId);
-    }
-
-    @GetMapping(value = "/{challengeId}/results/shooter/{shooterId}")
-    @PreAuthorize("authorizedFor('VIEW')")
-    public GetShooterResultsResponse getResultsForShooter(@PathVariable Long challengeId, @PathVariable Long shooterId) {
-        return shotResultService.getResultsForShooter(challengeId, shooterId);
     }
 
     @GetMapping
@@ -97,11 +91,11 @@ public class ChallengeController {
         shotResultService.addShotResult(challengeId, participationId, request);
     }
 
-    @GetMapping(value = "/{challengeId}/participants/{participantId}/shot-results")
+    @GetMapping(value = "/{challengeId}/results/participants/{participantId}/disciplines/{disciplineId}")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResultsResponse getShooterResults(@PathVariable Long challengeId, @PathVariable Long participantId) {
-        return shotResultService.getResultsForShooter(challengeId, participantId);
+    public GetShooterResultsResponse getShooterResults(@PathVariable Long challengeId, @PathVariable Long participantId, @PathVariable Long disciplineId) {
+        return shotResultService.getResultsForShooter(challengeId, participantId, disciplineId);
     }
 
 }

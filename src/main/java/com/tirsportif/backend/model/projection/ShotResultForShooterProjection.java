@@ -8,7 +8,7 @@ public interface ShotResultForShooterProjection {
 
     int getSerieNumber();
 
-    int getShotNumber();
+    Integer getShotNumber();
 
     double getPoints();
 

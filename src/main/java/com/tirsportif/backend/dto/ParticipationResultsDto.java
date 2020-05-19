@@ -8,6 +8,6 @@ import java.util.List;
 public class ParticipationResultsDto {
 
     ParticipationResultReferenceDto participationReference;
-    List<ShooterResultDto> results;
+    List<List<Double>> results;
 
 }

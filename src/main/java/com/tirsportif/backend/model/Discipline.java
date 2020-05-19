@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "discipline")
 // To avoid StackOverflow error when retrieving data from database (recursive dependency from object POV):
 @EqualsAndHashCode(exclude="challenges")

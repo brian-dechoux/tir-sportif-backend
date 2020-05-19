@@ -13,10 +13,7 @@ import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultForShooterProjection;
 import com.tirsportif.backend.property.ApiProperties;
-import com.tirsportif.backend.repository.ChallengeRepository;
-import com.tirsportif.backend.repository.IntegrityConstraints;
-import com.tirsportif.backend.repository.ParticipationRepository;
-import com.tirsportif.backend.repository.ShotResultRepository;
+import com.tirsportif.backend.repository.*;
 import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,13 +27,15 @@ import java.util.stream.Collectors;
 public class ShotResultService extends AbstractService {
 
     private final ChallengeRepository challengeRepository;
+    private final DisciplineRepository disciplineRepository;
     private final ParticipationRepository participationRepository;
     private final ShotResultRepository shotResultRepository;
     private final ShotResultMapper shotResultMapper;
 
-    public ShotResultService(ApiProperties apiProperties, ChallengeRepository challengeRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ShotResultMapper shotResultMapper) {
+    public ShotResultService(ApiProperties apiProperties, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ShotResultMapper shotResultMapper) {
         super(apiProperties);
         this.challengeRepository = challengeRepository;
+        this.disciplineRepository = disciplineRepository;
         this.participationRepository = participationRepository;
         this.shotResultRepository = shotResultRepository;
         this.shotResultMapper = shotResultMapper;
@@ -44,6 +43,10 @@ public class ShotResultService extends AbstractService {
 
     private Challenge findChallengeById(Long challengeId) {
         return RepositoryUtils.findById(challengeRepository::findById, challengeId);
+    }
+
+    private Discipline findDisciplineById(Long disciplineId) {
+        return RepositoryUtils.findById(disciplineRepository::findById, disciplineId);
     }
 
     private Participation findParticipationById(Long participationId) {
@@ -133,16 +136,18 @@ public class ShotResultService extends AbstractService {
     }
 
     /**
-     * Get results for a shooter, all participations included, for a challenge.
+     * Get results for a shooter and a discipline, all participations included, for a challenge.
      *
      * @param challengeId
      * @param shooterId
+     * @param disciplineId
      * @return Shooter results
      */
-    public GetShooterResultsResponse getResultsForShooter(Long challengeId, Long shooterId) {
+    public GetShooterResultsResponse getResultsForShooter(Long challengeId, Long shooterId, Long disciplineId) {
         log.info("Searching shot results for challenge: {}, and for category: {}", challengeId, shooterId);
-        List<ShotResultForShooterProjection> results = shotResultRepository.getShotResultsForChallengeAndShooter(challengeId, shooterId);
-        List<ParticipationResultsDto> participationResults = shotResultMapper.mapShooterResultToDto(results);
+        Discipline discipline = findDisciplineById(disciplineId);
+        List<ShotResultForShooterProjection> results = shotResultRepository.getShotResultsForChallengeAndShooterAndDiscipline(challengeId, shooterId, disciplineId);
+        List<ParticipationResultsDto> participationResults = shotResultMapper.mapShooterResultToDto(results, discipline);
         GetShooterResultsResponse response = new GetShooterResultsResponse(participationResults);
         log.info("Found {} results", results.size());
         return response;

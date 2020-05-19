@@ -27,8 +27,10 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
             "INNER JOIN participation p ON sr.participationId = p.id " +
             "INNER JOIN shooter s ON p.shooterId = s.id " +
             "WHERE p.challengeId = ?1 " +
-            "AND p.shooterId = ?2 "
+            "AND p.shooterId = ?2 " +
+            "AND p.disciplineId = ?3 " +
+            "ORDER BY p.outrank, sr.serieNumber, sr.shotNumber "
             , nativeQuery = true)
-    List<ShotResultForShooterProjection> getShotResultsForChallengeAndShooter(Long challengeId, Long shooterId);
+    List<ShotResultForShooterProjection> getShotResultsForChallengeAndShooterAndDiscipline(Long challengeId, Long shooterId, Long disciplineId);
 
 }
