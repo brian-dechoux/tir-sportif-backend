@@ -14,7 +14,7 @@ public interface ChallengeRepository extends PagingAndSortingRepository<Challeng
             "           SELECT COUNT(*) FROM participation " +
             "           WHERE participation.challengeId = challenge.id" +
             "       ) AS nbShooters " +
-            "FROM challenge\n" +
+            "FROM challenge " +
             "INNER JOIN address ON address.id = challenge.addressId"
             , countQuery = "SELECT COUNT(*) FROM challenge"
             , nativeQuery = true)

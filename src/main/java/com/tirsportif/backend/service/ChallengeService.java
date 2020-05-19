@@ -3,6 +3,7 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.cache.CountryStore;
 import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.mapper.ChallengeMapper;
+import com.tirsportif.backend.mapper.ParticipationMapper;
 import com.tirsportif.backend.model.*;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Slf4j
 public class ChallengeService extends AbstractService {
 
+    private final ParticipationMapper participationMapper;
     private final ChallengeMapper challengeMapper;
     private final ChallengeRepository challengeRepository;
     private final ClubRepository clubRepository;
@@ -28,8 +30,9 @@ public class ChallengeService extends AbstractService {
     private final ParticipationRepository participationRepository;
     private final CountryStore countryStore;
 
-    public ChallengeService(ApiProperties apiProperties, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, CountryStore countryStore) {
+    public ChallengeService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeMapper challengeMapper, ChallengeRepository challengeRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, CountryStore countryStore) {
         super(apiProperties);
+        this.participationMapper = participationMapper;
         this.challengeMapper = challengeMapper;
         this.challengeRepository = challengeRepository;
         this.clubRepository = clubRepository;
@@ -112,19 +115,19 @@ public class ChallengeService extends AbstractService {
     }
 
     /**
-     * Get all participations for a specific challenge.
+     * Get all participants (distinct shooters from all participations) for a specific challenge.
      *
      * @param challengeId Challenge ID
      * @param page Page number
-     * @return Paginated challenges
+     * @return Paginated shooters
      */
-    public Page<GetParticipationResponse> getParticipations(Long challengeId, int page, int rowsPerPage) {
-        log.info("Looking for all participations to challenge with ID: {}", challengeId);
+    public Page<GetParticipantResponse> getParticipants(Long challengeId, int page, int rowsPerPage) {
+        log.info("Looking for all participants to challenge with ID: {}", challengeId);
         findChallengeById(challengeId);
         PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
-        Page<GetParticipationResponse> responses = participationRepository.findByChallengeId(challengeId, pageRequest)
-                .map(challengeMapper::mapParticipationToResponse);
-        log.info("Found {} challenges", responses.getNumberOfElements());
+        Page<GetParticipantResponse> responses = participationRepository.findParticipantsByChallengeId(challengeId, pageRequest)
+                .map(participationMapper::mapParticipantToResponse);
+        log.info("Found {} participants to challenge {}", responses.getNumberOfElements(), challengeId);
         return responses;
     }
 
