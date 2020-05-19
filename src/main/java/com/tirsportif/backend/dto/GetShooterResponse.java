@@ -17,7 +17,6 @@ public class GetShooterResponse {
     @NonNull
     String firstname;
 
-    @NonNull
     LocalDate birthdate;
 
     GetAddressResponse address;

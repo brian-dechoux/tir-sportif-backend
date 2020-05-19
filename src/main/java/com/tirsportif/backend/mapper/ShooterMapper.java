@@ -27,7 +27,9 @@ public class ShooterMapper {
         shooter.setBirthDate(request.getBirthdate());
         shooter.setClub(request.getClub());
         shooter.setCategory(request.getCategory());
-        shooter.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
+        if (request.getAddress() != null) {
+            shooter.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
+        }
         return shooter;
     }
 
@@ -37,7 +39,9 @@ public class ShooterMapper {
                 shooter.getLastname(),
                 shooter.getFirstname(),
                 shooter.getBirthDate(),
-                addressMapper.mapAddressToDto(shooter.getAddress()),
+                Optional.ofNullable(shooter.getAddress())
+                        .map(addressMapper::mapAddressToDto)
+                        .orElse(null),
                 Optional.ofNullable(shooter.getClub())
                         .map(clubMapper::mapClubToResponse)
                         .orElse(null),

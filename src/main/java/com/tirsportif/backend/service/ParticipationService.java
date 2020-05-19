@@ -127,6 +127,7 @@ public class ParticipationService extends AbstractService {
         Set<Long> requestedDisciplineIds = requestedDisciplinesInformation.stream()
                 .map(CreateDisciplineParticipationRequest::getDisciplineId)
                 .collect(Collectors.toSet());
+        //if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
         if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
             throw new ForbiddenErrorException(ParticipationError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
         }

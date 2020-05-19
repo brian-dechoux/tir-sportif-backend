@@ -1,6 +1,7 @@
 package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.cache.CountryStore;
+import com.tirsportif.backend.dto.CreateAddressRequest;
 import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
@@ -62,8 +63,10 @@ public class ShooterService extends AbstractService {
 
     public GetShooterResponse createShooter(CreateShooterRequest request) {
         log.info("Creating shooter named : {} {}", request.getLastname(), request.getFirstname());
-        Country country = findCountryById(request.getAddress().getCountryId());
-        // TODO Remove this possibility. Force to use multiple routes
+        Country country = Optional.ofNullable(request.getAddress())
+                .map(CreateAddressRequest::getCountryId)
+                .map(this::findCountryById)
+                .orElse(null);
         Club club = Optional.ofNullable(request.getClubId())
                 .map(this::findClubById)
                 .orElse(null);

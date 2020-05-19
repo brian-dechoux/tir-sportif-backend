@@ -5,8 +5,10 @@ import com.tirsportif.backend.model.Club;
 import com.tirsportif.backend.model.Country;
 import lombok.NonNull;
 import lombok.Value;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Value
 public class ResolvedCreateShooterRequest {
@@ -26,12 +28,14 @@ public class ResolvedCreateShooterRequest {
     @NonNull
     Category category;
 
-    public static ResolvedCreateShooterRequest ofRawRequest(CreateShooterRequest request, Country country, Club resolvedClub, Category resolvedCategory) {
+    public static ResolvedCreateShooterRequest ofRawRequest(CreateShooterRequest request, @Nullable Country country, Club resolvedClub, Category resolvedCategory) {
         return new ResolvedCreateShooterRequest(
                 request.getLastname(),
                 request.getFirstname(),
                 request.getBirthdate(),
-                ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), country),
+                Optional.ofNullable(request.getAddress())
+                    .map(address -> ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), country))
+                .orElse(null),
                 resolvedClub,
                 resolvedCategory
         );
