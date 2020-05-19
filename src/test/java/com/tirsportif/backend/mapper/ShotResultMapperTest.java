@@ -51,9 +51,9 @@ public class ShotResultMapperTest {
 
         List<ParticipationResultsDto> results = shotResultMapper.mapShooterResultToDto(projections, discipline);
 
-        assertThat(results.get(0).getResults()).hasSize(2);
-        assertThat(results.get(0).getResults().get(0)).hasSize(2);
-        assertThat(results.get(0).getResults().get(1)).hasSize(2);
+        assertThat(results.get(0).getPoints()).hasSize(2);
+        assertThat(results.get(0).getPoints().get(0)).hasSize(2);
+        assertThat(results.get(0).getPoints().get(1)).hasSize(2);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ShotResultMapperTest {
 
         List<ParticipationResultsDto> results = shotResultMapper.mapShooterResultToDto(projections, discipline);
 
-        assertThat(results.get(0).getResults().get(0).get(2)).isEqualTo(9);
-        assertThat(results.get(0).getResults().get(1).get(2)).isEqualTo(8);
+        assertThat(results.get(0).getPoints().get(0).get(2)).isEqualTo(9);
+        assertThat(results.get(0).getPoints().get(1).get(2)).isEqualTo(8);
     }
 }
