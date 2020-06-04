@@ -9,7 +9,7 @@ public class ResolvedAddShotResultRequest {
 
     int serieNumber;
 
-    Integer shotNumber;
+    int shotNumber;
 
     double points;
 

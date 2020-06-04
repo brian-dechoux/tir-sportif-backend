@@ -27,7 +27,6 @@ public class ShotResultKey implements Serializable {
      * Let's say we've got a serie of 10 shots, then order will be [1-10].
      * If null, we consider it as a whole serie result.
      */
-    @Positive
     Integer shotNumber;
 
     long participationId;

@@ -62,7 +62,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     User user = userRepository.findByUsername(username)
-                            .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR, "Cannot find user with username: " + username));
+                            .orElseThrow(() -> new InternalServerErrorException(SystemError.TECHNICAL_ERROR));
                     if (jwtTokenManager.validateToken(jwtToken, user)) {
                         SecurityContextHolder.getContext().setAuthentication(user);
                     }
@@ -78,7 +78,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (ErrorException e) {
             handleException(e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
         } catch (Exception e) {
-            handleException(new InternalServerErrorException(SystemError.TECHNICAL_ERROR, e.getMessage()), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
+            handleException(new InternalServerErrorException(SystemError.TECHNICAL_ERROR), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
         }
     }
 

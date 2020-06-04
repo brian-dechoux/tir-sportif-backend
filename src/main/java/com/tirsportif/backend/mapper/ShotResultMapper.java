@@ -76,9 +76,9 @@ public class ShotResultMapper {
         int currentSerieShotNb = 0;
         for (ShooterResultDto singleResult : participationCurrentEntry.getValue()) {
             if (singleResult.getSerieNumber() != null) {
-                if (singleResult.getShotNumber() == null || singleResult.getShotNumber() == 0) {
+                if (singleResult.getShotNumber() <= 0) {
                     // Special case
-                    if (singleResult.getShotNumber() == null) {
+                    if (singleResult.getShotNumber() == -1) {
                         List<Double> onlyTotalResults = initializedSerieResultList(discipline);
                         onlyTotalResults.set(discipline.getNbShotsPerSerie(), singleResult.getPoints());
                         points.set(singleResult.getSerieNumber() - 1, onlyTotalResults);

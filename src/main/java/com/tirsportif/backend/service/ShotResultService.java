@@ -67,27 +67,27 @@ public class ShotResultService extends AbstractService {
             throw new BadRequestErrorException(ShotResultError.INVALID_SERIE_NUMBER, Integer.toString(serieNumber), Integer.toString(expectedNbSeries));
         }
 
-        Integer shotNumber = request.getShotNumber();
+        int shotNumber = request.getShotNumber();
         int expectedNbShots = discipline.getNbShotsPerSerie();
-        if (shotNumber != null && (shotNumber > expectedNbShots)) {
+        if (shotNumber >= 0 && (shotNumber > expectedNbShots)) {
             throw new BadRequestErrorException(ShotResultError.INVALID_SHOT_NUMBER, Integer.toString(shotNumber), Integer.toString(expectedNbShots));
         }
 
         double points = request.getPoints();
         if (!discipline.isDecimalResult() && ((points % 1) != 0)) {
-            throw new BadRequestErrorException(ShotResultError.INVALID_POINTS_VALUE, Double.toString(points));
+            throw new BadRequestErrorException(ShotResultError.INVALID_POINTS_VALUE);
         }
 
         double actualPoints = request.getPoints();
         double minPtsValue = discipline.getMinPointsValue();
         double maxPtsValue = discipline.getMaxPointsValue();
-        if (request.getShotNumber() != null) {
+        if (request.getShotNumber() >= 0) {
             if (minPtsValue > actualPoints || maxPtsValue < actualPoints) {
                 throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
             }
         } else {
             if (minPtsValue > actualPoints || maxPtsValue * discipline.getNbShotsPerSerie() < actualPoints) {
-                throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue * discipline.getNbShotsPerSerie()));
+                throw new BadRequestErrorException(ShotResultError.OUTRANGE_TOTAL_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue * discipline.getNbShotsPerSerie()));
             }
         }
     }

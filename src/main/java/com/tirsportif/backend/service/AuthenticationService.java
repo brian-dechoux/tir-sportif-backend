@@ -31,6 +31,7 @@ public class AuthenticationService {
         log.debug("BEGIN AuthenticationService.login(Username: {})", username);
         log.info("Authenticating user by username/password, for username: {}", username);
 
+        // This is not security best practice, but we tolerate it for such a small project (no big impacts)
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UnauthorizedErrorException(AuthenticationError.WRONG_USERNAME));
 

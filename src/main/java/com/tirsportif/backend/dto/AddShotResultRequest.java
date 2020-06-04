@@ -12,8 +12,7 @@ public class AddShotResultRequest {
     @PositiveOrZero
     int serieNumber;
 
-    @PositiveOrZero
-    Integer shotNumber;
+    int shotNumber;
 
     @NotNull
     @PositiveOrZero

@@ -59,7 +59,7 @@ public class CustomControllerAdvice extends BaseControllerAdvice {
     @ResponseBody
     public ErrorResponse handleException(Exception exception, WebRequest request, HttpServletResponse response) {
         log.error("Generic Exception in controller", exception);
-        InternalServerErrorException genericException = new InternalServerErrorException(SystemError.TECHNICAL_ERROR, exception.getMessage());
+        InternalServerErrorException genericException = new InternalServerErrorException(SystemError.TECHNICAL_ERROR);
         return buildErrorResponse(genericException);
     }
 
