@@ -38,7 +38,8 @@ public class ShotResultMapper {
      * to List: [(1 0 [(A,B), (A,C)]), (1 1 [(A,B)])]
      * to List: [(1 0 [[A.p, B.p], [A.p, C.p]]), (1 1 [[A.p, B.p]])]
      *
-     * Total is always calculated for all shot results
+     * Total is always calculated for all shot results.
+     * If no result for a serie, an empty results list will be provided.
      *
      * There's one special case in this workflow, the case of a shot result with only the total.
      * We set the total at the last index in the list (discipline.nbShots, considering index 0)
@@ -68,35 +69,37 @@ public class ShotResultMapper {
     }
 
     private ParticipationResultsDto formatResultsResponse(Map.Entry<ParticipationResultReferenceDto, LinkedList<ShooterResultDto>> participationCurrentEntry, Discipline discipline) {
+        // Initialize points with null values in case of no shot results for a serie for example
         List<List<Double>> points = new ArrayList<>(discipline.getNbSeries());
+        points.addAll(Collections.nCopies(discipline.getNbSeries(), initializedSerieResultList(discipline)));
+
         int currentSerieShotNb = 0;
         double currentSeriePointsSum = 0;
         for (ShooterResultDto singleResult : participationCurrentEntry.getValue()) {
             if (singleResult.getSerieNumber() != null) {
                 if (singleResult.getShotNumber() == null || singleResult.getShotNumber() == 0) {
-                    // TODO fill with 'empty' lists if no shot result
                     // Fill last serie total
-                    if (currentSeriePointsSum != 0 && !points.isEmpty()) {
-                        points.get(points.size() - 1).set(discipline.getNbShotsPerSerie(), currentSeriePointsSum);
+                    if (currentSeriePointsSum != 0) {
+                        points.get(singleResult.getSerieNumber() - 1).set(discipline.getNbShotsPerSerie(), currentSeriePointsSum);
                         currentSeriePointsSum = 0;
                     }
                     // Special case
                     if (singleResult.getShotNumber() == null) {
                         List<Double> onlyTotalResults = initializedSerieResultList(discipline);
                         onlyTotalResults.set(discipline.getNbShotsPerSerie(), singleResult.getPoints());
-                        points.add(onlyTotalResults);
-                        // New serie
+                        points.set(singleResult.getSerieNumber() - 1, onlyTotalResults);
+                    // New serie
                     } else {
                         currentSerieShotNb = 0;
                         List<Double> serieResults = initializedSerieResultList(discipline);
                         serieResults.set(currentSerieShotNb, singleResult.getPoints());
-                        points.add(serieResults);
+                        points.set(singleResult.getSerieNumber() - 1, serieResults);
                         currentSerieShotNb++;
                         currentSeriePointsSum += singleResult.getPoints();
                     }
                     // Simple shot result
                 } else {
-                    points.get(points.size() - 1).set(currentSerieShotNb, singleResult.getPoints());
+                    points.get(singleResult.getSerieNumber() - 1).set(currentSerieShotNb, singleResult.getPoints());
                     currentSerieShotNb++;
                     currentSeriePointsSum += singleResult.getPoints();
                 }
