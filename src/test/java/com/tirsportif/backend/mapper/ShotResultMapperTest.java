@@ -59,19 +59,21 @@ public class ShotResultMapperTest {
     @Test
     public void _mapShooterResultToDto_multipleParticipations() {
         List<ShotResultForShooterProjection> projections = Arrays.asList(
-                new ShotResultForShooterProjectionImpl(1L,false,1,0,1),
-                new ShotResultForShooterProjectionImpl(1L,false,1,1,1),
-                new ShotResultForShooterProjectionImpl(1L,false,2,0,2),
-                new ShotResultForShooterProjectionImpl(1L,false,2,1,2),
                 new ShotResultForShooterProjectionImpl(2L,true,1,0,3),
                 new ShotResultForShooterProjectionImpl(2L,true,1,1,3),
                 new ShotResultForShooterProjectionImpl(2L,true,2,0,4),
-                new ShotResultForShooterProjectionImpl(2L,true,2,1,4)
+                new ShotResultForShooterProjectionImpl(2L,true,2,1,4),
+                new ShotResultForShooterProjectionImpl(3L,false,1,0,1),
+                new ShotResultForShooterProjectionImpl(3L,false,1,1,1),
+                new ShotResultForShooterProjectionImpl(3L,false,2,0,2),
+                new ShotResultForShooterProjectionImpl(3L,false,2,1,2)
         );
 
         List<ParticipationResultsDto> results = shotResultMapper.mapShooterResultToDto(projections, discipline);
 
         assertThat(results).hasSize(2);
+        assertThat(results.get(0).getParticipationReference().isOutrank()).isFalse();
+        assertThat(results.get(1).getParticipationReference().isOutrank()).isTrue();
     }
 
     @Test

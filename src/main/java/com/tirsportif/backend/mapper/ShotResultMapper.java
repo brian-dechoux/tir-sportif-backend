@@ -7,9 +7,7 @@ import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplin
 import com.tirsportif.backend.model.projection.ShotResultForShooterProjection;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -48,6 +46,8 @@ public class ShotResultMapper {
      * | Serie2Shot1Result | Serie2Shot2Result | Total2 |
      * +-------------------+-------------------+--------+
      *
+     * Note: Specific List and Map implementation are used to preserve ordering.
+     *
      * @param results
      * @param discipline
      *
@@ -58,7 +58,8 @@ public class ShotResultMapper {
         return results.stream()
                 .collect(Collectors.groupingBy(
                         result -> new ParticipationResultReferenceDto(result.getParticipationId(), result.getOutrank()),
-                        Collectors.mapping(this::mapShooterResultToDto, Collectors.toList())
+                        LinkedHashMap::new,
+                        Collectors.mapping(this::mapShooterResultToDto, Collectors.toCollection(LinkedList::new))
                 )).entrySet().stream()
                 .map(entry -> {
                     List<List<Double>> points = new ArrayList<>();
@@ -83,7 +84,7 @@ public class ShotResultMapper {
                     }
                     return new ParticipationResultsDto(entry.getKey(), points);
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     private ShooterResultDto mapShooterResultToDto(ShotResultForShooterProjection result) {
