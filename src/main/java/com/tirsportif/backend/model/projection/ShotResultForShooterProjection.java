@@ -6,10 +6,21 @@ public interface ShotResultForShooterProjection {
 
     boolean getOutrank();
 
-    int getSerieNumber();
+    /**
+     * Null if participation without any shot result for the moment.
+     */
+    Integer getSerieNumber();
 
+    /**
+     * Null if:
+     * - participation without any shot result for the moment
+     * - OR if serie with only total points known
+     */
     Integer getShotNumber();
 
-    double getPoints();
+    /**
+     * Null if participation without any shot result for the moment.
+     */
+    Double getPoints();
 
 }

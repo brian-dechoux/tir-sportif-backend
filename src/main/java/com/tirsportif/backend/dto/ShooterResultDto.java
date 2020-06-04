@@ -5,10 +5,10 @@ import lombok.Value;
 @Value
 public class ShooterResultDto {
 
-    int serieNumber;
+    Integer serieNumber;
 
     Integer shotNumber;
 
-    double points;
+    Double points;
 
 }
