@@ -1,6 +1,6 @@
 package com.tirsportif.backend.model.projection;
 
-public interface ShotResultForShooterProjection {
+public interface ShotResultProjection {
 
     Long getParticipationId();
 

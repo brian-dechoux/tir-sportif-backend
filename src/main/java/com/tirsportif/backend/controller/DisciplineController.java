@@ -3,10 +3,7 @@ package com.tirsportif.backend.controller;
 import com.tirsportif.backend.dto.GetDisciplineResponse;
 import com.tirsportif.backend.service.DisciplineService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,13 @@ public class DisciplineController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public List<GetDisciplineResponse> getDisciplines() {
         return disciplineService.getDisciplines();
+    }
+
+    @GetMapping("/{disciplineId}")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetDisciplineResponse getDiscipline(@PathVariable Long disciplineId) {
+        return disciplineService.getDiscipline(disciplineId);
     }
 
 }

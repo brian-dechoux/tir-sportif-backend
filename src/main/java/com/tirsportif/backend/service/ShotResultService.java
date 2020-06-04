@@ -4,19 +4,20 @@ import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.ShotResultError;
 import com.tirsportif.backend.exception.BadRequestErrorException;
-import com.tirsportif.backend.exception.ForbiddenErrorException;
 import com.tirsportif.backend.mapper.ShotResultMapper;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
-import com.tirsportif.backend.model.projection.ShotResultForShooterProjection;
+import com.tirsportif.backend.model.projection.ShotResultProjection;
 import com.tirsportif.backend.property.ApiProperties;
-import com.tirsportif.backend.repository.*;
+import com.tirsportif.backend.repository.ChallengeRepository;
+import com.tirsportif.backend.repository.DisciplineRepository;
+import com.tirsportif.backend.repository.ParticipationRepository;
+import com.tirsportif.backend.repository.ShotResultRepository;
 import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -80,8 +81,14 @@ public class ShotResultService extends AbstractService {
         double actualPoints = request.getPoints();
         double minPtsValue = discipline.getMinPointsValue();
         double maxPtsValue = discipline.getMaxPointsValue();
-        if (minPtsValue > actualPoints || maxPtsValue < actualPoints) {
-            throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
+        if (request.getShotNumber() != null) {
+            if (minPtsValue > actualPoints || maxPtsValue < actualPoints) {
+                throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue));
+            }
+        } else {
+            if (minPtsValue > actualPoints || maxPtsValue * discipline.getNbShotsPerSerie() < actualPoints) {
+                throw new BadRequestErrorException(ShotResultError.OUTRANGE_POINTS_VALUE, Double.toString(minPtsValue), Double.toString(maxPtsValue * discipline.getNbShotsPerSerie()));
+            }
         }
     }
 
@@ -105,15 +112,7 @@ public class ShotResultService extends AbstractService {
                 ResolvedAddShotResultRequest.ofRawRequest(request, participation)
         );
 
-        try {
-            shotResultRepository.save(shotResult);
-        } catch (DataIntegrityViolationException exception) {
-            if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.SHOT_RESULT_UNIQUE.getCauseMessagePart())) {
-                throw new ForbiddenErrorException(ShotResultError.SHOT_RESULT_MUST_BE_UNIQUE);
-            }
-            throw exception;
-        }
-
+        shotResultRepository.save(shotResult);
         log.info("Shot result added.");
     }
 
@@ -146,10 +145,26 @@ public class ShotResultService extends AbstractService {
     public GetShooterResultsResponse getResultsForShooter(Long challengeId, Long shooterId, Long disciplineId) {
         log.info("Searching shot results for challenge: {}, and for category: {}", challengeId, shooterId);
         Discipline discipline = findDisciplineById(disciplineId);
-        List<ShotResultForShooterProjection> results = shotResultRepository.getShotResultsForChallengeAndShooterAndDiscipline(challengeId, shooterId, disciplineId);
-        List<ParticipationResultsDto> participationResults = shotResultMapper.mapShooterResultToDto(results, discipline);
+        List<ShotResultProjection> results = shotResultRepository.getShotResultsForChallengeAndShooterAndDiscipline(challengeId, shooterId, disciplineId);
+        List<GetParticipationResultsResponse> participationResults = shotResultMapper.mapResultToDto(results, discipline);
         GetShooterResultsResponse response = new GetShooterResultsResponse(participationResults);
         log.info("Found {} results", results.size());
+        return response;
+    }
+
+    /**
+     * Get results for a participation to a challenge.
+     *
+     * @param challengeId
+     * @param participationId
+     * @return Shooter results
+     */
+    public GetParticipationResultsResponse getParticipationResults(Long challengeId, Long participationId) {
+        log.info("Searching shot results for participation: {}", participationId);
+        Participation participation = findParticipationById(participationId);
+        List<ShotResultProjection> results = shotResultRepository.getShotResultsForParticipation(challengeId, participationId);
+        GetParticipationResultsResponse response = shotResultMapper.mapResultToDto(results, participation.getDiscipline()).get(0);
+        log.info("Found results");
         return response;
     }
 

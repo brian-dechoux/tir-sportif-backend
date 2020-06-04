@@ -98,4 +98,11 @@ public class ChallengeController {
         return shotResultService.getResultsForShooter(challengeId, participantId, disciplineId);
     }
 
+    @GetMapping(value = "/{challengeId}/results/participations/{participationId}")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetParticipationResultsResponse getParticipationResults(@PathVariable Long challengeId, @PathVariable Long participationId) {
+        return shotResultService.getParticipationResults(challengeId, participationId);
+    }
+
 }

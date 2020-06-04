@@ -1,10 +1,14 @@
 package com.tirsportif.backend.model;
 
+import com.tirsportif.backend.model.key.ShotResultKey;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -19,24 +23,8 @@ import javax.validation.constraints.Positive;
 @Entity(name = "shotResult")
 public class ShotResult {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    /**
-     * Number of the serie.
-     */
-    @NotNull
-    @Positive
-    int serieNumber;
-
-    /**
-     * Order of the shot.
-     * Let's say we've got a serie of 10 shots, then order will be [1-10].
-     * If null, we consider it as a whole serie result.
-     */
-    @Positive
-    Integer shotNumber;
+    @EmbeddedId
+    ShotResultKey id;
 
     @NotNull
     @Positive
@@ -45,7 +33,7 @@ public class ShotResult {
     @NonNull
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "participationId")
+    @JoinColumn(name = "participationId", insertable = false, updatable = false)
     Participation participation;
 
 }

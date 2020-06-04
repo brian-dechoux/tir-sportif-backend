@@ -17,4 +17,10 @@ public class GetDisciplineResponse {
 
     boolean useDecimalResults;
 
+    @NonNull
+    int nbSeries;
+
+    @NonNull
+    int nbShotsPerSerie;
+
 }

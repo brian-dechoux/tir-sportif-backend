@@ -3,8 +3,9 @@ package com.tirsportif.backend.mapper;
 import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.ShotResult;
+import com.tirsportif.backend.model.key.ShotResultKey;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
-import com.tirsportif.backend.model.projection.ShotResultForShooterProjection;
+import com.tirsportif.backend.model.projection.ShotResultProjection;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -15,8 +16,7 @@ public class ShotResultMapper {
 
     public ShotResult mapAddCreateShotResultDtoToShotResult(ResolvedAddShotResultRequest request) {
         ShotResult shotResult = new ShotResult();
-        shotResult.setSerieNumber(request.getSerieNumber());
-        shotResult.setShotNumber(request.getShotNumber());
+        shotResult.setId(new ShotResultKey(request.getSerieNumber(), request.getShotNumber(), request.getParticipation().getId()));
         shotResult.setPoints(request.getPoints());
         shotResult.setParticipation(request.getParticipation());
         return shotResult;
@@ -57,32 +57,26 @@ public class ShotResultMapper {
      * @return Mapped results
      */
     // FIXME Could it be done by some JPA magic ?
-    public List<ParticipationResultsDto> mapShooterResultToDto(List<ShotResultForShooterProjection> results, Discipline discipline) {
+    public List<GetParticipationResultsResponse> mapResultToDto(List<ShotResultProjection> results, Discipline discipline) {
         return results.stream()
                 .collect(Collectors.groupingBy(
                         result -> new ParticipationResultReferenceDto(result.getParticipationId(), result.getOutrank()),
                         LinkedHashMap::new,
-                        Collectors.mapping(this::mapShooterResultToDto, Collectors.toCollection(LinkedList::new))
+                        Collectors.mapping(this::mapResultToDto, Collectors.toCollection(LinkedList::new))
                 )).entrySet().stream()
                 .map(participationCurrentEntry -> formatResultsResponse(participationCurrentEntry, discipline))
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private ParticipationResultsDto formatResultsResponse(Map.Entry<ParticipationResultReferenceDto, LinkedList<ShooterResultDto>> participationCurrentEntry, Discipline discipline) {
+    private GetParticipationResultsResponse formatResultsResponse(Map.Entry<ParticipationResultReferenceDto, LinkedList<ShooterResultDto>> participationCurrentEntry, Discipline discipline) {
         // Initialize points with null values in case of no shot results for a serie for example
         List<List<Double>> points = new ArrayList<>(discipline.getNbSeries());
         points.addAll(Collections.nCopies(discipline.getNbSeries(), initializedSerieResultList(discipline)));
 
         int currentSerieShotNb = 0;
-        double currentSeriePointsSum = 0;
         for (ShooterResultDto singleResult : participationCurrentEntry.getValue()) {
             if (singleResult.getSerieNumber() != null) {
                 if (singleResult.getShotNumber() == null || singleResult.getShotNumber() == 0) {
-                    // Fill last serie total
-                    if (currentSeriePointsSum != 0) {
-                        points.get(singleResult.getSerieNumber() - 1).set(discipline.getNbShotsPerSerie(), currentSeriePointsSum);
-                        currentSeriePointsSum = 0;
-                    }
                     // Special case
                     if (singleResult.getShotNumber() == null) {
                         List<Double> onlyTotalResults = initializedSerieResultList(discipline);
@@ -95,17 +89,15 @@ public class ShotResultMapper {
                         serieResults.set(currentSerieShotNb, singleResult.getPoints());
                         points.set(singleResult.getSerieNumber() - 1, serieResults);
                         currentSerieShotNb++;
-                        currentSeriePointsSum += singleResult.getPoints();
                     }
                     // Simple shot result
                 } else {
                     points.get(singleResult.getSerieNumber() - 1).set(currentSerieShotNb, singleResult.getPoints());
                     currentSerieShotNb++;
-                    currentSeriePointsSum += singleResult.getPoints();
                 }
             }
         }
-        return new ParticipationResultsDto(participationCurrentEntry.getKey(), points);
+        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), points);
     }
 
     private List<Double> initializedSerieResultList(Discipline discipline) {
@@ -114,7 +106,7 @@ public class ShotResultMapper {
         return serieResults;
     }
 
-    private ShooterResultDto mapShooterResultToDto(ShotResultForShooterProjection result) {
+    private ShooterResultDto mapResultToDto(ShotResultProjection result) {
         return new ShooterResultDto(
                 result.getSerieNumber(),
                 result.getShotNumber(),

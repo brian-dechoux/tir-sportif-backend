@@ -2,7 +2,7 @@ package com.tirsportif.backend.repository;
 
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
-import com.tirsportif.backend.model.projection.ShotResultForShooterProjection;
+import com.tirsportif.backend.model.projection.ShotResultProjection;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -31,6 +31,14 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
             "AND p.disciplineId = ?3 " +
             "ORDER BY p.outrank, p.id, sr.serieNumber, sr.shotNumber "
             , nativeQuery = true)
-    List<ShotResultForShooterProjection> getShotResultsForChallengeAndShooterAndDiscipline(Long challengeId, Long shooterId, Long disciplineId);
+    List<ShotResultProjection> getShotResultsForChallengeAndShooterAndDiscipline(Long challengeId, Long shooterId, Long disciplineId);
+
+    @Query(value = "SELECT p.id as participationId, p.outrank, sr.serieNumber, sr.shotNumber, sr.points FROM shotResult AS sr " +
+            "RIGHT JOIN participation p ON sr.participationId = p.id " +
+            "WHERE p.challengeId = ?1 " +
+            "AND p.id = ?2 " +
+            "ORDER BY p.outrank, p.id, sr.serieNumber, sr.shotNumber "
+            , nativeQuery = true)
+    List<ShotResultProjection> getShotResultsForParticipation(Long challengeId, Long participationId);
 
 }

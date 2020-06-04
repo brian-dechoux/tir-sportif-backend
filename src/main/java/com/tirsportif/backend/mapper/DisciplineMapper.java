@@ -12,7 +12,9 @@ public class DisciplineMapper {
                 discipline.getId(),
                 discipline.getLabel(),
                 discipline.getCode(),
-                discipline.isDecimalResult()
+                discipline.isDecimalResult(),
+                discipline.getNbSeries(),
+                discipline.getNbShotsPerSerie()
         );
     }
 

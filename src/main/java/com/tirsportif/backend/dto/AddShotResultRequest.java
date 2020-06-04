@@ -3,20 +3,20 @@ package com.tirsportif.backend.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Data
 public class AddShotResultRequest {
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     int serieNumber;
 
-    @Positive
+    @PositiveOrZero
     Integer shotNumber;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     double points;
 
 }

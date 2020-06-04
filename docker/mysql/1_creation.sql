@@ -119,11 +119,11 @@ CREATE TABLE `participation` (
 );
 
 CREATE TABLE `shotResult` (
-  `id` int  PRIMARY KEY AUTO_INCREMENT,
   `serieNumber` int NOT NULL,
   `shotNumber` int,
   `points` float NOT NULL,
-  `participationId` int NOT NULL
+  `participationId` int NOT NULL,
+  CONSTRAINT `id` PRIMARY KEY (serieNumber, shotNumber, participationId)
 );
 
 CREATE TABLE `bill` (

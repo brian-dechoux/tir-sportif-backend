@@ -9,7 +9,6 @@ public class ResolvedAddShotResultRequest {
 
     int serieNumber;
 
-    @NonNull
     Integer shotNumber;
 
     double points;
