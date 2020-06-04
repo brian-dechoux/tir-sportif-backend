@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum BillError implements Error {
 
-    NO_PRICE_FOR_PARAMETERS("BI0001", "Cannot generate a bill for the provided parameters. Type: %s, For licensee: %s");
+    NO_PRICE_FOR_PARAMETERS("BI0001", "Impossible de générer la facture, la référence de prix est introuvable: %s, %s");
 
     private String code;
     private String message;

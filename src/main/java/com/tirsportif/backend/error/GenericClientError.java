@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public enum GenericClientError implements Error {
 
-    RESOURCE_NOT_FOUND("GCE0001", "Cannot find resource identified by the provided ID: %s"),
-    RESOURCES_NOT_FOUND("GCE0002", "Cannot find some resources in the provided list of IDs"),
-    VALIDATION_FAILED("GCE0003", "Provided params for request are not valid: %s");
+    RESOURCE_NOT_FOUND("GCE0001", "Ressource introuvable: %s"),
+    RESOURCES_NOT_FOUND("GCE0002", "Certaines ressources introuvables"),
+    VALIDATION_FAILED("GCE0003", "Le paramètre suivant est invalide: %s");
 
     private String code;
     private String message;

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum SystemError implements Error {
 
-    TECHNICAL_ERROR("SYS001", "A technical error occurred. Details: %s");
+    TECHNICAL_ERROR("SYS001", "Une erreur technique est survenue.");
 
     private String code;
     private String message;

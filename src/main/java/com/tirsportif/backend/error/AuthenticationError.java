@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public enum AuthenticationError implements Error {
 
-    EXPIRED_TOKEN("AUTH001", "The current authentication token is expired. Please login again."),
-    WRONG_FORMAT_TOKEN("AUTH002", "The current authentication token has wrong format. It must be a valid JWT of the form: 'Bearer $tokenValue'"),
-    WRONG_USERNAME("AUTH003", "The provided username is wrong."),
-    WRONG_PASSWORD("AUTH004", "The provided password is wrong."),
-    UNKNOWN_TOKEN("AUTH005", "Unknown token. Please login again.");
+    EXPIRED_TOKEN("AUTH001", "L'authentification a expiré."),
+    WRONG_FORMAT_TOKEN("AUTH002", "L'authentification a un mauvais format"),
+    WRONG_USERNAME("AUTH003", "Nom d'utilisateur inconnu."),
+    WRONG_PASSWORD("AUTH004", "Mauvais mot de passe."),
+    UNKNOWN_TOKEN("AUTH005", "L'authentification a échoué.");
 
     private String code;
     private String message;

@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 public enum ShotResultError implements Error {
 
-    INVALID_SERIE_NUMBER("SR0001", "Invalid serie number: %s. Should be positive and lighter than: %s"),
-    INVALID_SHOT_NUMBER("SR0002", "Invalid shot number: %s. Should be positive and lighter than: %s"),
-    INVALID_POINTS_VALUE("SR0003", "Invalid points value: %s, based on discipline parameters."),
-    SHOT_RESULT_MUST_BE_UNIQUE("SR0004", "Shot results must be unique among serie number, shot number and participationId."),
-    OUTRANGE_POINTS_VALUE("SR0004", "Shot results points value must be between (inclusive) %s and %s "),
-    OUTRANGE_TOTAL_POINTS_VALUE("SR0005", "Total shot results points value must be between (inclusive) %s and %s ");
+    INVALID_SERIE_NUMBER("SR0001", "Mauvais numéro de serie: %s. Devrait être positif et inférieur à: %s"),
+    INVALID_SHOT_NUMBER("SR0002", "Mauvais numéro de tir: %s. Devrait être positif et inférieur à: %s"),
+    INVALID_POINTS_VALUE("SR0003", "La discipline actuelle n'accepte pas les nombres à virgule"),
+    SHOT_RESULT_MUST_BE_UNIQUE("SR0004", "Les résultats doivent être uniques."),
+    OUTRANGE_POINTS_VALUE("SR0005", "Les résultats doivent être entre (inclusif) %s et %s"),
+    OUTRANGE_TOTAL_POINTS_VALUE("SR0006", "Le total doit être entre (inclusif) %s et %s ");
 
     private String code;
     private String message;
