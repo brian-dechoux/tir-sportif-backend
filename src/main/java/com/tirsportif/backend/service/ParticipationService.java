@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -106,7 +107,7 @@ public class ParticipationService extends AbstractService {
      * @return Generated participations
      */
     @Transactional
-    public void createParticipations(Long challengeId, CreateParticipationsRequest request) {
+    public GetShooterParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
         log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
         Challenge challenge = findChallengeById(challengeId);
         Shooter shooter = findShooterById(request.getShooterId());
@@ -124,7 +125,7 @@ public class ParticipationService extends AbstractService {
         // TODO Check also categories...
         checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
 
-        Set<Participation> participations = request.getDisciplinesInformation().stream()
+        List<Participation> participations = request.getDisciplinesInformation().stream()
                 .map(disciplineInformation -> {
                     Discipline discipline = findDisciplineById(disciplineInformation.getDisciplineId());
                     return Participation.builder()
@@ -135,10 +136,11 @@ public class ParticipationService extends AbstractService {
                             .useElectronicTarget(disciplineInformation.isUseElectronicTarget())
                             .outrank(disciplineInformation.isOutrank())
                             .build();
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
 
         try {
-            participationRepository.saveAll(participations);
+            participations = StreamSupport.stream(participationRepository.saveAll(participations).spliterator(), true).collect(Collectors.toList());
+            log.info("Participations created");
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
                 throw new ForbiddenErrorException(ParticipationError.PARTICIPATION_DISCIPLINE_RANKED_SHOULD_BE_UNIQUE, challengeId.toString());
@@ -146,12 +148,15 @@ public class ParticipationService extends AbstractService {
             throw exception;
         }
 
-        log.info("Participations created");
-
-        log.info("Sending participations to billing service...");
+        log.info("Sending participations to billing service");
         participations.stream()
                 .map(ParticipationCreated::new)
                 .forEach(applicationEventPublisher::publishEvent);
+
+        participations = participationRepository.findByChallengeIdAndShooterId(challengeId, shooter.getId());
+
+        log.info("Mapping results");
+        return participationMapper.mapShooterAndParticipationsToResponse(shooter, participations);
     }
 
     private void checkAuthorizedDisciplines(Challenge challenge, Set<CreateDisciplineParticipationRequest> requestedDisciplinesInformation) {
