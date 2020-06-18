@@ -140,4 +140,16 @@ public class ChallengeService extends AbstractService {
         return response;
     }
 
+    /**
+     * Delete an existing challenge
+     *
+     * @param challengeId
+     */
+    public void deleteChallenge(Long challengeId) {
+        log.info("Deleting challenge : {}", challengeId);
+        Challenge challenge = findChallengeById(challengeId);
+        challengeRepository.delete(challenge);
+        log.info("Challenge deleted");
+    }
+
 }

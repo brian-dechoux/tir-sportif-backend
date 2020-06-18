@@ -4,12 +4,15 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity(name = "participation")
+@EqualsAndHashCode(exclude={"shotResults", "bill"})
+@ToString(exclude = {"shotResults", "bill"})
 public class Participation {
 
     @Id
@@ -34,6 +37,12 @@ public class Participation {
     @JoinColumn(name = "disciplineId")
     Discipline discipline;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "participation")
+    Set<ShotResult> shotResults;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "participation", cascade = CascadeType.REMOVE)
+    Bill bill;
+
     @NotNull
     boolean useElectronicTarget;
 
@@ -43,9 +52,6 @@ public class Participation {
      */
     @Transient
     boolean paid;
-
-    @OneToOne(mappedBy = "participation")
-    Bill bill;
 
     @NotNull
     boolean outrank;

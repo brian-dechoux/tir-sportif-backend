@@ -1,8 +1,6 @@
 package com.tirsportif.backend.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +10,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity(name = "challenge")
+@EqualsAndHashCode(exclude="participations")
+@ToString(exclude = "participations")
 public class Challenge {
 
     @Id
@@ -30,6 +30,9 @@ public class Challenge {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId")
     Address address;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "challenge")
+    Set<Participation> participations;
 
     @ManyToOne
     @JoinColumn(name = "organiserClubId")

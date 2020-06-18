@@ -44,6 +44,12 @@ public class ChallengeController {
         return challengeService.updateChallenge(challengeId, request);
     }
 
+    @DeleteMapping(value = "/{challengeId}")
+    @PreAuthorize("authorizedFor('ADMIN')")
+    public void deleteChallenge(@PathVariable Long challengeId) {
+        challengeService.deleteChallenge(challengeId);
+    }
+
     @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
     @PreAuthorize("authorizedFor('VIEW')")
     public GetCategoryAndDisciplineResultsResponse getResultsForCategory(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
