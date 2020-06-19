@@ -77,6 +77,13 @@ public class ChallengeController {
         return participationService.getParticipations(challengeId, participantId);
     }
 
+    @DeleteMapping(value = "/{challengeId}/participants/{participantId}")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public void deleteParticipant(@PathVariable Long challengeId, @PathVariable Long participantId) {
+        participationService.deleteParticipant(challengeId, participantId);
+    }
+
     @PostMapping(value = "/{challengeId}/participations")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")

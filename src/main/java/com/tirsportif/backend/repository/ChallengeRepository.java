@@ -11,8 +11,13 @@ public interface ChallengeRepository extends PagingAndSortingRepository<Challeng
 
     @Query(value = "SELECT challenge.id, challenge.name, challenge.startDate, address.city, " +
             "       (" +
-            "           SELECT COUNT(*) FROM participation " +
-            "           WHERE participation.challengeId = challenge.id" +
+            "           SELECT COUNT(*) FROM " +
+            "               ( " +
+            "                   SELECT COUNT(*) FROM participation " +
+            "                   INNER JOIN shooter ON shooter.id = participation.shooterId " +
+            "                   WHERE participation.challengeId = challenge.id " +
+            "                   GROUP BY shooterId " +
+            "               ) AS groupedParticipations " +
             "       ) AS nbShooters " +
             "FROM challenge " +
             "INNER JOIN address ON address.id = challenge.addressId"

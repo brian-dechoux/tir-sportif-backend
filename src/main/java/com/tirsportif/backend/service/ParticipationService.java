@@ -177,6 +177,23 @@ public class ParticipationService extends AbstractService {
     }
 
     /**
+     * Delete an existing participant for a challenge.
+     * It deletes all its participations and bills.
+     * TODO evolution: Consider not removing all bills and do refund feature.
+     *
+     * @param challengeId
+     * @param participantId
+     */
+    public void deleteParticipant(Long challengeId, Long participantId) {
+        log.info("Deleting all participations for challenge {} and participant {}", challengeId, participantId);
+        findChallengeById(challengeId);
+        findShooterById(participantId);
+        List<Participation> participations = participationRepository.findByChallengeIdAndShooterId(challengeId, participantId);
+        participationRepository.deleteAll(participations);
+        log.info("Participant deleted, along with associated bills for the challenge");
+    }
+
+    /**
      * Delete a participation for a challenge.
      *
      * @param challengeId       Challenge
