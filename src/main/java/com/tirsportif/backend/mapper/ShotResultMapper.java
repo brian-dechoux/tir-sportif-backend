@@ -89,7 +89,11 @@ public class ShotResultMapper {
                     if (singleResult.getShotNumber() == -2) {
                         participationSerieResults = new GetParticipationSerieResultsResponse(seriePoints, null, singleResult.getPoints());
                     } else {
-                        participationSerieResults = new GetParticipationSerieResultsResponse(seriePoints, singleResult.getPoints(), null);
+                        GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber() - 1) != null ?
+                                serieResults.get(singleResult.getSerieNumber() - 1) :
+                                initializedSerieResultList(discipline);
+                        serieResult.setCalculatedTotal(singleResult.getPoints());
+                        participationSerieResults = serieResult;
                     }
                     serieResults.set(singleResult.getSerieNumber() - 1, participationSerieResults);
                 } else if (singleResult.getShotNumber() == 0) {

@@ -1,11 +1,11 @@
 package com.tirsportif.backend.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
 import java.util.List;
 
-@Value
+@Data
 @AllArgsConstructor
 public class GetParticipationSerieResultsResponse {
 

@@ -12,6 +12,13 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
 
     boolean existsByParticipationId(Long participationId);
 
+    @Query(value = "SELECT * FROM shotResult " +
+            "WHERE participationId = ?1 " +
+            "AND serieNumber = ?2 " +
+            "ORDER BY shotNumber"
+            , nativeQuery = true)
+    List<ShotResult> findAllByParticipationIdAndSerieNumber(Long participationId, int serieNumber);
+
     @Query(value = "SELECT SUM(points) AS totalPoints, shooter.lastname, shooter.firstname FROM shotResult AS sr " +
             "INNER JOIN participation p ON sr.participationId = p.id " +
             "INNER JOIN shooter s ON p.shooterId = s.id " +

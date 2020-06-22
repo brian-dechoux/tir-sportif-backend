@@ -9,6 +9,7 @@ import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.ShotResult;
+import com.tirsportif.backend.model.key.ShotResultKey;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
 import com.tirsportif.backend.property.ApiProperties;
@@ -118,6 +119,17 @@ public class ShotResultService extends AbstractService {
 
         shotResultRepository.save(shotResult);
         log.info("Shot result added.");
+
+        double calculatedTotal = shotResultRepository.findAllByParticipationIdAndSerieNumber(shotResult.getParticipation().getId(), shotResult.getId().getSerieNumber()).stream()
+                .filter(currentShotResult -> currentShotResult.getId().getShotNumber() >= 0)
+                .map(ShotResult::getPoints)
+                .reduce(0.0, Double::sum);
+        shotResultRepository.save(new ShotResult(
+                new ShotResultKey(shotResult.getId().getSerieNumber(), -1, shotResult.getId().getParticipationId()),
+                calculatedTotal,
+                participation
+        ));
+        log.info("Shot result serie total recalculated.");
     }
 
     /**
