@@ -120,7 +120,7 @@ CREATE TABLE `participation` (
 
 CREATE TABLE `shotResult` (
   `serieNumber` int NOT NULL,
-  `shotNumber` int,
+  `shotNumber` int NOT NULL,
   `points` float NOT NULL,
   `participationId` int NOT NULL,
   CONSTRAINT `id` PRIMARY KEY (serieNumber, shotNumber, participationId)

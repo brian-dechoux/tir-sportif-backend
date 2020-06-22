@@ -19,7 +19,7 @@ public class ResolvedAddShotResultRequest {
     public static ResolvedAddShotResultRequest ofRawRequest(AddShotResultRequest request, Participation participation) {
         return new ResolvedAddShotResultRequest(
                 request.getSerieNumber(),
-                request.getShotNumber(),
+                request.getShotNumber() == null ? -2 : request.getShotNumber(),
                 request.getPoints(),
                 participation
         );

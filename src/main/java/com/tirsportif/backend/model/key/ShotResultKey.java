@@ -25,9 +25,11 @@ public class ShotResultKey implements Serializable {
     /**
      * Order of the shot.
      * Let's say we've got a serie of 10 shots, then order will be [1-10].
-     * If null, we consider it as a whole serie result.
+     * Special cases:
+     * * -1: Calculated serie total
+     * * -2: Manual serie total (user input)
      */
-    Integer shotNumber;
+    int shotNumber;
 
     long participationId;
 

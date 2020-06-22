@@ -12,7 +12,10 @@ public class AddShotResultRequest {
     @PositiveOrZero
     int serieNumber;
 
-    int shotNumber;
+    /**
+     * If null, it's a manual total value.
+     */
+    Integer shotNumber;
 
     @NotNull
     @PositiveOrZero

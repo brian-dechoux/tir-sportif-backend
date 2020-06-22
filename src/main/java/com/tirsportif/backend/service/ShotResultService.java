@@ -60,15 +60,20 @@ public class ShotResultService extends AbstractService {
         }
     }
 
-    private void checkShotResultRequestParameters(Discipline discipline, AddShotResultRequest request) {
+    private void checkShotResultRequestParameters(Discipline discipline, ResolvedAddShotResultRequest request) {
         int serieNumber = request.getSerieNumber();
+        int shotNumber = request.getShotNumber();
         int expectedNbSeries = discipline.getNbSeries();
+        int expectedNbShots = discipline.getNbShotsPerSerie();
+
+        if (request.getShotNumber() < -2) {
+            throw new BadRequestErrorException(ShotResultError.INVALID_SHOT_NUMBER_OUTBOUNDS);
+        }
+
         if (request.getSerieNumber() > discipline.getNbSeries()) {
             throw new BadRequestErrorException(ShotResultError.INVALID_SERIE_NUMBER, Integer.toString(serieNumber), Integer.toString(expectedNbSeries));
         }
 
-        int shotNumber = request.getShotNumber();
-        int expectedNbShots = discipline.getNbShotsPerSerie();
         if (shotNumber >= 0 && (shotNumber > expectedNbShots)) {
             throw new BadRequestErrorException(ShotResultError.INVALID_SHOT_NUMBER, Integer.toString(shotNumber), Integer.toString(expectedNbShots));
         }
@@ -106,11 +111,10 @@ public class ShotResultService extends AbstractService {
         checkParticipationMatchesChallenge(participation, challenge);
         Discipline discipline = participation.getDiscipline();
 
-        checkShotResultRequestParameters(discipline, request);
+        ResolvedAddShotResultRequest resultRequest = ResolvedAddShotResultRequest.ofRawRequest(request, participation);
+        checkShotResultRequestParameters(discipline, resultRequest);
 
-        ShotResult shotResult = shotResultMapper.mapAddCreateShotResultDtoToShotResult(
-                ResolvedAddShotResultRequest.ofRawRequest(request, participation)
-        );
+        ShotResult shotResult = shotResultMapper.mapAddCreateShotResultDtoToShotResult(resultRequest);
 
         shotResultRepository.save(shotResult);
         log.info("Shot result added.");

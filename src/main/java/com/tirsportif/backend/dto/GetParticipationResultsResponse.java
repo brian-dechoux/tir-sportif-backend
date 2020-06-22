@@ -8,6 +8,6 @@ import java.util.List;
 public class GetParticipationResultsResponse {
 
     ParticipationResultReferenceDto participationReference;
-    List<List<Double>> points;
+    List<GetParticipationSerieResultsResponse> serieResults;
 
 }

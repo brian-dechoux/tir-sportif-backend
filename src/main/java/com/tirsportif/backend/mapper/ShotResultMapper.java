@@ -31,6 +31,7 @@ public class ShotResultMapper {
     }
 
     /**
+     * TODO rewrite explanation
      * Mapping operations, using basic example:
      *
      * List of: 1 0 A B, 1 0 A C, 1 1 A B
@@ -56,7 +57,6 @@ public class ShotResultMapper {
      *
      * @return Mapped results
      */
-    // FIXME Could it be done by some JPA magic ?
     public List<GetParticipationResultsResponse> mapResultToDto(List<ShotResultProjection> results, Discipline discipline) {
         return results.stream()
                 .collect(Collectors.groupingBy(
@@ -73,35 +73,43 @@ public class ShotResultMapper {
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    // TODO Do best, this is not immutable :-(
     private GetParticipationResultsResponse formatResultsResponse(Map.Entry<ParticipationResultReferenceDto, LinkedList<ShooterResultDto>> participationCurrentEntry, Discipline discipline) {
         // Initialize points with null values in case of no shot results for a serie for example
-        List<List<Double>> points = new ArrayList<>(discipline.getNbSeries());
-        points.addAll(Collections.nCopies(discipline.getNbSeries(), initializedSerieResultList(discipline)));
+        List<GetParticipationSerieResultsResponse> serieResults = new ArrayList<>(discipline.getNbSeries());
+        for (int i=0 ; i < discipline.getNbSeries() ; i++) {
+            serieResults.add(initializedSerieResultList(discipline));
+        }
 
         for (ShooterResultDto singleResult : participationCurrentEntry.getValue()) {
             if (singleResult.getSerieNumber() != null) {
-                if (singleResult.getShotNumber() <= 0) {
-                    List<Double> serieResults;
-                    if (singleResult.getShotNumber() == -1) {
-                        serieResults = initializedSerieResultList(discipline);
-                        serieResults.set(discipline.getNbShotsPerSerie(), singleResult.getPoints());
+                if (singleResult.getShotNumber() < 0) {
+                    GetParticipationSerieResultsResponse participationSerieResults;
+                    List<Double> seriePoints = initializedSerieResultList(discipline).getPoints();
+                    if (singleResult.getShotNumber() == -2) {
+                        participationSerieResults = new GetParticipationSerieResultsResponse(seriePoints, null, singleResult.getPoints());
                     } else {
-                        serieResults = points.get(singleResult.getSerieNumber() - 1) != null ? points.get(singleResult.getSerieNumber() - 1) : initializedSerieResultList(discipline);
-                        serieResults.set(singleResult.getShotNumber(), singleResult.getPoints());
+                        participationSerieResults = new GetParticipationSerieResultsResponse(seriePoints, singleResult.getPoints(), null);
                     }
-                    points.set(singleResult.getSerieNumber() - 1, serieResults);
+                    serieResults.set(singleResult.getSerieNumber() - 1, participationSerieResults);
+                } else if (singleResult.getShotNumber() == 0) {
+                    GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber() - 1) != null ?
+                            serieResults.get(singleResult.getSerieNumber() - 1) :
+                            initializedSerieResultList(discipline);
+                    serieResult.getPoints().set(singleResult.getShotNumber(), singleResult.getPoints());
+                    serieResults.set(singleResult.getSerieNumber() - 1, serieResult);
                 } else {
-                    points.get(singleResult.getSerieNumber() - 1).set(singleResult.getShotNumber(), singleResult.getPoints());
+                    serieResults.get(singleResult.getSerieNumber() - 1).getPoints().set(singleResult.getShotNumber(), singleResult.getPoints());
                 }
             }
         }
-        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), points);
+        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), serieResults);
     }
 
-    private List<Double> initializedSerieResultList(Discipline discipline) {
-        List<Double> serieResults = new ArrayList<>(discipline.getNbShotsPerSerie() + 1);
-        serieResults.addAll(Collections.nCopies(discipline.getNbShotsPerSerie() + 1, null));
-        return serieResults;
+    private GetParticipationSerieResultsResponse initializedSerieResultList(Discipline discipline) {
+        List<Double> serieResults = new ArrayList<>(discipline.getNbShotsPerSerie());
+        serieResults.addAll(Collections.nCopies(discipline.getNbShotsPerSerie(), null));
+        return GetParticipationSerieResultsResponse.init(serieResults);
     }
 
     private ShooterResultDto mapResultToDto(ShotResultProjection result) {
