@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ShotResultProjectionImpl implements ShotResultProjection {
     Long participationId;
     boolean outrank;
+    boolean useElectronicTarget;
     Integer serieNumber;
     Integer shotNumber;
     Double points;
@@ -26,6 +27,11 @@ class ShotResultProjectionImpl implements ShotResultProjection {
     @Override
     public boolean getOutrank() {
         return outrank;
+    }
+
+    @Override
+    public boolean getUseElectronicTarget() {
+        return useElectronicTarget;
     }
 }
 
@@ -44,10 +50,10 @@ public class ShotResultMapperTest {
     @Test
     public void _mapShooterResultToDto() {
         List<ShotResultProjection> projections = Arrays.asList(
-                new ShotResultProjectionImpl(1L,false,1,0,1.),
-                new ShotResultProjectionImpl(1L,false,1,1,1.),
-                new ShotResultProjectionImpl(1L,false,2,0,2.),
-                new ShotResultProjectionImpl(1L,false,2,1,2.)
+                new ShotResultProjectionImpl(1L,false, false, 1,0,1.),
+                new ShotResultProjectionImpl(1L,false,false, 1,1,1.),
+                new ShotResultProjectionImpl(1L,false,false, 2,0,2.),
+                new ShotResultProjectionImpl(1L,false,false, 2,1,2.)
         );
 
         List<GetParticipationResultsResponse> results = shotResultMapper.mapResultToDto(projections, discipline);
@@ -60,14 +66,14 @@ public class ShotResultMapperTest {
     @Test
     public void _mapShooterResultToDto_multipleParticipations() {
         List<ShotResultProjection> projections = Arrays.asList(
-                new ShotResultProjectionImpl(2L,true,1,0,3.),
-                new ShotResultProjectionImpl(2L,true,1,1,3.),
-                new ShotResultProjectionImpl(2L,true,2,0,4.),
-                new ShotResultProjectionImpl(2L,true,2,1,4.),
-                new ShotResultProjectionImpl(3L,false,1,0,1.),
-                new ShotResultProjectionImpl(3L,false,1,1,1.),
-                new ShotResultProjectionImpl(3L,false,2,0,2.),
-                new ShotResultProjectionImpl(3L,false,2,1,2.)
+                new ShotResultProjectionImpl(2L,true,false, 1,0,3.),
+                new ShotResultProjectionImpl(2L,true,false, 1,1,3.),
+                new ShotResultProjectionImpl(2L,true,false, 2,0,4.),
+                new ShotResultProjectionImpl(2L,true,false, 2,1,4.),
+                new ShotResultProjectionImpl(3L,false,false, 1,0,1.),
+                new ShotResultProjectionImpl(3L,false,false, 1,1,1.),
+                new ShotResultProjectionImpl(3L,false,false, 2,0,2.),
+                new ShotResultProjectionImpl(3L,false,false, 2,1,2.)
         );
 
         List<GetParticipationResultsResponse> results = shotResultMapper.mapResultToDto(projections, discipline);
@@ -80,8 +86,8 @@ public class ShotResultMapperTest {
     @Test
     public void _mapShooterResultToDto_specialCase_withTotalForSerie() {
         List<ShotResultProjection> projections = Arrays.asList(
-                new ShotResultProjectionImpl(1L,false,1,null,9.),
-                new ShotResultProjectionImpl(1L,false,2,null,8.)
+                new ShotResultProjectionImpl(1L,false,false, 1,null,9.),
+                new ShotResultProjectionImpl(1L,false,false, 2,null,8.)
         );
 
         List<GetParticipationResultsResponse> results = shotResultMapper.mapResultToDto(projections, discipline);

@@ -9,6 +9,10 @@ public class ParticipationResultReferenceDto {
 
     Long participationId;
 
+    int nbShotsPerSerie;
+
     boolean outrank;
+
+    boolean useElectronicTarget;
 
 }

@@ -60,7 +60,12 @@ public class ShotResultMapper {
     public List<GetParticipationResultsResponse> mapResultToDto(List<ShotResultProjection> results, Discipline discipline) {
         return results.stream()
                 .collect(Collectors.groupingBy(
-                        result -> new ParticipationResultReferenceDto(result.getParticipationId(), result.getOutrank()),
+                        result -> new ParticipationResultReferenceDto(
+                                result.getParticipationId(),
+                                discipline.getNbShotsPerSerie(),
+                                result.getOutrank(),
+                                result.getUseElectronicTarget()
+                        ),
                         LinkedHashMap::new,
                         Collectors.mapping(this::mapResultToDto, Collectors.toCollection(LinkedList::new))
                 )).entrySet().stream()
@@ -73,27 +78,20 @@ public class ShotResultMapper {
         List<List<Double>> points = new ArrayList<>(discipline.getNbSeries());
         points.addAll(Collections.nCopies(discipline.getNbSeries(), initializedSerieResultList(discipline)));
 
-        int currentSerieShotNb = 0;
         for (ShooterResultDto singleResult : participationCurrentEntry.getValue()) {
             if (singleResult.getSerieNumber() != null) {
                 if (singleResult.getShotNumber() <= 0) {
-                    // Special case
+                    List<Double> serieResults;
                     if (singleResult.getShotNumber() == -1) {
-                        List<Double> onlyTotalResults = initializedSerieResultList(discipline);
-                        onlyTotalResults.set(discipline.getNbShotsPerSerie(), singleResult.getPoints());
-                        points.set(singleResult.getSerieNumber() - 1, onlyTotalResults);
-                    // New serie
+                        serieResults = initializedSerieResultList(discipline);
+                        serieResults.set(discipline.getNbShotsPerSerie(), singleResult.getPoints());
                     } else {
-                        currentSerieShotNb = 0;
-                        List<Double> serieResults = initializedSerieResultList(discipline);
-                        serieResults.set(currentSerieShotNb, singleResult.getPoints());
-                        points.set(singleResult.getSerieNumber() - 1, serieResults);
-                        currentSerieShotNb++;
+                        serieResults = points.get(singleResult.getSerieNumber() - 1) != null ? points.get(singleResult.getSerieNumber() - 1) : initializedSerieResultList(discipline);
+                        serieResults.set(singleResult.getShotNumber(), singleResult.getPoints());
                     }
-                    // Simple shot result
+                    points.set(singleResult.getSerieNumber() - 1, serieResults);
                 } else {
-                    points.get(singleResult.getSerieNumber() - 1).set(currentSerieShotNb, singleResult.getPoints());
-                    currentSerieShotNb++;
+                    points.get(singleResult.getSerieNumber() - 1).set(singleResult.getShotNumber(), singleResult.getPoints());
                 }
             }
         }

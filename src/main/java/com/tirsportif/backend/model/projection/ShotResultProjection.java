@@ -6,6 +6,8 @@ public interface ShotResultProjection {
 
     boolean getOutrank();
 
+    boolean getUseElectronicTarget();
+
     /**
      * Null if participation without any shot result for the moment.
      */

@@ -33,7 +33,7 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
             , nativeQuery = true)
     List<ShotResultProjection> getShotResultsForChallengeAndShooterAndDiscipline(Long challengeId, Long shooterId, Long disciplineId);
 
-    @Query(value = "SELECT p.id as participationId, p.outrank, sr.serieNumber, sr.shotNumber, sr.points FROM shotResult AS sr " +
+    @Query(value = "SELECT p.id as participationId, p.outrank, p.useElectronicTarget, sr.serieNumber, sr.shotNumber, sr.points FROM shotResult AS sr " +
             "RIGHT JOIN participation p ON sr.participationId = p.id " +
             "WHERE p.challengeId = ?1 " +
             "AND p.id = ?2 " +
