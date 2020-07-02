@@ -9,5 +9,6 @@ public class GetParticipationResultsResponse {
 
     ParticipationResultReferenceDto participationReference;
     List<GetParticipationSerieResultsResponse> serieResults;
+    Double participationTotal;
 
 }

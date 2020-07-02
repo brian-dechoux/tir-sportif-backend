@@ -202,7 +202,6 @@ public class ParticipationService extends AbstractService {
     public void deleteParticipation(Long challengeId, Long participationId) {
         log.info("Deleting participation with ID: {}, for challenge with ID: {}", participationId, challengeId);
         checkExistingParticipationForChallenge(participationId, challengeId);
-        checkNoExistingShotResultsForParticipation(participationId);
         participationRepository.deleteById(participationId);
         log.info("Participation deleted");
     }
@@ -211,12 +210,6 @@ public class ParticipationService extends AbstractService {
         if (!participationRepository.existsByChallengeIdAndId(challengeId, participationId)) {
             String ids = "ChallengeId: "+challengeId.toString()+", Id: "+participationId.toString();
             throw new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, ids);
-        }
-    }
-
-    private void checkNoExistingShotResultsForParticipation(Long participationId) {
-        if (shotResultRepository.existsByParticipationId(participationId)) {
-            throw new ForbiddenErrorException(ParticipationError.EXISTING_SHOT_RESULTS_FOR_PARTICIPATION, participationId.toString());
         }
     }
 

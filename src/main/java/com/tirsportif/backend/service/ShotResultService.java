@@ -105,7 +105,7 @@ public class ShotResultService extends AbstractService {
      * @param participationId
      * @param request
      */
-    public void addShotResult(Long challengeId, Long participationId, AddShotResultRequest request) {
+    public GetParticipationResultsResponse addShotResult(Long challengeId, Long participationId, AddShotResultRequest request) {
         log.info("Adding shot result for challenge: {}, and for participation: {}", challengeId, participationId);
         Challenge challenge = findChallengeById(challengeId);
         Participation participation = findParticipationById(participationId);
@@ -130,6 +130,8 @@ public class ShotResultService extends AbstractService {
                 participation
         ));
         log.info("Shot result serie total recalculated.");
+
+        return getParticipationResults(challengeId, participationId);
     }
 
     /**

@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 /**
  * Shot result for a serie.
@@ -29,7 +29,7 @@ public class ShotResult {
     ShotResultKey id;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     double points;
 
     @NonNull

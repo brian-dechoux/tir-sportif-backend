@@ -100,8 +100,8 @@ public class ChallengeController {
     @PostMapping(value = "/{challengeId}/participations/{participationId}/shot-result")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("authorizedFor('MANAGER')")
-    public void addShotResult(@PathVariable Long challengeId, @PathVariable Long participationId, @Valid @RequestBody AddShotResultRequest request) {
-        shotResultService.addShotResult(challengeId, participationId, request);
+    public GetParticipationResultsResponse addShotResult(@PathVariable Long challengeId, @PathVariable Long participationId, @Valid @RequestBody AddShotResultRequest request) {
+        return shotResultService.addShotResult(challengeId, participationId, request);
     }
 
     @GetMapping(value = "/{challengeId}/results/participants/{participantId}/disciplines/{disciplineId}")

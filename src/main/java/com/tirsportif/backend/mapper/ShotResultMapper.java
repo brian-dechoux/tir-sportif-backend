@@ -89,25 +89,33 @@ public class ShotResultMapper {
                     if (singleResult.getShotNumber() == -2) {
                         participationSerieResults = new GetParticipationSerieResultsResponse(seriePoints, null, singleResult.getPoints());
                     } else {
-                        GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber() - 1) != null ?
-                                serieResults.get(singleResult.getSerieNumber() - 1) :
+                        GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber()) != null ?
+                                serieResults.get(singleResult.getSerieNumber()) :
                                 initializedSerieResultList(discipline);
                         serieResult.setCalculatedTotal(singleResult.getPoints());
                         participationSerieResults = serieResult;
                     }
-                    serieResults.set(singleResult.getSerieNumber() - 1, participationSerieResults);
+                    serieResults.set(singleResult.getSerieNumber(), participationSerieResults);
                 } else if (singleResult.getShotNumber() == 0) {
-                    GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber() - 1) != null ?
-                            serieResults.get(singleResult.getSerieNumber() - 1) :
+                    GetParticipationSerieResultsResponse serieResult = serieResults.get(singleResult.getSerieNumber()) != null ?
+                            serieResults.get(singleResult.getSerieNumber()) :
                             initializedSerieResultList(discipline);
                     serieResult.getPoints().set(singleResult.getShotNumber(), singleResult.getPoints());
-                    serieResults.set(singleResult.getSerieNumber() - 1, serieResult);
+                    serieResults.set(singleResult.getSerieNumber(), serieResult);
                 } else {
-                    serieResults.get(singleResult.getSerieNumber() - 1).getPoints().set(singleResult.getShotNumber(), singleResult.getPoints());
+                    serieResults.get(singleResult.getSerieNumber()).getPoints().set(singleResult.getShotNumber(), singleResult.getPoints());
                 }
             }
         }
-        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), serieResults);
+
+        Double participationTotal = serieResults.stream()
+                .map(serieResult ->
+                    Optional.ofNullable(serieResult.getManualTotal())
+                        .or(() -> Optional.ofNullable(serieResult.getCalculatedTotal()))
+                        .orElse(0.0)
+                ).reduce(Double::sum)
+                .orElse(0.0);
+        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), serieResults, participationTotal);
     }
 
     private GetParticipationSerieResultsResponse initializedSerieResultList(Discipline discipline) {
