@@ -38,7 +38,7 @@ CREATE TABLE `price` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `type` ENUM('LICENSE', 'CHALLENGE'),
   `forLicenseeOnly` boolean,
-  `value` float,
+  `value` double,
   `clubId` int NOT NULL,
   `active` boolean
 );
@@ -77,8 +77,8 @@ CREATE TABLE `discipline` (
   `nbSeries` int NOT NULL,
   `nbShotsPerSerie` int NOT NULL,
   `isDecimalResult` boolean NOT NULL,
-  `minPointsValue` float NOT NULL,
-  `maxPointsValue` float NOT NULL
+  `minPointsValue` double NOT NULL,
+  `maxPointsValue` double NOT NULL
 );
 
 CREATE TABLE `categoriesDisciplinesParameters` (
@@ -121,14 +121,14 @@ CREATE TABLE `participation` (
 CREATE TABLE `shotResult` (
   `serieNumber` int NOT NULL,
   `shotNumber` int NOT NULL,
-  `points` float NOT NULL,
+  `points` double NOT NULL,
   `participationId` int NOT NULL,
   CONSTRAINT `id` PRIMARY KEY (serieNumber, shotNumber, participationId)
 );
 
 CREATE TABLE `bill` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
-  `value` float NOT NULL,
+  `value` double NOT NULL,
   `paid` boolean NOT NULL,
   `participationId` int,
   `licenseeId` int,
