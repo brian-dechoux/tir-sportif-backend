@@ -50,6 +50,7 @@ CREATE TABLE `shooter` (
   `birthDate` date,
   `clubId` int,
   `addressId` int,
+  `email` int,
   `categoryId` int NOT NULL
 );
 
@@ -58,6 +59,7 @@ CREATE TABLE `licensee` (
   `badgeNumber` int NOT NULL,
   `lockerNumber` int,
   `subscriptionDate` date NOT NULL,
+  `addressId` int,
   `shooterId` int NOT NULL
 );
 

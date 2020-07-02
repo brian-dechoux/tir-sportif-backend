@@ -31,4 +31,8 @@ public class Licensee {
     @JoinColumn(name = "shooterId")
     Shooter shooter;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "addressId")
+    Address address;
+
 }

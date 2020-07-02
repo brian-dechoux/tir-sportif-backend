@@ -1,8 +1,10 @@
 package com.tirsportif.backend.model;
 
+import com.tirsportif.backend.utils.Regexes;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -40,4 +42,6 @@ public class Shooter {
     @JoinColumn(name = "categoryId")
     Category category;
 
+    @Email(regexp = Regexes.EMAIL)
+    String email;
 }
