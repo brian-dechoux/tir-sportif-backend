@@ -23,4 +23,6 @@ public class GetShooterResponse {
 
     GetCategoryResponse category;
 
+    String email;
+
 }

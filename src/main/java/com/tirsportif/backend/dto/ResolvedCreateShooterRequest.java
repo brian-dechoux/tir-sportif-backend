@@ -23,13 +23,16 @@ public class ResolvedCreateShooterRequest {
     @NonNull
     Category category;
 
+    String email;
+
     public static ResolvedCreateShooterRequest ofRawRequest(CreateShooterRequest request, Club resolvedClub, Category resolvedCategory) {
         return new ResolvedCreateShooterRequest(
                 request.getLastname(),
                 request.getFirstname(),
                 request.getBirthdate(),
                 resolvedClub,
-                resolvedCategory
+                resolvedCategory,
+                request.getEmail()
         );
     }
 

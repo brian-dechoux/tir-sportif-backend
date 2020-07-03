@@ -1,11 +1,9 @@
 package com.tirsportif.backend.dto;
 
+import com.tirsportif.backend.utils.Regexes;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -29,4 +27,6 @@ public class CreateShooterRequest {
     @Positive
     Long categoryId;
 
+    @Email(regexp = Regexes.EMAIL)
+    String email;
 }

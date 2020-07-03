@@ -25,6 +25,7 @@ public class ShooterMapper {
         shooter.setBirthDate(request.getBirthdate());
         shooter.setClub(request.getClub());
         shooter.setCategory(request.getCategory());
+        shooter.setEmail(request.getEmail());
         return shooter;
     }
 
@@ -37,7 +38,8 @@ public class ShooterMapper {
                 Optional.ofNullable(shooter.getClub())
                         .map(clubMapper::mapClubToResponse)
                         .orElse(null),
-                categoryMapper.mapCategoryToResponse(shooter.getCategory())
+                categoryMapper.mapCategoryToResponse(shooter.getCategory()),
+                shooter.getEmail()
         );
     }
 
