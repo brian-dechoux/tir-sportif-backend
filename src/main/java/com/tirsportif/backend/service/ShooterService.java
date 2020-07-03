@@ -1,7 +1,6 @@
 package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.cache.CountryStore;
-import com.tirsportif.backend.dto.CreateAddressRequest;
 import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
@@ -63,16 +62,12 @@ public class ShooterService extends AbstractService {
 
     public GetShooterResponse createShooter(CreateShooterRequest request) {
         log.info("Creating shooter named : {} {}", request.getLastname(), request.getFirstname());
-        Country country = Optional.ofNullable(request.getAddress())
-                .map(CreateAddressRequest::getCountryId)
-                .map(this::findCountryById)
-                .orElse(null);
         Club club = Optional.ofNullable(request.getClubId())
                 .map(this::findClubById)
                 .orElse(null);
         Category category = findCategoryById(request.getCategoryId());
         Shooter shooter = shooterMapper.mapCreateShooterDtoToShooter(
-                ResolvedCreateShooterRequest.ofRawRequest(request, country, club, category)
+                ResolvedCreateShooterRequest.ofRawRequest(request, club, category)
         );
         shooter = shooterRepository.save(shooter);
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);

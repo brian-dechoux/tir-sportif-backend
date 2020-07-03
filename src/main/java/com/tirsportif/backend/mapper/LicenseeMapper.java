@@ -11,9 +11,11 @@ import java.time.LocalDate;
 public class LicenseeMapper {
 
     private final ShooterMapper shooterMapper;
+    private final AddressMapper addressMapper;
 
-    public LicenseeMapper(ShooterMapper shooterMapper) {
+    public LicenseeMapper(ShooterMapper shooterMapper, AddressMapper addressMapper) {
         this.shooterMapper = shooterMapper;
+        this.addressMapper = addressMapper;
     }
 
     public Licensee mapCreateLicenseeDtoToLicensee(ResolvedCreateLicenseeRequest request, LocalDate subscriptionDate) {
@@ -22,6 +24,9 @@ public class LicenseeMapper {
         licensee.setLockerNumber(request.getLockerNumber());
         licensee.setSubscriptionDate(subscriptionDate);
         licensee.setShooter(request.getShooter());
+        if (request.getAddress() != null) {
+            licensee.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
+        }
         return licensee;
     }
 
@@ -31,7 +36,8 @@ public class LicenseeMapper {
                 licensee.getBadgeNumber(),
                 licensee.getLockerNumber(),
                 licensee.getSubscriptionDate(),
-                shooterMapper.mapShooterToResponse(licensee.getShooter())
+                shooterMapper.mapShooterToResponse(licensee.getShooter()),
+                addressMapper.mapAddressToDto(licensee.getAddress())
         );
     }
 

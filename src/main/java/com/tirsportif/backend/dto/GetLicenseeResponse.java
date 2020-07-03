@@ -17,4 +17,6 @@ public class GetLicenseeResponse {
 
     GetShooterResponse shooter;
 
+    GetAddressResponse address;
+
 }

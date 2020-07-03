@@ -19,8 +19,6 @@ public class GetShooterResponse {
 
     LocalDate birthdate;
 
-    GetAddressResponse address;
-
     GetClubResponse club;
 
     GetCategoryResponse category;

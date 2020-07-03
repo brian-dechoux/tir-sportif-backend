@@ -10,12 +10,10 @@ import java.util.Optional;
 @Component
 public class ShooterMapper {
 
-    private final AddressMapper addressMapper;
     private final CategoryMapper categoryMapper;
     private final ClubMapper clubMapper;
 
-    public ShooterMapper(AddressMapper addressMapper, CategoryMapper categoryMapper, ClubMapper clubMapper) {
-        this.addressMapper = addressMapper;
+    public ShooterMapper(CategoryMapper categoryMapper, ClubMapper clubMapper) {
         this.categoryMapper = categoryMapper;
         this.clubMapper = clubMapper;
     }
@@ -27,9 +25,6 @@ public class ShooterMapper {
         shooter.setBirthDate(request.getBirthdate());
         shooter.setClub(request.getClub());
         shooter.setCategory(request.getCategory());
-        if (request.getAddress() != null) {
-            shooter.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
-        }
         return shooter;
     }
 
@@ -39,9 +34,6 @@ public class ShooterMapper {
                 shooter.getLastname(),
                 shooter.getFirstname(),
                 shooter.getBirthDate(),
-                Optional.ofNullable(shooter.getAddress())
-                        .map(addressMapper::mapAddressToDto)
-                        .orElse(null),
                 Optional.ofNullable(shooter.getClub())
                         .map(clubMapper::mapClubToResponse)
                         .orElse(null),
