@@ -49,7 +49,6 @@ CREATE TABLE `shooter` (
   `firstname` varchar(255) NOT NULL,
   `birthDate` date,
   `clubId` int,
-  `addressId` int,
   `email` int,
   `categoryId` int NOT NULL
 );
@@ -146,10 +145,10 @@ ALTER TABLE `club` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
 ALTER TABLE `price` ADD FOREIGN KEY (`clubId`) REFERENCES `club` (`id`);
 
 ALTER TABLE `shooter` ADD FOREIGN KEY (`clubId`) REFERENCES `club` (`id`);
-ALTER TABLE `shooter` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
 ALTER TABLE `shooter` ADD FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
 
 ALTER TABLE `licensee` ADD FOREIGN KEY (`shooterId`) REFERENCES `shooter` (`id`);
+ALTER TABLE `licensee` ADD FOREIGN KEY (`addressId`) REFERENCES `address` (`id`);
 
 ALTER TABLE `challenge` ADD FOREIGN KEY (`organiserClubId`) REFERENCES `club` (`id`);
 
