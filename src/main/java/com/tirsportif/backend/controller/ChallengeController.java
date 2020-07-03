@@ -50,12 +50,6 @@ public class ChallengeController {
         challengeService.deleteChallenge(challengeId);
     }
 
-    @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
-    @PreAuthorize("authorizedFor('VIEW')")
-    public GetCategoryAndDisciplineResultsResponse getResultsForCategory(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
-        return shotResultService.getResultsForCategory(challengeId, categoryId, disciplineId);
-    }
-
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
@@ -116,6 +110,12 @@ public class ChallengeController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetParticipationResultsResponse getParticipationResults(@PathVariable Long challengeId, @PathVariable Long participationId) {
         return shotResultService.getParticipationResults(challengeId, participationId);
+    }
+
+    @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
+    @PreAuthorize("authorizedFor('VIEW')")
+    public GetCategoryAndDisciplineResultsResponse getResultsForCategory(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
+        return shotResultService.getResultsForCategory(challengeId, categoryId, disciplineId);
     }
 
 }

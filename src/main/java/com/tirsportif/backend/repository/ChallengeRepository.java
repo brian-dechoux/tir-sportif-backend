@@ -20,7 +20,8 @@ public interface ChallengeRepository extends PagingAndSortingRepository<Challeng
             "               ) AS groupedParticipations " +
             "       ) AS nbShooters " +
             "FROM challenge " +
-            "INNER JOIN address ON address.id = challenge.addressId"
+            "INNER JOIN address ON address.id = challenge.addressId " +
+            "ORDER BY challenge.startDate DESC"
             , countQuery = "SELECT COUNT(*) FROM challenge"
             , nativeQuery = true)
     Page<ChallengeListElement> findAllAsListElements(Pageable page);
