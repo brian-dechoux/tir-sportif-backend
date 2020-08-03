@@ -108,6 +108,11 @@ public class ChallengeController {
         return shotResultService.getParticipationResults(challengeId, participationId);
     }
 
+    @GetMapping(value = "/{challengeId}/results")
+    public GetChallengeResultsResponse getResultsForChallenge(@PathVariable Long challengeId) {
+        return shotResultService.getResultsForChallenge(challengeId);
+    }
+
     @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
     public GetCategoryAndDisciplineResultsResponse getResultsForCategory(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
         return shotResultService.getResultsForCategory(challengeId, categoryId, disciplineId);

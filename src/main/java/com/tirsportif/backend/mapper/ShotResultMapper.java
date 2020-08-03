@@ -5,7 +5,10 @@ import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.key.ShotResultKey;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
+import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -28,6 +31,52 @@ public class ShotResultMapper {
                 result.getLastname(),
                 result.getFirstname()
         );
+    }
+
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    private class TemporaryChallengeCategoryDisciplineMapKey {
+        long categoryId;
+        String categoryLabel;
+        long disciplineId;
+        String disciplineLabel;
+    }
+
+    /**
+     * TODO
+     * @param results
+     * @return
+     */
+    public List<GetChallengeCategoryDisciplineResponse> mapChallengeResultsToDto(List<ShotResultForChallengeProjection> results) {
+        return results.stream()
+                .collect(Collectors.groupingBy(
+                        singleResult -> new TemporaryChallengeCategoryDisciplineMapKey(
+                                singleResult.getCategoryId(),
+                                singleResult.getCategoryLabel(),
+                                singleResult.getDisciplineId(),
+                                singleResult.getDisciplineLabel()
+                        ),
+                        LinkedHashMap::new,
+                        Collectors.mapping(
+                                singleResult -> new GetChallengeCategoryDisciplineResultResponse(
+                                        singleResult.getLastname(),
+                                        singleResult.getFirstname(),
+                                        singleResult.getParticipationId(), singleResult.getParticipationTotalPoints()
+                                ),
+                                Collectors.toCollection(LinkedList::new)
+                        )
+                )).entrySet().stream()
+                .map(participationCurrentEntry -> GetChallengeCategoryDisciplineResponse.builder()
+                        .categoryId(participationCurrentEntry.getKey().categoryId)
+                        .categoryLabel(participationCurrentEntry.getKey().categoryLabel)
+                        .disciplineId(participationCurrentEntry.getKey().disciplineId)
+                        .disciplineLabel(participationCurrentEntry.getKey().disciplineLabel)
+                        .results(
+                                participationCurrentEntry.getValue().stream()
+                                        .sorted(Comparator.comparingDouble(GetChallengeCategoryDisciplineResultResponse::getParticipationTotalPoints).reversed())
+                                        .collect(Collectors.toCollection(LinkedList::new))
+                        ).build()
+                ).collect(Collectors.toList());
     }
 
     /**

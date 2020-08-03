@@ -4,6 +4,7 @@ import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.ParticipationError;
 import com.tirsportif.backend.error.ShotResultError;
 import com.tirsportif.backend.exception.BadRequestErrorException;
+import com.tirsportif.backend.mapper.ChallengeMapper;
 import com.tirsportif.backend.mapper.ShotResultMapper;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
@@ -11,6 +12,7 @@ import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.key.ShotResultKey;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
+import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.ChallengeRepository;
@@ -21,6 +23,7 @@ import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,14 +35,16 @@ public class ShotResultService extends AbstractService {
     private final DisciplineRepository disciplineRepository;
     private final ParticipationRepository participationRepository;
     private final ShotResultRepository shotResultRepository;
+    private final ChallengeMapper challengeMapper;
     private final ShotResultMapper shotResultMapper;
 
-    public ShotResultService(ApiProperties apiProperties, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ShotResultMapper shotResultMapper) {
+    public ShotResultService(ApiProperties apiProperties, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ChallengeMapper challengeMapper, ShotResultMapper shotResultMapper) {
         super(apiProperties);
         this.challengeRepository = challengeRepository;
         this.disciplineRepository = disciplineRepository;
         this.participationRepository = participationRepository;
         this.shotResultRepository = shotResultRepository;
+        this.challengeMapper = challengeMapper;
         this.shotResultMapper = shotResultMapper;
     }
 
@@ -132,6 +137,25 @@ public class ShotResultService extends AbstractService {
         log.info("Shot result serie total recalculated.");
 
         return getParticipationResults(challengeId, participationId);
+    }
+
+    /**
+     * Get results for a challenge.
+     *
+     * @param challengeId
+     * @return Challenge results
+     */
+    @Transactional
+    public GetChallengeResultsResponse getResultsForChallenge(Long challengeId) {
+        log.info("Searching shot results for challenge: {}", challengeId);
+        Challenge challenge = findChallengeById(challengeId);
+        List<ShotResultForChallengeProjection> results = shotResultRepository.getShotResultsForChallenge(challengeId);
+        GetChallengeResultsResponse response = GetChallengeResultsResponse.builder()
+                .challenge(challengeMapper.mapChallengeToResponse(challenge))
+                .challengeResults(shotResultMapper.mapChallengeResultsToDto(results))
+                .build();
+        log.info("Found {} results", results.size());
+        return response;
     }
 
     /**
