@@ -1,11 +1,14 @@
 package com.tirsportif.backend.mapper;
 
 import com.tirsportif.backend.dto.*;
+import com.tirsportif.backend.model.Category;
 import com.tirsportif.backend.model.Challenge;
+import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.projection.ChallengeListElement;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,11 +77,13 @@ public class ChallengeMapper {
                 addressMapper.mapAddressToDto(challenge.getAddress()),
                 clubMapper.mapClubToResponse(challenge.getOrganiserClub()),
                 challenge.getCategories().stream()
+                        .sorted(Comparator.comparingLong(Category::getId))
                         .map(categoryMapper::mapCategoryToResponse)
-                        .collect(Collectors.toSet()),
+                        .collect(Collectors.toList()),
                 challenge.getDisciplines().stream()
+                        .sorted(Comparator.comparingLong(Discipline::getId))
                         .map(disciplineMapper::mapDisciplineToResponse)
-                        .collect(Collectors.toSet())
+                        .collect(Collectors.toList())
         );
     }
 
@@ -90,9 +95,11 @@ public class ChallengeMapper {
                 addressMapper.mapAddressToDto(challenge.getAddress()),
                 clubMapper.mapClubToResponse(challenge.getOrganiserClub()),
                 challenge.getCategories().stream()
+                        .sorted(Comparator.comparingLong(Category::getId))
                         .map(categoryMapper::mapCategoryToResponse)
                         .collect(Collectors.toSet()),
                 challenge.getDisciplines().stream()
+                        .sorted(Comparator.comparingLong(Discipline::getId))
                         .map(disciplineMapper::mapDisciplineToResponse)
                         .collect(Collectors.toSet()),
                 participations.stream()

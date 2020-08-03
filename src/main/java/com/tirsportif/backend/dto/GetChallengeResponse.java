@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Value
 public class GetChallengeResponse {
@@ -25,9 +25,9 @@ public class GetChallengeResponse {
     GetClubResponse club;
 
     @NonNull
-    Set<GetCategoryResponse> categories;
+    List<GetCategoryResponse> categories;
 
     @NonNull
-    Set<GetDisciplineResponse> disciplines;
+    List<GetDisciplineResponse> disciplines;
 
 }
