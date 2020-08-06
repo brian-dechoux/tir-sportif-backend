@@ -1,7 +1,7 @@
 package com.tirsportif.backend.repository;
 
 import com.tirsportif.backend.model.Challenge;
-import com.tirsportif.backend.model.projection.ChallengeListElement;
+import com.tirsportif.backend.model.projection.ChallengeListElementProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +24,6 @@ public interface ChallengeRepository extends PagingAndSortingRepository<Challeng
             "ORDER BY challenge.startDate DESC"
             , countQuery = "SELECT COUNT(*) FROM challenge"
             , nativeQuery = true)
-    Page<ChallengeListElement> findAllAsListElements(Pageable page);
+    Page<ChallengeListElementProjection> findAllAsListElements(Pageable page);
 
 }

@@ -1,7 +1,7 @@
 package com.tirsportif.backend.repository;
 
 import com.tirsportif.backend.model.Participation;
-import com.tirsportif.backend.model.projection.Participant;
+import com.tirsportif.backend.model.projection.ParticipantProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +24,6 @@ public interface ParticipationRepository extends PagingAndSortingRepository<Part
                 "FROM participation p " +
                 "WHERE p.challengeId = ?1"
             , nativeQuery = true)
-    Page<Participant> findParticipantsByChallengeId(Long challengeId, Pageable page);
+    Page<ParticipantProjection> findParticipantsByChallengeId(Long challengeId, Pageable page);
 
 }

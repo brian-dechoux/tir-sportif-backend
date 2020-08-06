@@ -1,6 +1,6 @@
 package com.tirsportif.backend.model.projection;
 
-public interface Participant {
+public interface ParticipantProjection {
 
     Long getId();
 

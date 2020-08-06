@@ -6,7 +6,7 @@ import com.tirsportif.backend.dto.GetShooterParticipationsResponse;
 import com.tirsportif.backend.model.Bill;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.Shooter;
-import com.tirsportif.backend.model.projection.Participant;
+import com.tirsportif.backend.model.projection.ParticipantProjection;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,13 +24,13 @@ public class ParticipationMapper {
         this.disciplineMapper = disciplineMapper;
     }
 
-    public GetParticipantResponse mapParticipantToResponse(Participant participant) {
+    public GetParticipantResponse mapParticipantToResponse(ParticipantProjection participantProjection) {
         return new GetParticipantResponse(
-                participant.getId(),
-                participant.getLastname(),
-                participant.getFirstname(),
-                participant.getClubId(),
-                participant.getClubName()
+                participantProjection.getId(),
+                participantProjection.getLastname(),
+                participantProjection.getFirstname(),
+                participantProjection.getClubId(),
+                participantProjection.getClubName()
         );
     }
 

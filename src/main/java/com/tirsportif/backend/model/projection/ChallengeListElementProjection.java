@@ -5,7 +5,7 @@ import com.tirsportif.backend.configuration.converter.OffsetDateTimeConverter;
 import javax.persistence.Convert;
 import java.time.OffsetDateTime;
 
-public interface ChallengeListElement {
+public interface ChallengeListElementProjection {
 
     Long getId();
 

@@ -5,7 +5,7 @@ import com.tirsportif.backend.model.Category;
 import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
-import com.tirsportif.backend.model.projection.ChallengeListElement;
+import com.tirsportif.backend.model.projection.ChallengeListElementProjection;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -108,13 +108,13 @@ public class ChallengeMapper {
         );
     }
 
-    public GetChallengeListElementResponse mapChallengeListElementToResponse(ChallengeListElement challengeListElement) {
+    public GetChallengeListElementResponse mapChallengeListElementToResponse(ChallengeListElementProjection challengeListElementProjection) {
         return new GetChallengeListElementResponse(
-                challengeListElement.getId(),
-                challengeListElement.getName(),
-                challengeListElement.getStartDate(),
-                challengeListElement.getCity(),
-                challengeListElement.getNbShooters()
+                challengeListElementProjection.getId(),
+                challengeListElementProjection.getName(),
+                challengeListElementProjection.getStartDate(),
+                challengeListElementProjection.getCity(),
+                challengeListElementProjection.getNbShooters()
         );
     }
 

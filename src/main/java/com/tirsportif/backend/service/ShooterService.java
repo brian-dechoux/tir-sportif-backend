@@ -1,17 +1,16 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.cache.CountryStore;
 import com.tirsportif.backend.dto.CreateShooterRequest;
+import com.tirsportif.backend.dto.GetSearchShooterResponse;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
 import com.tirsportif.backend.error.GenericClientError;
-import com.tirsportif.backend.exception.BadRequestErrorException;
 import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.ShooterMapper;
 import com.tirsportif.backend.model.Category;
 import com.tirsportif.backend.model.Club;
-import com.tirsportif.backend.model.Country;
 import com.tirsportif.backend.model.Shooter;
+import com.tirsportif.backend.model.projection.SearchShooterProjection;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.CategoryRepository;
 import com.tirsportif.backend.repository.ClubRepository;
@@ -19,7 +18,9 @@ import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,20 +30,13 @@ public class ShooterService extends AbstractService {
     private final ShooterRepository shooterRepository;
     private final ClubRepository clubRepository;
     private final CategoryRepository categoryRepository;
-    private final CountryStore countryStore;
 
-    public ShooterService(ApiProperties apiProperties, ShooterMapper shooterMapper, ShooterRepository shooterRepository, ClubRepository clubRepository, CategoryRepository categoryRepository, CountryStore countryStore) {
+    public ShooterService(ApiProperties apiProperties, ShooterMapper shooterMapper, ShooterRepository shooterRepository, ClubRepository clubRepository, CategoryRepository categoryRepository) {
         super(apiProperties);
         this.shooterMapper = shooterMapper;
         this.shooterRepository = shooterRepository;
         this.clubRepository = clubRepository;
         this.categoryRepository = categoryRepository;
-        this.countryStore = countryStore;
-    }
-
-    private Country findCountryById(Long id) {
-        return countryStore.getCountryById(id)
-                .orElseThrow(() -> new BadRequestErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
     }
 
     private Shooter findShooterById(Long shooterId) {
@@ -81,6 +75,17 @@ public class ShooterService extends AbstractService {
                 .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, id.toString()));
         GetShooterResponse response = shooterMapper.mapShooterToResponse(shooter);
         log.info("Found shooter");
+        return response;
+    }
+
+    public List<GetSearchShooterResponse> search(String searchName) {
+        log.info("Search for shooters with name: {}", searchName);
+        String sanitizedSearchName = searchName.replaceAll("\\s+", " ").trim();
+        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName);
+        List<GetSearchShooterResponse> response = shooters.stream()
+                .map(shooterMapper::mapSearchShooterToResponse)
+                .collect(Collectors.toList());
+        log.info("Found {} shooters matching searched name", searchName);
         return response;
     }
 
