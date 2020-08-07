@@ -5,5 +5,3 @@ build:
     redis: docker/redis/Dockerfile
 release:
   image: backend
-  command:
-    - echo 'Starting server after deployment!';
