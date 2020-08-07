@@ -88,4 +88,4 @@ DerivedData
 
 # Environment
 .env
-env_file
+*.env_file

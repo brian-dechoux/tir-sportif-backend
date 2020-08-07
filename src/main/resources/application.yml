@@ -25,24 +25,12 @@ spring:
     password: ${REDIS_PASSWORD}
     time-unit: ${REDIS_TTL_TIMEUNIT}
 
-## Server configs
-
-server:
-
-  port: 8443
-  ssl:
-    key-store-type: PKCS12
-    key-store: ${SERVER_SSL_KS}
-    key-store-password: ${SERVER_SSL_PASSWORD}
-    key-alias: ${SERVER_SSL_ALIAS}
-
 ## Custom app configs
 tir-sportif:
 
   api:
     ### Default pages size
     pagination-size: 10
-    url: ${TIRSPORTIF_API_URL}
 
   jwt:
     secret: ${TIRSPORTIF_JWT_SECRET}
@@ -71,19 +59,10 @@ spring:
     password: password
     time-unit: MILLISECONDS
 
-## Server configs
-
-server:
-  ssl:
-    key-store: classpath:ssl/tir-sportif-local.p12
-    key-store-password: password
-    key-alias: local
+server.port: 8080
 
 ## Custom app configs
 tir-sportif:
-
-  api:
-    url: https://localhost:8443
 
   jwt:
     secret: springfield1911EMP

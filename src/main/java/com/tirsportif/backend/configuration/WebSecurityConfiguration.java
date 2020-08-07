@@ -41,8 +41,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                     .cors();
-        // SSL
-        httpSecurity.requiresChannel().anyRequest().requiresSecure();
     }
 
 }
