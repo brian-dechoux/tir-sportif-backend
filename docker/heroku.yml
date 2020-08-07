@@ -1,5 +1,0 @@
-build:
-  docker:
-    backend: Dockerfile
-    mysql: mysql/Dockerfile
-    redis: redis/Dockerfile
