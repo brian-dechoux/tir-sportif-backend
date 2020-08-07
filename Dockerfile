@@ -7,6 +7,9 @@ WORKDIR ${WORKDIR}
 
 ADD . ${WORKDIR}
 
-ADD docker/start.sh /
-RUN ["chmod", "+x", "/start.sh"]
-CMD ["/start.sh"]
+RUN mvn clean
+RUN mvn -B -Dmaven.test.skip=true package
+
+RUN ls
+
+CMD java -Xmx256m -jar ${WORKDIR}/target/tir-sportif.jar

@@ -1,5 +1,9 @@
 # Default
 
+## Server
+
+server.port: ${PORT}
+
 ## Spring related configs
 
 spring:
@@ -14,10 +18,10 @@ spring:
 
   ### SGBDR MySQL properties
   datasource:
-    url: jdbc:mysql://${SPRING_DATASOURCE_DOMAIN}/tir-sportif?useSSL=${SPRING_DATASOURCE_USE_SSL}&allowPublicKeyRetrieval=true
+    url: ${SPRING_DATASOURCE_DOMAIN}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER}
 
   redis:
     host: ${REDIS_HOST}
@@ -40,6 +44,8 @@ tir-sportif:
 
 # Local
 
+server.port: 8080
+
 ## Spring related configs
 
 spring:
@@ -52,14 +58,13 @@ spring:
     url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false&allowPublicKeyRetrieval=true
     username: admin
     password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis:
     host: localhost
     port: 6379
     password: password
     time-unit: MILLISECONDS
-
-server.port: 8080
 
 ## Custom app configs
 tir-sportif:
