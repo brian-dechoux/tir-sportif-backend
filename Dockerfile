@@ -12,4 +12,4 @@ RUN mvn -B -Dmaven.test.skip=true package
 
 RUN ls
 
-CMD java -Xmx256m -jar ${WORKDIR}/target/tir-sportif.jar
+CMD java -Xmx128m -jar ${WORKDIR}/target/tir-sportif.jar
