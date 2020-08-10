@@ -49,7 +49,7 @@ CREATE TABLE `shooter` (
   `firstname` varchar(255) NOT NULL,
   `birthDate` date,
   `clubId` int,
-  `email` int,
+  `email` varchar(255),
   `categoryId` int NOT NULL
 );
 
