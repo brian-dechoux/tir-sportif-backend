@@ -9,18 +9,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ChallengeRepository extends PagingAndSortingRepository<Challenge,Long> {
 
-    @Query(value = "SELECT challenge.id, challenge.name, challenge.startDate, address.city, " +
-            "       (" +
-            "           SELECT COUNT(*) FROM " +
-            "               ( " +
-            "                   SELECT COUNT(*) FROM participation " +
-            "                   INNER JOIN shooter ON shooter.id = participation.shooterId " +
-            "                   WHERE participation.challengeId = challenge.id " +
-            "                   GROUP BY shooterId " +
-            "               ) AS groupedParticipations " +
-            "       ) AS nbShooters " +
+    @Query(value = "SELECT challenge.id, challenge.name, challenge.startDate, address.city, COUNT(DISTINCT p.shooterId) AS nbShooters " +
             "FROM challenge " +
             "INNER JOIN address ON address.id = challenge.addressId " +
+            "LEFT JOIN participation p on challenge.id = p.challengeId " +
+            "GROUP BY challenge.id, challenge.name, challenge.startDate, address.city " +
             "ORDER BY challenge.startDate DESC"
             , countQuery = "SELECT COUNT(*) FROM challenge"
             , nativeQuery = true)
