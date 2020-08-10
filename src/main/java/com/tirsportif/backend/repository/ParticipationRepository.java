@@ -13,7 +13,7 @@ public interface ParticipationRepository extends PagingAndSortingRepository<Part
 
     boolean existsByChallengeIdAndId(Long challengeId, Long participationId);
 
-    List<Participation> findByChallengeIdAndShooterId(Long challengeId, Long shooterId);
+    List<Participation> findByChallengeIdAndShooterIdOrderByOutrankAsc(Long challengeId, Long shooterId);
 
     @Query(value = "SELECT DISTINCT(s.id), s.lastname, s.firstname, c.id as clubId, c.name as clubName " +
                 "FROM participation p " +

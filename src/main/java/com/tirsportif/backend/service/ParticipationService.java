@@ -93,7 +93,7 @@ public class ParticipationService extends AbstractService {
         log.info("Looking for all participations to challenge with ID: {} for a shooter with ID: {}", challengeId, participantId);
         findChallengeById(challengeId);
         Shooter shooter = findShooterById(participantId);
-        List<Participation> participations = participationRepository.findByChallengeIdAndShooterId(challengeId, participantId);
+        List<Participation> participations = participationRepository.findByChallengeIdAndShooterIdOrderByOutrankAsc(challengeId, participantId);
         GetShooterParticipationsResponse response = participationMapper.mapShooterAndParticipationsToResponse(shooter, participations);
         log.info("Found {} participations", response.getParticipations().size());
         return response;
@@ -151,7 +151,7 @@ public class ParticipationService extends AbstractService {
                 .map(ParticipationCreated::new)
                 .forEach(applicationEventPublisher::publishEvent);
 
-        participations = participationRepository.findByChallengeIdAndShooterId(challengeId, shooter.getId());
+        participations = participationRepository.findByChallengeIdAndShooterIdOrderByOutrankAsc(challengeId, shooter.getId());
 
         log.info("Mapping results");
         return participationMapper.mapShooterAndParticipationsToResponse(shooter, participations);
@@ -185,7 +185,7 @@ public class ParticipationService extends AbstractService {
         log.info("Deleting all participations for challenge {} and participant {}", challengeId, participantId);
         findChallengeById(challengeId);
         findShooterById(participantId);
-        List<Participation> participations = participationRepository.findByChallengeIdAndShooterId(challengeId, participantId);
+        List<Participation> participations = participationRepository.findByChallengeIdAndShooterIdOrderByOutrankAsc(challengeId, participantId);
         participationRepository.deleteAll(participations);
         log.info("Participant deleted, along with associated bills for the challenge");
     }
