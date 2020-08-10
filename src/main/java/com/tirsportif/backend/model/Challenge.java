@@ -31,14 +31,14 @@ public class Challenge {
     @JoinColumn(name = "addressId")
     Address address;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "challenge")
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "challenge")
     Set<Participation> participations;
 
     @ManyToOne
     @JoinColumn(name = "organiserClubId")
     Club organiserClub;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "challengeCategories",
             joinColumns = @JoinColumn(name = "challengeId", referencedColumnName = "id"),
@@ -46,7 +46,7 @@ public class Challenge {
     )
     Set<Category> categories;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "challengeDisciplines",
             joinColumns = @JoinColumn(name = "challengeId", referencedColumnName = "id"),

@@ -13,7 +13,6 @@ import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.PriceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +30,7 @@ public class BillService extends AbstractService {
         this.licenseeRepository = licenseeRepository;
     }
 
-    @Async
+    // TODO Evolution: Consider active price only
     @EventListener(value = ParticipationCreated.class)
     public void generateBill(ParticipationCreated event) {
         Participation participation = event.getParticipation();

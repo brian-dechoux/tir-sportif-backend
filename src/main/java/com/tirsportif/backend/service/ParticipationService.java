@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -106,7 +105,6 @@ public class ParticipationService extends AbstractService {
      * @param request, Creation request with challenge, shooter, category, and multiple disciplines
      * @return Generated participations
      */
-    @Transactional
     public GetShooterParticipationsResponse createParticipations(Long challengeId, CreateParticipationsRequest request) {
         log.info("Creating participations for shooter with ID: {}, for challenge with ID: {}", request.getShooterId(), challengeId);
         Challenge challenge = findChallengeById(challengeId);
@@ -166,7 +164,6 @@ public class ParticipationService extends AbstractService {
         Set<Long> requestedDisciplineIds = requestedDisciplinesInformation.stream()
                 .map(CreateDisciplineParticipationRequest::getDisciplineId)
                 .collect(Collectors.toSet());
-        //if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
         if (!challengeDisciplineIds.containsAll(requestedDisciplineIds)) {
             throw new ForbiddenErrorException(ParticipationError.PARTICIPATION_DISCIPLINE_NOT_AUTHORIZED_FOR_CHALLENGE, challenge.getId().toString());
         }

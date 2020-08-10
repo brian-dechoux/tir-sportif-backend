@@ -1,12 +1,12 @@
 package com.tirsportif.backend.repository;
 
 import com.tirsportif.backend.model.Bill;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface BillRepository extends CrudRepository<Bill, Long> {
+public interface BillRepository extends JpaRepository<Bill, Long> {
 
     @Query(value = "SELECT * FROM bill " +
             "INNER JOIN participation ON bill.participationId = participation.id " +

@@ -37,10 +37,10 @@ public class Participation {
     @JoinColumn(name = "disciplineId")
     Discipline discipline;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "participation")
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "participation")
     Set<ShotResult> shotResults;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "participation", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "participation", cascade = CascadeType.REMOVE)
     Bill bill;
 
     @NotNull
