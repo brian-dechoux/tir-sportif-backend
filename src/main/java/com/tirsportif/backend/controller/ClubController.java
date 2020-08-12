@@ -36,6 +36,16 @@ public class ClubController {
         return clubService.getClubById(clubId);
     }
 
+    @GetMapping(value = "/my")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetClubResponse getMyClub() {
+        return clubService.getClubById(1L);
+    }
+
+    // TODO create a route returning a resume for a club
+    //  Club, nb shooters, nb challenges
+
     @GetMapping("/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")

@@ -1,10 +1,7 @@
 package com.tirsportif.backend.service;
 
 import com.tirsportif.backend.cache.CountryStore;
-import com.tirsportif.backend.dto.CreateAddressRequest;
-import com.tirsportif.backend.dto.CreateLicenseeRequest;
-import com.tirsportif.backend.dto.GetLicenseeResponse;
-import com.tirsportif.backend.dto.ResolvedCreateLicenseeRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestErrorException;
 import com.tirsportif.backend.exception.NotFoundErrorException;
@@ -16,6 +13,8 @@ import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -71,6 +70,21 @@ public class LicenseeService extends AbstractService {
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
         log.info("Licensee information created. Should still need to be associated to a shooter.");
         return response;
+    }
+
+    /**
+     * Get all licensees.
+     *
+     * @param page Page number
+     * @return Paginated licensees
+     */
+    public Page<GetLicenseeListElementResponse> getLicensees(int page, int rowsPerPage) {
+        log.info("Looking for all licensees");
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
+        Page<GetLicenseeListElementResponse> responses = licenseeRepository.findAllAsListElements(pageRequest)
+                .map(licenseeMapper::mapLicenseeListElementToResponse);
+        log.info("Found {} licensees", responses.getNumberOfElements());
+        return responses;
     }
 
     public GetLicenseeResponse getLicenseeById(Long id) {

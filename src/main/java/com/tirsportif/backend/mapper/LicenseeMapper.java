@@ -1,8 +1,10 @@
 package com.tirsportif.backend.mapper;
 
+import com.tirsportif.backend.dto.GetLicenseeListElementResponse;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
 import com.tirsportif.backend.dto.ResolvedCreateLicenseeRequest;
 import com.tirsportif.backend.model.Licensee;
+import com.tirsportif.backend.model.projection.LicenseeListElementProjection;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -38,6 +40,15 @@ public class LicenseeMapper {
                 licensee.getSubscriptionDate(),
                 shooterMapper.mapShooterToResponse(licensee.getShooter()),
                 addressMapper.mapAddressToDto(licensee.getAddress())
+        );
+    }
+
+    public GetLicenseeListElementResponse mapLicenseeListElementToResponse(LicenseeListElementProjection projection) {
+        return new GetLicenseeListElementResponse(
+                projection.getId(),
+                projection.getLastname(),
+                projection.getFirstname(),
+                projection.getSubscriptionDate()
         );
     }
 
