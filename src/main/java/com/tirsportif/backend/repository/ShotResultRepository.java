@@ -4,12 +4,12 @@ import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
+public interface ShotResultRepository extends JpaRepository<ShotResult, Long> {
 
     boolean existsByParticipationId(Long participationId);
 
