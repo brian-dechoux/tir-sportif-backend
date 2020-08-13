@@ -25,6 +25,7 @@ public class AddressMapper {
         dto.setZip(address.getZip());
         dto.setCity(address.getCity());
         dto.setCountryCode(address.getCountry().getCode());
+        dto.setCountryName(address.getCountry().getName());
         return dto;
     }
 
