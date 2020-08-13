@@ -13,6 +13,7 @@ spring:
     hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     ### Anti pattern, even logged by SpringBoot. See: https://stackoverflow.com/a/48222934/4675568
     open-in-view: false
+    show-sql: true
 
   liquibase.enabled: ${SPRING_LIQUIBASE_ENABLED}
 
@@ -55,7 +56,7 @@ spring:
   liquibase.enabled: false
 
   datasource:
-    url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Paris&useLegacyDatetimeCode=false
     username: admin
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
