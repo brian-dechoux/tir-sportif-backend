@@ -20,7 +20,7 @@ public class Licensee {
     @NotNull
     int badgeNumber;
 
-    int lockerNumber;
+    Integer lockerNumber;
 
     @NonNull
     @NotNull
