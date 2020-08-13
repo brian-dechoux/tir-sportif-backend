@@ -9,10 +9,12 @@ import com.tirsportif.backend.mapper.LicenseeMapper;
 import com.tirsportif.backend.model.Country;
 import com.tirsportif.backend.model.Licensee;
 import com.tirsportif.backend.model.Shooter;
+import com.tirsportif.backend.model.event.LicenseSubscriptionEvent;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -29,15 +31,17 @@ public class LicenseeService extends AbstractService {
     private final LicenseeRepository licenseeRepository;
     private final ShooterRepository shooterRepository;
     private final CountryStore countryStore;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
-    public LicenseeService(ApiProperties apiProperties, LicenseeMapper licenseeMapper, LicenseeRepository licenseeRepository, ShooterRepository shooterRepository, CountryStore countryStore, Clock clock) {
+    public LicenseeService(ApiProperties apiProperties, LicenseeMapper licenseeMapper, LicenseeRepository licenseeRepository, ShooterRepository shooterRepository, CountryStore countryStore, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
         super(apiProperties);
         this.licenseeMapper = licenseeMapper;
         this.licenseeRepository = licenseeRepository;
         this.shooterRepository = shooterRepository;
         this.countryStore = countryStore;
         this.clock = clock;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     private Country findCountryById(Long id) {
@@ -67,8 +71,9 @@ public class LicenseeService extends AbstractService {
                 LocalDate.now(clock)
         );
         licensee = licenseeRepository.save(licensee);
+        applicationEventPublisher.publishEvent(new LicenseSubscriptionEvent(licensee));
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
-        log.info("Licensee information created. Should still need to be associated to a shooter.");
+        log.info("Licensee information created.");
         return response;
     }
 
@@ -95,7 +100,7 @@ public class LicenseeService extends AbstractService {
         return response;
     }
 
-    public GetLicenseeResponse updateLicenseeSubscription(Long licenseeId) {
+    public GetLicenseeResponse renewLicenseeSubscription(Long licenseeId) {
         log.info("Updating licensee subscription date.");
         Licensee licensee = findLicenseeById(licenseeId);
         licensee = licenseeRepository.save(
@@ -104,6 +109,7 @@ public class LicenseeService extends AbstractService {
                     .build()
         );
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
+        applicationEventPublisher.publishEvent(new LicenseSubscriptionEvent(licensee));
         log.info("Licensee subscription updated.");
         return response;
     }

@@ -43,10 +43,10 @@ public class LicenseeController {
         return licenseeService.getLicenseeById(licenseeId);
     }
 
-    @PostMapping(value = "/{licenseeId}/update-subscription")
+    @PostMapping(value = "/{licenseeId}/renew")
     @PreAuthorize("authorizedFor('MANAGER')")
-    public GetLicenseeResponse updateLicenseeSubscription(@PathVariable Long licenseeId) {
-        return licenseeService.updateLicenseeSubscription(licenseeId);
+    public GetLicenseeResponse renewLicenseeSubscription(@PathVariable Long licenseeId) {
+        return licenseeService.renewLicenseeSubscription(licenseeId);
     }
 
     @PostMapping(value = "/{licenseeId}/associate")

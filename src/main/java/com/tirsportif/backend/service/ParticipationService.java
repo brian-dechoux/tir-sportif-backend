@@ -13,7 +13,7 @@ import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.Shooter;
-import com.tirsportif.backend.model.event.ParticipationCreated;
+import com.tirsportif.backend.model.event.ParticipationCreatedEvent;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,17 +37,15 @@ public class ParticipationService extends AbstractService {
     private final DisciplineRepository disciplineRepository;
     private final ShooterRepository shooterRepository;
     private final ParticipationRepository participationRepository;
-    private final ShotResultRepository shotResultRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ParticipationService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public ParticipationService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ApplicationEventPublisher applicationEventPublisher) {
         super(apiProperties);
         this.participationMapper = participationMapper;
         this.challengeRepository = challengeRepository;
         this.disciplineRepository = disciplineRepository;
         this.shooterRepository = shooterRepository;
         this.participationRepository = participationRepository;
-        this.shotResultRepository = shotResultRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -148,7 +146,7 @@ public class ParticipationService extends AbstractService {
 
         log.info("Sending participations to billing service");
         participations.stream()
-                .map(ParticipationCreated::new)
+                .map(ParticipationCreatedEvent::new)
                 .forEach(applicationEventPublisher::publishEvent);
 
         participations = participationRepository.findByChallengeIdAndShooterIdOrderByOutrankAsc(challengeId, shooter.getId());
