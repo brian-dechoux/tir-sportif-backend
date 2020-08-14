@@ -9,6 +9,7 @@ import javax.validation.constraints.Positive;
 @Data
 public class CreateLicenseeRequest {
 
+    @NotNull
     @Positive
     Integer badgeNumber;
 
