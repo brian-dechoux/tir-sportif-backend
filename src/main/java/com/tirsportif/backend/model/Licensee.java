@@ -27,7 +27,7 @@ public class Licensee {
     @Column(name = "subscriptionDate", columnDefinition = "DATE")
     LocalDate subscriptionDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "shooterId")
     Shooter shooter;
 
