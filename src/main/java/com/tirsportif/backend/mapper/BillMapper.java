@@ -4,13 +4,12 @@ import com.tirsportif.backend.dto.GetShooterBillResponse;
 import com.tirsportif.backend.dto.GetShooterFinanceResponse;
 import com.tirsportif.backend.dto.GetShooterWithFinancesListElementResponse;
 import com.tirsportif.backend.model.PriceType;
+import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.projection.ShooterBillProjection;
 import com.tirsportif.backend.model.projection.ShooterWithBillsListElementProjection;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,18 +23,28 @@ public class BillMapper {
         );
     }
 
-    public GetShooterFinanceResponse mapShooterBillsToResponse(List<ShooterBillProjection> bills) {
+    public GetShooterFinanceResponse mapShooterBillsToResponse(Shooter shooter, List<ShooterBillProjection> bills) {
          Map<Boolean, Map<PriceType, List<GetShooterBillResponse>>> shooterFinance= bills.stream()
                 .map(this::mapShooterBillToResponse)
                 .collect(Collectors.groupingBy(GetShooterBillResponse::isPaid, Collectors.groupingBy(GetShooterBillResponse::getPriceType)));
 
-         List<GetShooterBillResponse> unpaidBills = shooterFinance.get(false).values().stream()
-                 .flatMap(Collection::stream)
-                 .collect(Collectors.toList());
-         List<GetShooterBillResponse> participationBills = shooterFinance.get(true).get(PriceType.CHALLENGE);
-         List<GetShooterBillResponse> licenseBills = shooterFinance.get(true).get(PriceType.LICENSE);
+         List<GetShooterBillResponse> unpaidBills = Optional.ofNullable(shooterFinance.get(false))
+                 .map(unpaids ->
+                                 unpaids.values().stream()
+                                         .flatMap(Collection::stream)
+                                         .collect(Collectors.toList())
+                 )
+                 .orElse(Collections.emptyList());
+         List<GetShooterBillResponse> participationBills = Optional.ofNullable(shooterFinance.get(true))
+                 .map(participations -> participations.get(PriceType.CHALLENGE))
+                 .orElse(Collections.emptyList());
+         List<GetShooterBillResponse> licenseBills = Optional.ofNullable(shooterFinance.get(true))
+                 .map(participations -> participations.get(PriceType.LICENSE))
+                 .orElse(Collections.emptyList());
 
          return new GetShooterFinanceResponse(
+                 shooter.getLastname(),
+                 shooter.getFirstname(),
                  unpaidBills,
                  participationBills,
                  licenseBills

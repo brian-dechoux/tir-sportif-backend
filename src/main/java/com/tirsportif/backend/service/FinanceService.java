@@ -3,10 +3,14 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.dto.GetChallengeFinanceResponse;
 import com.tirsportif.backend.dto.GetShooterFinanceResponse;
 import com.tirsportif.backend.dto.GetShooterWithFinancesListElementResponse;
+import com.tirsportif.backend.error.GenericClientError;
+import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.BillMapper;
+import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.projection.ShooterBillProjection;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.BillRepository;
+import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,11 +22,13 @@ import java.util.List;
 @Slf4j
 public class FinanceService extends AbstractService {
 
+    private final ShooterRepository shooterRepository;
     private final BillRepository billRepository;
     private final BillMapper billMapper;
 
-    public FinanceService(ApiProperties apiProperties, BillRepository billRepository, BillMapper billMapper) {
+    public FinanceService(ApiProperties apiProperties, ShooterRepository shooterRepository, BillRepository billRepository, BillMapper billMapper) {
         super(apiProperties);
+        this.shooterRepository = shooterRepository;
         this.billRepository = billRepository;
         this.billMapper = billMapper;
     }
@@ -73,7 +79,9 @@ public class FinanceService extends AbstractService {
         log.info("Searching all bills for shooter with ID: {}", shooterId);
 
         List<ShooterBillProjection> bills = billRepository.getBillsForShooter(shooterId);
-        GetShooterFinanceResponse finances = billMapper.mapShooterBillsToResponse(bills);
+        Shooter shooter = shooterRepository.findById(shooterId)
+                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+        GetShooterFinanceResponse finances = billMapper.mapShooterBillsToResponse(shooter, bills);
 
         log.info("Found {} bills", bills.size());
         return finances;
