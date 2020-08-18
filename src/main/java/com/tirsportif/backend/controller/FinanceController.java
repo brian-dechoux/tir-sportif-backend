@@ -41,4 +41,12 @@ public class FinanceController {
         return financeService.getShooterFinances(shooterId);
     }
 
+    @PostMapping(value = "/shooters/{shooterId}/bills/{billId}")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterFinanceResponse payBill(@PathVariable Long shooterId, @PathVariable Long billId) {
+        financeService.payBill(billId);
+        return financeService.getShooterFinances(shooterId);
+    }
+
 }

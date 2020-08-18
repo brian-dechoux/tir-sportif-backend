@@ -13,7 +13,7 @@ spring:
     hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     ### Anti pattern, even logged by SpringBoot. See: https://stackoverflow.com/a/48222934/4675568
     open-in-view: false
-    show-sql: true
+    show-sql: false
 
   liquibase.enabled: ${SPRING_LIQUIBASE_ENABLED}
 
@@ -32,6 +32,9 @@ spring:
 
 ## Custom app configs
 tir-sportif:
+
+  my-club:
+    id: 1
 
   api:
     ### Default pages size
@@ -69,6 +72,9 @@ spring:
 
 ## Custom app configs
 tir-sportif:
+
+  my-club:
+    id: 1
 
   jwt:
     secret: springfield1911EMP

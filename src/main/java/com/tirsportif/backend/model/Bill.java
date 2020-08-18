@@ -12,7 +12,7 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "bill")
-@Builder
+@Builder(toBuilder = true)
 public class Bill {
 
     @Id

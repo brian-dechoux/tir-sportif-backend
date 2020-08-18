@@ -4,15 +4,18 @@ import com.tirsportif.backend.cache.CountryStore;
 import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.BadRequestErrorException;
-import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.LicenseeMapper;
+import com.tirsportif.backend.model.Club;
 import com.tirsportif.backend.model.Country;
 import com.tirsportif.backend.model.Licensee;
 import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.event.LicenseSubscriptionEvent;
 import com.tirsportif.backend.property.ApiProperties;
+import com.tirsportif.backend.property.MyClubProperties;
+import com.tirsportif.backend.repository.ClubRepository;
 import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.ShooterRepository;
+import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -30,16 +33,20 @@ public class LicenseeService extends AbstractService {
     private final LicenseeMapper licenseeMapper;
     private final LicenseeRepository licenseeRepository;
     private final ShooterRepository shooterRepository;
+    private final ClubRepository clubRepository;
     private final CountryStore countryStore;
+    private final MyClubProperties myClubProperties;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
-    public LicenseeService(ApiProperties apiProperties, LicenseeMapper licenseeMapper, LicenseeRepository licenseeRepository, ShooterRepository shooterRepository, CountryStore countryStore, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
+    public LicenseeService(ApiProperties apiProperties, LicenseeMapper licenseeMapper, LicenseeRepository licenseeRepository, ShooterRepository shooterRepository, ClubRepository clubRepository, CountryStore countryStore, MyClubProperties myClubProperties, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
         super(apiProperties);
         this.licenseeMapper = licenseeMapper;
         this.licenseeRepository = licenseeRepository;
         this.shooterRepository = shooterRepository;
+        this.clubRepository = clubRepository;
         this.countryStore = countryStore;
+        this.myClubProperties = myClubProperties;
         this.clock = clock;
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -50,17 +57,20 @@ public class LicenseeService extends AbstractService {
     }
 
     private Licensee findLicenseeById(Long licenseeId) {
-        return licenseeRepository.findById(licenseeId)
-                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, licenseeId.toString()));
+        return RepositoryUtils.findById(licenseeRepository::findById, licenseeId);
     }
 
     private Shooter findShooterById(Long shooterId) {
-        return shooterRepository.findById(shooterId)
-                .orElseThrow(() -> new NotFoundErrorException(GenericClientError.RESOURCE_NOT_FOUND, shooterId.toString()));
+        return RepositoryUtils.findById(shooterRepository::findById, shooterId);
+    }
+
+    private Club findClubById(Long clubId) {
+        return RepositoryUtils.findById(clubRepository::findById, clubId);
     }
 
     public GetLicenseeResponse createLicensee(CreateLicenseeRequest request) {
         log.info("Creating licensee");
+
         Country country = Optional.ofNullable(request.getAddress())
                 .map(CreateAddressRequest::getCountryId)
                 .map(this::findCountryById)
@@ -71,9 +81,17 @@ public class LicenseeService extends AbstractService {
                 LocalDate.now(clock)
         );
         licensee = licenseeRepository.save(licensee);
+
+        Club myClub = findClubById(myClubProperties.getId());
+        if (shooter.getClub() == null || !shooter.getClub().getId().equals(myClub.getId())) {
+            log.info("Updating shooter club");
+            shooterRepository.save(shooter.toBuilder().club(myClub).build());
+        }
+
         applicationEventPublisher.publishEvent(new LicenseSubscriptionEvent(licensee));
+
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
-        log.info("Licensee information created.");
+        log.info("Licensee information created");
         return response;
     }
 

@@ -3,12 +3,14 @@ package com.tirsportif.backend.service;
 import com.tirsportif.backend.error.BillError;
 import com.tirsportif.backend.exception.InternalServerErrorException;
 import com.tirsportif.backend.model.*;
+import com.tirsportif.backend.model.event.BillPaidEvent;
 import com.tirsportif.backend.model.event.LicenseSubscriptionEvent;
 import com.tirsportif.backend.model.event.ParticipationCreatedEvent;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.BillRepository;
 import com.tirsportif.backend.repository.LicenseeRepository;
 import com.tirsportif.backend.repository.PriceRepository;
+import com.tirsportif.backend.utils.RepositoryUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,10 @@ public class BillService extends AbstractService {
         this.billRepository = billRepository;
         this.priceRepository = priceRepository;
         this.licenseeRepository = licenseeRepository;
+    }
+
+    private Bill findBillById(Long billId) {
+        return RepositoryUtils.findById(billRepository::findById, billId);
     }
 
     // TODO Evolution: Consider active price only
@@ -67,4 +73,11 @@ public class BillService extends AbstractService {
         log.info("Bill generated");
     }
 
+    @EventListener(value = BillPaidEvent.class)
+    public void payBill(BillPaidEvent event) {
+        log.info("Paying bill with ID: {}", event.getBillId());
+        Bill bill = findBillById(event.getBillId());
+        billRepository.save(bill.toBuilder().paid(true).build());
+        log.info("Bill paid");
+    }
 }

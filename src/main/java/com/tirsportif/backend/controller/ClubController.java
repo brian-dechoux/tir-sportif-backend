@@ -40,7 +40,7 @@ public class ClubController {
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetClubResponse getMyClub() {
-        return clubService.getClubById(1L);
+        return clubService.getMyClub();
     }
 
     // TODO create a route returning a resume for a club

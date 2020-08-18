@@ -7,11 +7,13 @@ import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.BillMapper;
 import com.tirsportif.backend.model.Shooter;
+import com.tirsportif.backend.model.event.BillPaidEvent;
 import com.tirsportif.backend.model.projection.ShooterBillProjection;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.BillRepository;
 import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,12 +27,14 @@ public class FinanceService extends AbstractService {
     private final ShooterRepository shooterRepository;
     private final BillRepository billRepository;
     private final BillMapper billMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public FinanceService(ApiProperties apiProperties, ShooterRepository shooterRepository, BillRepository billRepository, BillMapper billMapper) {
+    public FinanceService(ApiProperties apiProperties, ShooterRepository shooterRepository, BillRepository billRepository, BillMapper billMapper, ApplicationEventPublisher applicationEventPublisher) {
         super(apiProperties);
         this.shooterRepository = shooterRepository;
         this.billRepository = billRepository;
         this.billMapper = billMapper;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     // TODO TO TEST
@@ -85,6 +89,17 @@ public class FinanceService extends AbstractService {
 
         log.info("Found {} bills", bills.size());
         return finances;
+    }
+
+    /**
+     * Pay bill with ID.
+     *
+     * @param billId
+     */
+    public void payBill(Long billId) {
+        log.info("Paying bill with ID: {}", billId);
+        applicationEventPublisher.publishEvent(new BillPaidEvent(billId));
+        log.info("Bill paid");
     }
 
 }

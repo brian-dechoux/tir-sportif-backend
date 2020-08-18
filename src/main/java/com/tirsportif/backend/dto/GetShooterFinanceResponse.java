@@ -15,6 +15,6 @@ public class GetShooterFinanceResponse {
 
     List<GetShooterBillResponse> participationBills;
 
-    List<GetShooterBillResponse> licenceBills;
+    List<GetShooterBillResponse> licenseBills;
 
 }

@@ -17,8 +17,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     @Query(value = "SELECT DISTINCT(s.id), s.lastname, s.firstname, c.id as clubId, c.name as clubName " +
                 "FROM participation p " +
-                "INNER JOIN shooter s on p.shooterId = s.id " +
-                "LEFT JOIN club c ON (s.clubId = c.id) " +
+                "INNER JOIN shooter s ON p.shooterId = s.id " +
+                "LEFT JOIN club c ON s.clubId = c.id " +
                 "WHERE p.challengeId = ?1"
             , countQuery = "SELECT COUNT(DISTINCT shooterId) " +
                 "FROM participation p " +
