@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -76,18 +75,18 @@ public class ClubService extends AbstractService {
         return response;
     }
 
-    public Page<GetClubResponse> getClubs(int page) {
+    public Page<GetClubListElementResponse> searchClubs(int page, int rowsPerPage) {
         log.info("Searching for clubs");
-        PageRequest pageRequest = PageRequest.of(page, apiProperties.getPaginationSize());
-        Page<GetClubResponse> responses = clubRepository.findAll(pageRequest)
-                .map(clubMapper::mapClubToResponse);
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
+        Page<GetClubListElementResponse> responses = clubRepository.findAllAsListElements(pageRequest, myClubProperties.getId())
+                .map(clubMapper::mapClubListElementProjectionToResponse);
         log.info("Found {} clubs", responses.getNumber());
         return responses;
     }
 
     public List<GetClubResponse> getClubs() {
         log.info("Looking for all clubs");
-        List<GetClubResponse> clubs = StreamSupport.stream(clubRepository.findAll().spliterator(), false)
+        List<GetClubResponse> clubs = clubRepository.findAll().stream()
                 .map(clubMapper::mapClubToResponse)
                 .collect(Collectors.toList());
         log.info("Found {} clubs", clubs.size());

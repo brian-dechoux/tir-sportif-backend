@@ -1,6 +1,7 @@
 package com.tirsportif.backend.controller;
 
 import com.tirsportif.backend.dto.CreateClubRequest;
+import com.tirsportif.backend.dto.GetClubListElementResponse;
 import com.tirsportif.backend.dto.GetClubResponse;
 import com.tirsportif.backend.dto.UpdateClubRequest;
 import com.tirsportif.backend.service.ClubService;
@@ -49,9 +50,8 @@ public class ClubController {
     @GetMapping("/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public Page<GetClubResponse> getClubs(@RequestParam("page") int page) {
-        // TODO Exclude current club (Briey) as it's MyClub. Depends on connected user.
-        return clubService.getClubs(page);
+    public Page<GetClubListElementResponse> searchClubs(@RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return clubService.searchClubs(page, rowsPerPage);
     }
 
     @GetMapping

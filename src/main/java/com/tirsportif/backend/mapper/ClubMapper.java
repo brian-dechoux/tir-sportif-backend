@@ -1,9 +1,11 @@
 package com.tirsportif.backend.mapper;
 
+import com.tirsportif.backend.dto.GetClubListElementResponse;
 import com.tirsportif.backend.dto.GetClubResponse;
 import com.tirsportif.backend.dto.ResolvedCreateClubRequest;
 import com.tirsportif.backend.dto.ResolvedUpdateClubRequest;
 import com.tirsportif.backend.model.Club;
+import com.tirsportif.backend.model.projection.ClubListElementProjection;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -42,4 +44,12 @@ public class ClubMapper {
         );
     }
 
+    public GetClubListElementResponse mapClubListElementProjectionToResponse(ClubListElementProjection projection) {
+        return new GetClubListElementResponse(
+                projection.getId(),
+                projection.getName(),
+                projection.getCity(),
+                projection.getNbShooters()
+        );
+    }
 }
