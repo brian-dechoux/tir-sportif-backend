@@ -23,6 +23,7 @@ public class ClubMapper {
         Club club = new Club();
         club.setName(request.getName());
         club.setAddress(addressMapper.mapAddressDtoToAddress(request.getAddress()));
+        club.setEmail(request.getEmail());
         return club;
     }
 
@@ -40,7 +41,8 @@ public class ClubMapper {
         return new GetClubResponse(
                 club.getId(),
                 club.getName(),
-                addressMapper.mapAddressToDto(club.getAddress())
+                addressMapper.mapAddressToDto(club.getAddress()),
+                club.getEmail()
         );
     }
 

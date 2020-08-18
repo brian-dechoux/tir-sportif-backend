@@ -31,7 +31,8 @@ CREATE TABLE `address` (
 CREATE TABLE `club` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `addressId` int NOT NULL
+  `addressId` int NOT NULL,
+  `email` varchar(255)
 );
 
 CREATE TABLE `price` (

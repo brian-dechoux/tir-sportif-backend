@@ -17,4 +17,6 @@ public class CreateClubRequest {
     @Valid
     CreateAddressRequest address;
 
+    String email;
+
 }

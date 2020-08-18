@@ -11,4 +11,6 @@ public class GetClubResponse {
 
     GetAddressResponse address;
 
+    String email;
+
 }

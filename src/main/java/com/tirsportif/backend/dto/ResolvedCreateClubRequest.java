@@ -13,10 +13,13 @@ public class ResolvedCreateClubRequest {
     @NonNull
     ResolvedCreateAddressRequest address;
 
+    String email;
+
     public static ResolvedCreateClubRequest ofRawRequest(CreateClubRequest request, Country resolvedCountry) {
         return new ResolvedCreateClubRequest(
                 request.getName(),
-                ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), resolvedCountry)
+                ResolvedCreateAddressRequest.ofRawRequest(request.getAddress(), resolvedCountry),
+                request.getEmail()
         );
     }
 
