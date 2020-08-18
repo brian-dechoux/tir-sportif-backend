@@ -32,7 +32,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             , nativeQuery = true)
     Page<ShooterWithBillsListElementProjection> findShootersWithBillsAsListElements(Pageable page);
 
-    @Query(value = "SELECT b.id, b.value, b.paid, pr.type, c.name AS challengeName, c.startDate AS challengeStartDate, l.subscriptionDate AS licenseSubscriptionDate FROM bill b " +
+    @Query(value = "SELECT b.id, b.value, b.paid, b.paidDate, pr.type, c.name AS challengeName, c.startDate AS challengeStartDate, l.subscriptionDate AS licenseSubscriptionDate FROM bill b " +
             "INNER JOIN price pr ON b.priceId = pr.id " +
             "LEFT JOIN participation p ON b.participationId = p.id " +
             "LEFT JOIN challenge c ON p.challengeId = c.id " +

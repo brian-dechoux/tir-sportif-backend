@@ -56,6 +56,7 @@ public class BillMapper {
                 bill.getId(),
                 bill.getValue(),
                 bill.getPaid(),
+                bill.getPaidDate(),
                 bill.getType(),
                 bill.getChallengeName(),
                 bill.getChallengeStartDate(),

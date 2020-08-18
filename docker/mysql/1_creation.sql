@@ -131,6 +131,7 @@ CREATE TABLE `bill` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `value` double NOT NULL,
   `paid` boolean NOT NULL,
+  `creationDate` timestamp,
   `participationId` int,
   `licenseeId` int,
   `priceId` int NOT NULL

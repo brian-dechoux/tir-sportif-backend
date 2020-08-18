@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.OffsetDateTime;
+
 @Service
 @Slf4j
 public class BillService extends AbstractService {
@@ -22,12 +25,14 @@ public class BillService extends AbstractService {
     private final BillRepository billRepository;
     private final PriceRepository priceRepository;
     private final LicenseeRepository licenseeRepository;
+    private final Clock clock;
 
-    public BillService(ApiProperties apiProperties, BillRepository billRepository, PriceRepository priceRepository, LicenseeRepository licenseeRepository) {
+    public BillService(ApiProperties apiProperties, BillRepository billRepository, PriceRepository priceRepository, LicenseeRepository licenseeRepository, Clock clock) {
         super(apiProperties);
         this.billRepository = billRepository;
         this.priceRepository = priceRepository;
         this.licenseeRepository = licenseeRepository;
+        this.clock = clock;
     }
 
     private Bill findBillById(Long billId) {
@@ -66,6 +71,7 @@ public class BillService extends AbstractService {
         Bill bill  = Bill.builder()
                 .value(price.getValue())
                 .paid(true)
+                .paidDate(OffsetDateTime.now(clock))
                 .licensee(licensee)
                 .price(price)
                 .build();
@@ -77,7 +83,12 @@ public class BillService extends AbstractService {
     public void payBill(BillPaidEvent event) {
         log.info("Paying bill with ID: {}", event.getBillId());
         Bill bill = findBillById(event.getBillId());
-        billRepository.save(bill.toBuilder().paid(true).build());
+        billRepository.save(
+                bill.toBuilder()
+                        .paid(true)
+                        .paidDate(OffsetDateTime.now(clock))
+                        .build()
+        );
         log.info("Bill paid");
     }
 }

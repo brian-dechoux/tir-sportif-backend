@@ -15,6 +15,8 @@ public class GetShooterBillResponse {
 
     boolean paid;
 
+    OffsetDateTime paidDate;
+
     PriceType priceType;
 
     String challengeName;

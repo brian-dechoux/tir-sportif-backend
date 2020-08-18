@@ -13,6 +13,8 @@ public interface ShooterBillProjection {
 
     Boolean getPaid();
 
+    OffsetDateTime getPaidDate();
+
     PriceType getType();
 
     String getChallengeName();

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
@@ -27,6 +28,8 @@ public class Bill {
     double value;
 
     boolean paid;
+
+    OffsetDateTime paidDate;
 
     @OneToOne
     @JoinColumn(name = "participationId", referencedColumnName = "id")
