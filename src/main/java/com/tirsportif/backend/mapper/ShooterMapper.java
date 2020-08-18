@@ -5,6 +5,7 @@ import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
 import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.projection.SearchShooterProjection;
+import com.tirsportif.backend.utils.NameNormalizer;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -22,8 +23,8 @@ public class ShooterMapper {
 
     public Shooter mapCreateShooterDtoToShooter(ResolvedCreateShooterRequest request) {
         Shooter shooter = new Shooter();
-        shooter.setLastname(request.getLastname());
-        shooter.setFirstname(request.getFirstname());
+        shooter.setLastname(NameNormalizer.normalize(request.getLastname()));
+        shooter.setFirstname(NameNormalizer.normalize(request.getFirstname()));
         shooter.setBirthDate(request.getBirthdate());
         shooter.setClub(request.getClub());
         shooter.setCategory(request.getCategory());
