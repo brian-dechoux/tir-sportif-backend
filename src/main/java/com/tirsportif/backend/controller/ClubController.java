@@ -1,10 +1,8 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.CreateClubRequest;
-import com.tirsportif.backend.dto.GetClubListElementResponse;
-import com.tirsportif.backend.dto.GetClubResponse;
-import com.tirsportif.backend.dto.UpdateClubRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.service.ClubService;
+import com.tirsportif.backend.service.ShooterService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +16,11 @@ import java.util.List;
 public class ClubController {
 
     private final ClubService clubService;
+    private final ShooterService shooterService;
 
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService, ShooterService shooterService) {
         this.clubService = clubService;
+        this.shooterService = shooterService;
     }
 
     @PostMapping
@@ -54,6 +54,13 @@ public class ClubController {
         return clubService.searchClubs(page, rowsPerPage);
     }
 
+    @GetMapping(value = "/{clubId}/shooters")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public Page<GetShooterListElementResponse> getShooters(@PathVariable Long clubId, @RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return shooterService.getShootersForClub(clubId, page, rowsPerPage);
+    }
+
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
@@ -65,6 +72,12 @@ public class ClubController {
     @PreAuthorize("authorizedFor('ADMIN')")
     public GetClubResponse updateClub(@PathVariable Long clubId, @Valid @RequestBody UpdateClubRequest request) {
        return  clubService.updateClub(clubId, request);
+    }
+
+    @PostMapping(value = "/{clubId}/shooters/{shooterId}/associate")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterResponse associateShooter(@PathVariable Long clubId, @PathVariable Long shooterId) {
+        return shooterService.associateShooter(shooterId, clubId);
     }
 
 }

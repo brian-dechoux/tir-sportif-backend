@@ -1,6 +1,5 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.AssociateShooterToClubRequest;
 import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetSearchShooterResponse;
 import com.tirsportif.backend.dto.GetShooterResponse;
@@ -33,7 +32,7 @@ public class ShooterController {
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
     public List<GetSearchShooterResponse> searchShooters(@RequestParam String searchName) {
-        return shooterService.search(searchName);
+        return shooterService.searchShooters(searchName);
     }
 
     @GetMapping(value = "/{shooterId}")
@@ -41,12 +40,6 @@ public class ShooterController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetShooterResponse getShooter(@PathVariable Long shooterId) {
         return shooterService.getShooterById(shooterId);
-    }
-
-    @PostMapping(value = "/{shooterId}/associate")
-    @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @Valid @RequestBody AssociateShooterToClubRequest associateShooterToClubRequest) {
-        return shooterService.associateShooter(shooterId, associateShooterToClubRequest.getClubId());
     }
 
 }
