@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -108,17 +107,6 @@ public class ParticipationService extends AbstractService {
         Challenge challenge = findChallengeById(challengeId);
         Shooter shooter = findShooterById(request.getShooterId());
 
-        /*
-        TODO Cache categories and disciplines
-        Map<Long, Discipline> disciplinesMap =
-                findDisciplinesByIds(
-                    request.getDisciplinesInformation().stream()
-                            .map(CreateDisciplineParticipationRequest::getDisciplineId)
-                            .collect(Collectors.toSet())
-                ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
-        */
-
-        // TODO Check also categories...
         checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
 
         List<Participation> participations = request.getDisciplinesInformation().stream()
@@ -135,7 +123,7 @@ public class ParticipationService extends AbstractService {
                 }).collect(Collectors.toList());
 
         try {
-            participations = StreamSupport.stream(participationRepository.saveAll(participations).spliterator(), true).collect(Collectors.toList());
+            participations = participationRepository.saveAll(participations).parallelStream().collect(Collectors.toList());
             log.info("Participations created");
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {

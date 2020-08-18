@@ -8,8 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-// TODO add financial resume to these routes
-//  add a generic financial resume for the club
+// TODO add a generic financial resume for the club
 @RestController
 @RequestMapping(value = "/finances", produces = "application/json;charset=UTF-8")
 public class FinanceController {

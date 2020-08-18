@@ -37,8 +37,6 @@ public class FinanceService extends AbstractService {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    // TODO TO TEST
-
     /**
      * Get all shooter bills for a specific challenge.
      *

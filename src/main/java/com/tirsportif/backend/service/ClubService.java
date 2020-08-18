@@ -94,7 +94,6 @@ public class ClubService extends AbstractService {
         return clubs;
     }
 
-    // TODO See ChallengeService.update, better way of handling
     public GetClubResponse updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());
         Club club = clubRepository.findById(id)

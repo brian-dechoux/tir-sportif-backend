@@ -1,6 +1,5 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.AssociateLicenseeToShooterRequest;
 import com.tirsportif.backend.dto.CreateLicenseeRequest;
 import com.tirsportif.backend.dto.GetLicenseeListElementResponse;
 import com.tirsportif.backend.dto.GetLicenseeResponse;
@@ -47,14 +46,6 @@ public class LicenseeController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetLicenseeResponse renewLicenseeSubscription(@PathVariable Long licenseeId) {
         return licenseeService.renewLicenseeSubscription(licenseeId);
-    }
-
-    @PostMapping(value = "/{licenseeId}/associate")
-    @PreAuthorize("authorizedFor('MANAGER')")
-    @Deprecated
-    public GetLicenseeResponse associateLicensee(@PathVariable Long licenseeId, @Valid @RequestBody AssociateLicenseeToShooterRequest associateLicenseeToShooterRequest) {
-        // FIXME licensee should not be existing without a shooter
-        return licenseeService.associateLicenseeToShooter(licenseeId, associateLicenseeToShooterRequest.getShooterId());
     }
 
 }
