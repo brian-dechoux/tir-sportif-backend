@@ -47,6 +47,12 @@ public class ClubService extends AbstractService {
         return RepositoryUtils.findById(clubRepository::findById, clubId);
     }
 
+    /**
+     * Create a new club in the system.
+     *
+     * @param request
+     * @return Created club
+     */
     public GetClubResponse createClub(CreateClubRequest request) {
         log.info("Creating club named: {}", request.getName());
         Country country = findCountryById(request.getAddress().getCountryId());
@@ -59,6 +65,11 @@ public class ClubService extends AbstractService {
         return response;
     }
 
+    /**
+     * Get my club (Briey)
+     *
+     * @return Briey club information
+     */
     public GetClubResponse getMyClub() {
         log.info("Looking for my club");
         Club club = findClubById(myClubProperties.getId());
@@ -67,6 +78,12 @@ public class ClubService extends AbstractService {
         return response;
     }
 
+    /**
+     * Get a specific club.
+     *
+     * @param id
+     * @return Club information
+     */
     public GetClubResponse getClubById(Long id) {
         log.info("Looking for club with ID: {}", id);
         Club club = findClubById(id);
@@ -75,6 +92,13 @@ public class ClubService extends AbstractService {
         return response;
     }
 
+    /**
+     * Get paged clubs, excluding my club (Briey) from the list.
+     *
+     * @param page
+     * @param rowsPerPage
+     * @return Paged clubs
+     */
     public Page<GetClubListElementResponse> searchClubs(int page, int rowsPerPage) {
         log.info("Searching for clubs");
         PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
@@ -84,15 +108,32 @@ public class ClubService extends AbstractService {
         return responses;
     }
 
-    public List<GetClubResponse> getClubs() {
+    /**
+     * Get all clubs.
+     * Possibility to include/exclude my club (Briey) from the list.
+     *
+     * @param withMyClub
+     * @return Clubs information.
+     */
+    public List<GetClubResponse> getClubs(boolean withMyClub) {
         log.info("Looking for all clubs");
-        List<GetClubResponse> clubs = clubRepository.findAll().stream()
+        List<Club> clubs = withMyClub ?
+                clubRepository.findAll()
+                : clubRepository.findAll(myClubProperties.getId());
+        List<GetClubResponse> responses = clubs.stream()
                 .map(clubMapper::mapClubToResponse)
                 .collect(Collectors.toList());
-        log.info("Found {} clubs", clubs.size());
-        return clubs;
+        log.info("Found {} clubs", responses.size());
+        return responses;
     }
 
+    /**
+     * Update club information.
+     *
+     * @param id
+     * @param request
+     * @return Updated club information
+     */
     public GetClubResponse updateClub(Long id, UpdateClubRequest request) {
         log.info("Updating club named: {}", request.getName());
         Club club = clubRepository.findById(id)

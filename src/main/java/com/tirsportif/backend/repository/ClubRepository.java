@@ -7,7 +7,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ClubRepository extends JpaRepository<Club,Long> {
+
+    @Query(value = "SELECT * " +
+            "FROM club c " +
+            "WHERE c.id <> ?1 " +
+            "ORDER BY c.name"
+            , nativeQuery = true)
+    List<Club> findAll(Long myClubId);
 
     @Query(value = "SELECT c.id, c.name, a.city, COUNT(s.id) AS nbShooters " +
             "FROM club c " +

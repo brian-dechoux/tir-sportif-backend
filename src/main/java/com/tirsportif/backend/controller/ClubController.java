@@ -64,8 +64,8 @@ public class ClubController {
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public List<GetClubResponse> getClubs() {
-        return clubService.getClubs();
+    public List<GetClubResponse> getClubs(@RequestParam(required = false, defaultValue = "false") boolean withMyClub) {
+        return clubService.getClubs(withMyClub);
     }
 
     @PutMapping(value = "/{clubId}")
