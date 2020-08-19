@@ -33,10 +33,10 @@ public class ShooterController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public List<GetSearchShooterResponse> searchShooters(
             @RequestParam String searchName,
-            @RequestParam(required = false) Long clubId,
+            @RequestParam(required = false, defaultValue = "false") boolean freeClubOnly,
             @RequestParam(required = false) List<Long> categoryIds
     ) {
-        return shooterService.searchShooters(searchName, clubId, categoryIds);
+        return shooterService.searchShooters(searchName, freeClubOnly, categoryIds);
     }
 
     @GetMapping(value = "/{shooterId}")

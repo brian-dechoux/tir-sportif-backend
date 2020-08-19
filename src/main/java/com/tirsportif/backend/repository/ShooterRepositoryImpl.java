@@ -18,24 +18,21 @@ public class ShooterRepositoryImpl implements ShooterRepositoryCustom {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<SearchShooterProjection> search(String searchName, @Nullable Long clubId, @Nullable List<Long> categoryIds) {
+    public List<SearchShooterProjection> search(String searchName, @Nullable boolean freeClubOnly, @Nullable List<Long> categoryIds) {
         Query query = entityManager.createNativeQuery(
                 "SELECT s.id, s.lastname, s.firstname, c.name AS clubName, cat.label AS categoryLabel "+
                         "FROM shooter s "+
-                        ((clubId != null) ? "INNER JOIN club c ON s.clubId = c.id " : "LEFT JOIN club c ON s.clubId = c.id ") +
+                        "LEFT JOIN club c ON s.clubId = c.id " +
                         "INNER JOIN category cat ON s.categoryId = cat.id "+
                         "WHERE (CONCAT(s.firstname, ' ', s.lastname) LIKE CONCAT('%',?1,'%') " +
                         "OR CONCAT(s.lastname, ' ', s.firstname) LIKE CONCAT('%',?1,'%')) " +
-                        ((clubId != null) ? "AND c.id = ?2 " : "") +
-                        ((categoryIds != null) ? "AND cat.id IN (?3) " : "")
+                        ((freeClubOnly) ? "AND s.clubId IS NULL " : "") +
+                        ((categoryIds != null) ? "AND s.categoryId IN (?2) " : "")
                 , Tuple.class
         ).setParameter(1, searchName);
 
-        if (clubId != null) {
-            query = query.setParameter(2, clubId);
-        }
         if (categoryIds != null) {
-            query = query.setParameter(3, categoryIds);
+            query = query.setParameter(2, categoryIds);
         }
 
         List<Tuple> results = query.getResultList();

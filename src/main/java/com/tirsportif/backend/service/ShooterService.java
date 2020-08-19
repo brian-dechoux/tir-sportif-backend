@@ -78,10 +78,10 @@ public class ShooterService extends AbstractService {
         return response;
     }
 
-    public List<GetSearchShooterResponse> searchShooters(String searchName, @Nullable Long clubId, @Nullable List<Long> categoryIds) {
-        log.info("Search for shooters with parameters: {}, {}, {}", searchName, clubId, categoryIds);
+    public List<GetSearchShooterResponse> searchShooters(String searchName, boolean freeClubOnly, @Nullable List<Long> categoryIds) {
+        log.info("Search for shooters with parameters: {}, {}, {}", searchName, freeClubOnly, categoryIds);
         String sanitizedSearchName = searchName.replaceAll("\\s+", " ").trim();
-        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, clubId, categoryIds);
+        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, freeClubOnly, categoryIds);
         List<GetSearchShooterResponse> response = shooters.stream()
                 .map(shooterMapper::mapSearchShooterToResponse)
                 .collect(Collectors.toList());
