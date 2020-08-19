@@ -68,6 +68,15 @@ public class LicenseeService extends AbstractService {
         return RepositoryUtils.findById(clubRepository::findById, clubId);
     }
 
+    /**
+     * Create a license for a shooter.
+     * The shooter must exists in the system in the first place.
+     *
+     * The shooter's associated club is changed to myclub if not already the case.
+     *
+     * @param request
+     * @return License created
+     */
     public GetLicenseeResponse createLicensee(CreateLicenseeRequest request) {
         log.info("Creating licensee");
 
@@ -96,7 +105,7 @@ public class LicenseeService extends AbstractService {
     }
 
     /**
-     * Get all licensees.
+     * Get paged licensees.
      *
      * @param page Page number
      * @return Paginated licensees
@@ -110,6 +119,12 @@ public class LicenseeService extends AbstractService {
         return responses;
     }
 
+    /**
+     * Get a specific license.
+     *
+     * @param id
+     * @return License
+     */
     public GetLicenseeResponse getLicenseeById(Long id) {
         log.info("Looking for licensee with ID: {}", id);
         Licensee licensee = findLicenseeById(id);
@@ -118,6 +133,12 @@ public class LicenseeService extends AbstractService {
         return response;
     }
 
+    /**
+     * Renew a license, starting again from now.
+     *
+     * @param licenseeId
+     * @return Renewed license
+     */
     public GetLicenseeResponse renewLicenseeSubscription(Long licenseeId) {
         log.info("Updating licensee subscription date.");
         Licensee licensee = findLicenseeById(licenseeId);
@@ -129,20 +150,6 @@ public class LicenseeService extends AbstractService {
         GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
         applicationEventPublisher.publishEvent(new LicenseSubscriptionEvent(licensee));
         log.info("Licensee subscription updated.");
-        return response;
-    }
-
-    public GetLicenseeResponse associateLicenseeToShooter(Long licenseeId, Long shooterId) {
-        log.info("Associating licensee with ID: {} to the shooter with ID: {}", licenseeId, shooterId);
-        Licensee licensee = findLicenseeById(licenseeId);
-        Shooter shooter = findShooterById(shooterId);
-        licensee = licenseeRepository.save(
-                licensee.toBuilder()
-                        .shooter(shooter)
-                        .build()
-        );
-        GetLicenseeResponse response = licenseeMapper.mapLicenseeToResponse(licensee);
-        log.info("Licensee associated.");
         return response;
     }
 
