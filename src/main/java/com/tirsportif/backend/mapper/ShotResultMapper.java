@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -164,7 +166,10 @@ public class ShotResultMapper {
                         .orElse(0.0)
                 ).reduce(Double::sum)
                 .orElse(0.0);
-        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), serieResults, participationTotal);
+        Double roundParticipationTotal = new BigDecimal(participationTotal)
+                .setScale(1, RoundingMode.HALF_UP)
+                .doubleValue();
+        return new GetParticipationResultsResponse(participationCurrentEntry.getKey(), serieResults, roundParticipationTotal);
     }
 
     private GetParticipationSerieResultsResponse initializedSerieResultList(Discipline discipline) {
