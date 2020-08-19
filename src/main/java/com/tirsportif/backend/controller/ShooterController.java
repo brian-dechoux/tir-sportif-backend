@@ -31,8 +31,12 @@ public class ShooterController {
     @GetMapping(value = "/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public List<GetSearchShooterResponse> searchShooters(@RequestParam String searchName) {
-        return shooterService.searchShooters(searchName);
+    public List<GetSearchShooterResponse> searchShooters(
+            @RequestParam String searchName,
+            @RequestParam(required = false) Long clubId,
+            @RequestParam(required = false) List<Long> categoryIds
+    ) {
+        return shooterService.searchShooters(searchName, clubId, categoryIds);
     }
 
     @GetMapping(value = "/{shooterId}")

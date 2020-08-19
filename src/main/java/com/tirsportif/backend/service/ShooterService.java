@@ -15,6 +15,7 @@ import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,14 +78,14 @@ public class ShooterService extends AbstractService {
         return response;
     }
 
-    public List<GetSearchShooterResponse> searchShooters(String searchName) {
-        log.info("Search for shooters with name: {}", searchName);
+    public List<GetSearchShooterResponse> searchShooters(String searchName, @Nullable Long clubId, @Nullable List<Long> categoryIds) {
+        log.info("Search for shooters with parameters: {}, {}, {}", searchName, clubId, categoryIds);
         String sanitizedSearchName = searchName.replaceAll("\\s+", " ").trim();
-        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, null, null);
+        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, clubId, categoryIds);
         List<GetSearchShooterResponse> response = shooters.stream()
                 .map(shooterMapper::mapSearchShooterToResponse)
                 .collect(Collectors.toList());
-        log.info("Found {} shooters matching searched name", searchName);
+        log.info("Found {} shooters", searchName);
         return response;
     }
 
