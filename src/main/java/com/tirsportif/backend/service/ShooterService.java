@@ -80,7 +80,7 @@ public class ShooterService extends AbstractService {
     public List<GetSearchShooterResponse> searchShooters(String searchName) {
         log.info("Search for shooters with name: {}", searchName);
         String sanitizedSearchName = searchName.replaceAll("\\s+", " ").trim();
-        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName);
+        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, null, null);
         List<GetSearchShooterResponse> response = shooters.stream()
                 .map(shooterMapper::mapSearchShooterToResponse)
                 .collect(Collectors.toList());
