@@ -4,6 +4,7 @@ import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.key.ShotResultKey;
+import com.tirsportif.backend.model.projection.SeriesShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
@@ -49,7 +50,7 @@ public class ShotResultMapper {
      * @param results
      * @return
      */
-    public List<GetChallengeCategoryDisciplineResponse> mapChallengeResultsToDto(List<ShotResultForChallengeProjection> results) {
+    public List<GetChallengeCategoryDisciplineResultsResponse> mapChallengeResultsToDto(List<ShotResultForChallengeProjection> results) {
         return results.stream()
                 .collect(Collectors.groupingBy(
                         singleResult -> new TemporaryChallengeCategoryDisciplineMapKey(
@@ -63,12 +64,13 @@ public class ShotResultMapper {
                                 singleResult -> new GetChallengeCategoryDisciplineResultResponse(
                                         singleResult.getLastname(),
                                         singleResult.getFirstname(),
-                                        singleResult.getParticipationId(), singleResult.getParticipationTotalPoints()
+                                        singleResult.getParticipationId(),
+                                        singleResult.getParticipationTotalPoints()
                                 ),
                                 Collectors.toCollection(LinkedList::new)
                         )
                 )).entrySet().stream()
-                .map(participationCurrentEntry -> GetChallengeCategoryDisciplineResponse.builder()
+                .map(participationCurrentEntry -> GetChallengeCategoryDisciplineResultsResponse.builder()
                         .categoryId(participationCurrentEntry.getKey().categoryId)
                         .categoryLabel(participationCurrentEntry.getKey().categoryLabel)
                         .disciplineId(participationCurrentEntry.getKey().disciplineId)
@@ -79,6 +81,46 @@ public class ShotResultMapper {
                                         .collect(Collectors.toCollection(LinkedList::new))
                         ).build()
                 ).collect(Collectors.toList());
+    }
+
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    private class TemporaryChallengeSeriesMapKey {
+        Long shooterId;
+        String lastname;
+        String firstname;
+    }
+
+    /**
+     * TODO
+     * @param results
+     * @return
+     */
+    public List<GetChallengeSeriesResultsResponse> mapChallengeSeriesResultsToDto(List<SeriesShotResultForChallengeProjection> results) {
+        return results.stream()
+                .collect(Collectors.groupingBy(
+                        singleResult -> new TemporaryChallengeSeriesMapKey(
+                                singleResult.getShooterId(),
+                                singleResult.getLastname(),
+                                singleResult.getFirstname()
+                        ),
+                        LinkedHashMap::new,
+                        Collectors.mapping(
+                                SeriesShotResultForChallengeProjection::getPoints,
+                                Collectors.toCollection(LinkedList::new)
+                        )
+                )).entrySet().stream()
+                .map(participationCurrentEntry -> GetChallengeSeriesResultsResponse.builder()
+                        .lastname(participationCurrentEntry.getKey().lastname)
+                        .firstname(participationCurrentEntry.getKey().firstname)
+                        .participationSeriesPoints(participationCurrentEntry.getValue())
+                        .participationTotalPoints(
+                                participationCurrentEntry.getValue().stream()
+                                        .mapToDouble(Double::doubleValue)
+                                        .sum()
+                        ).build()
+                ).sorted(Comparator.comparingDouble(GetChallengeSeriesResultsResponse::getParticipationTotalPoints).reversed())
+                .collect(Collectors.toList());
     }
 
     /**

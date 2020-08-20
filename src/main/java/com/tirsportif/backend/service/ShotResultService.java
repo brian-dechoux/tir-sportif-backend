@@ -11,6 +11,7 @@ import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.ShotResult;
 import com.tirsportif.backend.model.key.ShotResultKey;
+import com.tirsportif.backend.model.projection.SeriesShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
@@ -140,7 +141,8 @@ public class ShotResultService extends AbstractService {
     }
 
     /**
-     * Get results for a challenge.
+     * Get general results for a challenge.
+     * Uses aggregated results with total for each shooter, category and discipline.
      *
      * @param challengeId
      * @return Challenge results
@@ -156,6 +158,23 @@ public class ShotResultService extends AbstractService {
                 .build();
         log.info("Found {} results", results.size());
         return response;
+    }
+
+    /**
+     * Get detailed results for a challenge, a category and a discipline.
+     * Uses series results, total is aggregated programatically when building response DTO.
+     *
+     * @param challengeId
+     * @return Challenge results
+     */
+    @Transactional
+    public List<GetChallengeSeriesResultsResponse> getSeriesResultsForChallenge(Long challengeId, Long categoryId, Long disciplineId) {
+        log.info("Searching shot results for challenge: {}", challengeId);
+        Challenge challenge = findChallengeById(challengeId);
+        List<SeriesShotResultForChallengeProjection> results = shotResultRepository.getSeriesShotResultsForChallenge(challengeId, categoryId, disciplineId);
+        List<GetChallengeSeriesResultsResponse> responses = shotResultMapper.mapChallengeSeriesResultsToDto(results);
+        log.info("Found {} results", results.size());
+        return responses;
     }
 
     /**

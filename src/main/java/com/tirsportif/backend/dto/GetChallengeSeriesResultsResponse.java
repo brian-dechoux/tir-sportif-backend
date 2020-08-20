@@ -9,10 +9,14 @@ import java.util.List;
 @Value
 @Builder
 @AllArgsConstructor
-public class GetChallengeResultsResponse {
+public class GetChallengeSeriesResultsResponse {
 
-    GetChallengeResponse challenge;
+    String lastname;
 
-    List<GetChallengeCategoryDisciplineResultsResponse> challengeResults;
+    String firstname;
+
+    List<Double> participationSeriesPoints;
+
+    double participationTotalPoints;
 
 }
