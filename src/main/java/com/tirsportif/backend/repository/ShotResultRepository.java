@@ -43,25 +43,25 @@ public interface ShotResultRepository extends JpaRepository<ShotResult, Long> {
             , nativeQuery = true)
     List<ShotResultForChallengeProjection> getShotResultsForChallenge(Long challengeId);
 
-    @Query(value = "SELECT s.id AS shooterId, s.lastname, s.firstname, participationResults.serieNumber, participationResults.points\n" +
-            "FROM (\n" +
-            "    SELECT raw.participationId, raw.serieNumber, sr.points\n" +
-            "    FROM (\n" +
-            "             SELECT p.id AS participationId, rawsr.serieNumber, MIN(rawsr.shotNumber) AS shotNumber\n" +
-            "             FROM shotResult AS rawsr\n" +
-            "                      INNER JOIN participation p ON rawsr.participationId = p.id\n" +
-            "                      INNER JOIN shooter s ON p.shooterId = s.id\n" +
-            "             WHERE p.challengeId = ?1\n" +
-            "               AND p.disciplineId = ?3\n" +
-            "               AND s.categoryId = ?2\n" +
-            "               AND (rawsr.shotNumber = -2 OR rawsr.shotNumber = -1)\n" +
-            "               AND p.outRank = false\n" +
-            "             GROUP BY p.id, rawsr.serieNumber\n" +
-            "         ) AS raw\n" +
-            "    INNER JOIN shotResult sr ON sr.serieNumber = raw.serieNumber AND sr.shotNumber = raw.shotNumber AND sr.participationId = raw.participationId\n" +
-            " ) AS participationResults\n" +
-            "INNER JOIN participation p ON p.id = participationResults.participationId\n" +
-            "INNER JOIN shooter s on p.shooterId = s.id\n" +
+    @Query(value = "SELECT s.id AS shooterId, s.lastname, s.firstname, participationResults.serieNumber, participationResults.points " +
+            "FROM (" +
+            "    SELECT raw.participationId, raw.serieNumber, sr.points " +
+            "    FROM (" +
+            "             SELECT p.id AS participationId, rawsr.serieNumber, MIN(rawsr.shotNumber) AS shotNumber " +
+            "             FROM shotResult AS rawsr " +
+            "                      INNER JOIN participation p ON rawsr.participationId = p.id " +
+            "                      INNER JOIN shooter s ON p.shooterId = s.id " +
+            "             WHERE p.challengeId = ?1 " +
+            "               AND p.disciplineId = ?3 " +
+            "               AND s.categoryId = ?2 " +
+            "               AND (rawsr.shotNumber = -2 OR rawsr.shotNumber = -1) " +
+            "               AND p.outRank = false " +
+            "             GROUP BY p.id, rawsr.serieNumber " +
+            "         ) AS raw " +
+            "    INNER JOIN shotResult sr ON sr.serieNumber = raw.serieNumber AND sr.shotNumber = raw.shotNumber AND sr.participationId = raw.participationId " +
+            " ) AS participationResults " +
+            "INNER JOIN participation p ON p.id = participationResults.participationId " +
+            "INNER JOIN shooter s on p.shooterId = s.id " +
             "ORDER BY participationResults.participationId, participationResults.serieNumber"
             , nativeQuery = true)
     List<SeriesShotResultForChallengeProjection> getSeriesShotResultsForChallenge(Long challengeId, Long categoryId, Long disciplineId);

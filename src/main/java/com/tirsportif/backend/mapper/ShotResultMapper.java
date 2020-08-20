@@ -45,11 +45,6 @@ public class ShotResultMapper {
         String disciplineLabel;
     }
 
-    /**
-     * TODO
-     * @param results
-     * @return
-     */
     public List<GetChallengeCategoryDisciplineResultsResponse> mapChallengeResultsToDto(List<ShotResultForChallengeProjection> results) {
         return results.stream()
                 .collect(Collectors.groupingBy(
@@ -91,11 +86,6 @@ public class ShotResultMapper {
         String firstname;
     }
 
-    /**
-     * TODO
-     * @param results
-     * @return
-     */
     public List<GetChallengeSeriesResultsResponse> mapChallengeSeriesResultsToDto(List<SeriesShotResultForChallengeProjection> results) {
         return results.stream()
                 .collect(Collectors.groupingBy(
