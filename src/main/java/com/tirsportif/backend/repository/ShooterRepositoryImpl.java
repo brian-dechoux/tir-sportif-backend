@@ -24,8 +24,8 @@ public class ShooterRepositoryImpl implements ShooterRepositoryCustom {
                         "FROM shooter s "+
                         "LEFT JOIN club c ON s.clubId = c.id " +
                         "INNER JOIN category cat ON s.categoryId = cat.id "+
-                        "WHERE (CONCAT(s.firstname, ' ', s.lastname) LIKE CONCAT('%',?1,'%') " +
-                        "OR CONCAT(s.lastname, ' ', s.firstname) LIKE CONCAT('%',?1,'%')) " +
+                        "WHERE (LOWER(CONCAT(s.firstname, ' ', s.lastname)) LIKE CONCAT('%',LOWER(?1),'%') " +
+                        "OR LOWER(CONCAT(s.lastname, ' ', s.firstname)) LIKE CONCAT('%',LOWER(?1),'%')) " +
                         ((freeClubOnly) ? "AND s.clubId IS NULL " : "") +
                         ((categoryIds != null) ? "AND s.categoryId IN (?2) " : "")
                 , Tuple.class
