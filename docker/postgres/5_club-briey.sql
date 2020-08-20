@@ -1,2 +1,2 @@
-INSERT INTO address (id,street,city,countryId) VALUES (1,'Rue de Dolhain','Val de Briey',75);
-INSERT INTO club (id,name,addressId) VALUES (1,'ST Briey',1);
+INSERT INTO address (street,city,countryId) VALUES ('Rue de Dolhain','Val de Briey',(SELECT id FROM country WHERE name = 'France'));
+INSERT INTO club (name,addressId) VALUES ('ST Briey',(SELECT id FROM address));
