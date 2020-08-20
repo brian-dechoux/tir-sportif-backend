@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface ShotResultRepository extends JpaRepository<ShotResult, Long> {
 
-    boolean existsByParticipationId(Long participationId);
-
     @Query(value = "SELECT * FROM shotResult " +
             "WHERE participationId = ?1 " +
             "AND serieNumber = ?2 " +
@@ -23,7 +21,7 @@ public interface ShotResultRepository extends JpaRepository<ShotResult, Long> {
 
     @Query(value = "SELECT s.lastname, s.firstname, c.id AS categoryId, c.label AS categoryLabel, d.id AS disciplineId, d.label AS disciplineLabel, participationResults.participationId, participationTotalPoints " +
             "FROM (" +
-            "        SELECT raw.participationId, SUM(sr.points) AS participationTotalPoints\n" +
+            "        SELECT raw.participationId, SUM(sr.points) AS participationTotalPoints " +
             "        FROM (" +
             "              SELECT p.id AS participationId, rawsr.serieNumber, MIN(rawsr.shotNumber) AS shotNumber " +
             "              FROM shotResult AS rawsr " +
