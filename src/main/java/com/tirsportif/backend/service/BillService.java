@@ -50,6 +50,7 @@ public class BillService extends AbstractService {
                 .orElseThrow(() -> new InternalServerErrorException(BillError.NO_PRICE_FOR_PARAMETERS, PriceType.CHALLENGE.name(), Boolean.toString(forLicensee)));
         Bill bill  = Bill.builder()
                 .value(price.getValue())
+                .creationDate(OffsetDateTime.now(clock))
                 .paid(participation.isPaid())
                 .participation(participation)
                 .price(price)
