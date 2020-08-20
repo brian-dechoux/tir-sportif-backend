@@ -135,7 +135,8 @@ CREATE TABLE `bill` (
   `creationDate` timestamp,
   `participationId` int,
   `licenseeId` int,
-  `priceId` int NOT NULL
+  `priceId` int NOT NULL,
+  `paidDate` timestamp
 );
 
 ALTER TABLE `user` ADD FOREIGN KEY (`authorityId`) REFERENCES `authority` (`id`);
