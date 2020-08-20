@@ -20,6 +20,8 @@ public class Bill {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
 
+    OffsetDateTime creationDate;
+
     /**
      * Uncorrelated value from the single price.
      * Other factors may be implied in calculation.
