@@ -9,6 +9,7 @@ server.port: ${PORT}
 spring:
 
   jpa:
+    properties.hibernate.jdbc.lob.non_contextual_creation: true
     ### Naming convention for database columns: CamelCase
     hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     ### Anti pattern, even logged by SpringBoot. See: https://stackoverflow.com/a/48222934/4675568
