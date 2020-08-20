@@ -11,6 +11,16 @@ services:
     volumes:
       - tir-sportif_mysql:/var/lib/mysql
 
+  postgres:
+    container_name: tir-sportif-postgres
+    build: postgres
+    env_file: ${ENV_FILE}
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - tir-sportif_postgres:/var/lib/postgresql/data
+
   redis:
     container_name: tir-sportif-redis
     build: ./redis
@@ -39,3 +49,4 @@ networks:
 volumes:
   tir-sportif_m2cache:
   tir-sportif_mysql:
+  tir-sportif_postgres:
