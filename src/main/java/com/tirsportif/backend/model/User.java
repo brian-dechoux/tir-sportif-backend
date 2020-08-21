@@ -14,7 +14,7 @@ import java.util.Collections;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "user")
+@Entity(name = "userAccount")
 public class User implements Authentication {
 
     @Id

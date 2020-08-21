@@ -9,10 +9,12 @@ server.port: ${PORT}
 spring:
 
   jpa:
+    properties.hibernate.jdbc.lob.non_contextual_creation: true
     ### Naming convention for database columns: CamelCase
     hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     ### Anti pattern, even logged by SpringBoot. See: https://stackoverflow.com/a/48222934/4675568
     open-in-view: false
+    show-sql: false
 
   liquibase.enabled: ${SPRING_LIQUIBASE_ENABLED}
 
@@ -31,6 +33,9 @@ spring:
 
 ## Custom app configs
 tir-sportif:
+
+  my-club:
+    id: 1
 
   api:
     ### Default pages size
@@ -55,7 +60,7 @@ spring:
   liquibase.enabled: false
 
   datasource:
-    url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/tir-sportif?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Paris&useLegacyDatetimeCode=false
     username: admin
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -68,6 +73,9 @@ spring:
 
 ## Custom app configs
 tir-sportif:
+
+  my-club:
+    id: 1
 
   jwt:
     secret: springfield1911EMP

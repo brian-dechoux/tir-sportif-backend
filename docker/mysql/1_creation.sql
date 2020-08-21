@@ -1,4 +1,4 @@
-CREATE TABLE `user` (
+CREATE TABLE `userAccount` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
@@ -31,7 +31,8 @@ CREATE TABLE `address` (
 CREATE TABLE `club` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `addressId` int NOT NULL
+  `addressId` int NOT NULL,
+  `email` varchar(255)
 );
 
 CREATE TABLE `price` (
@@ -131,9 +132,11 @@ CREATE TABLE `bill` (
   `id` int  PRIMARY KEY AUTO_INCREMENT,
   `value` double NOT NULL,
   `paid` boolean NOT NULL,
+  `creationDate` timestamp,
   `participationId` int,
   `licenseeId` int,
-  `priceId` int NOT NULL
+  `priceId` int NOT NULL,
+  `paidDate` timestamp
 );
 
 ALTER TABLE `user` ADD FOREIGN KEY (`authorityId`) REFERENCES `authority` (`id`);

@@ -13,7 +13,7 @@ import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.Discipline;
 import com.tirsportif.backend.model.Participation;
 import com.tirsportif.backend.model.Shooter;
-import com.tirsportif.backend.model.event.ParticipationCreated;
+import com.tirsportif.backend.model.event.ParticipationCreatedEvent;
 import com.tirsportif.backend.property.ApiProperties;
 import com.tirsportif.backend.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -37,17 +36,15 @@ public class ParticipationService extends AbstractService {
     private final DisciplineRepository disciplineRepository;
     private final ShooterRepository shooterRepository;
     private final ParticipationRepository participationRepository;
-    private final ShotResultRepository shotResultRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ParticipationService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ShotResultRepository shotResultRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public ParticipationService(ApiProperties apiProperties, ParticipationMapper participationMapper, ChallengeRepository challengeRepository, DisciplineRepository disciplineRepository, ShooterRepository shooterRepository, ParticipationRepository participationRepository, ApplicationEventPublisher applicationEventPublisher) {
         super(apiProperties);
         this.participationMapper = participationMapper;
         this.challengeRepository = challengeRepository;
         this.disciplineRepository = disciplineRepository;
         this.shooterRepository = shooterRepository;
         this.participationRepository = participationRepository;
-        this.shotResultRepository = shotResultRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -110,17 +107,6 @@ public class ParticipationService extends AbstractService {
         Challenge challenge = findChallengeById(challengeId);
         Shooter shooter = findShooterById(request.getShooterId());
 
-        /*
-        TODO Cache categories and disciplines
-        Map<Long, Discipline> disciplinesMap =
-                findDisciplinesByIds(
-                    request.getDisciplinesInformation().stream()
-                            .map(CreateDisciplineParticipationRequest::getDisciplineId)
-                            .collect(Collectors.toSet())
-                ).stream().collect(Collectors.toMap(Discipline::getId, Function.identity()));
-        */
-
-        // TODO Check also categories...
         checkAuthorizedDisciplines(challenge, request.getDisciplinesInformation());
 
         List<Participation> participations = request.getDisciplinesInformation().stream()
@@ -137,7 +123,7 @@ public class ParticipationService extends AbstractService {
                 }).collect(Collectors.toList());
 
         try {
-            participations = StreamSupport.stream(participationRepository.saveAll(participations).spliterator(), true).collect(Collectors.toList());
+            participations = participationRepository.saveAll(participations).parallelStream().collect(Collectors.toList());
             log.info("Participations created");
         } catch (DataIntegrityViolationException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains(IntegrityConstraints.PARTICIPATION_DISCIPLINE_ONLY_ONE_RANKED.getCauseMessagePart())) {
@@ -148,7 +134,7 @@ public class ParticipationService extends AbstractService {
 
         log.info("Sending participations to billing service");
         participations.stream()
-                .map(ParticipationCreated::new)
+                .map(ParticipationCreatedEvent::new)
                 .forEach(applicationEventPublisher::publishEvent);
 
         participations = participationRepository.findByChallengeIdAndShooterIdOrderByOutrankAsc(challengeId, shooter.getId());

@@ -20,14 +20,14 @@ public class Licensee {
     @NotNull
     int badgeNumber;
 
-    int lockerNumber;
+    Integer lockerNumber;
 
     @NonNull
     @NotNull
     @Column(name = "subscriptionDate", columnDefinition = "DATE")
     LocalDate subscriptionDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "shooterId")
     Shooter shooter;
 

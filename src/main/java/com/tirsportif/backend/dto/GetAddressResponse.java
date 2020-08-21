@@ -15,4 +15,6 @@ public class GetAddressResponse {
 
     String countryCode;
 
+    String countryName;
+
 }

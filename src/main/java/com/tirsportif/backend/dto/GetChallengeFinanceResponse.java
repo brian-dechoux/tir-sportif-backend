@@ -7,6 +7,6 @@ import java.util.List;
 @Value
 public class GetChallengeFinanceResponse {
 
-    List<GetBillResponse> bills;
+    List<GetShooterBillResponse> bills;
 
 }

@@ -31,12 +31,10 @@ public class AuthenticationService {
         log.debug("BEGIN AuthenticationService.login(Username: {})", username);
         log.info("Authenticating user by username/password, for username: {}", username);
 
-        // This is not security best practice, but we tolerate it for such a small project (no big impacts)
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UnauthorizedErrorException(AuthenticationError.WRONG_USERNAME));
-
+                .orElseThrow(() -> new UnauthorizedErrorException(AuthenticationError.WRONG_CREDENTIALS));
         if (!passwordService.passwordsMatch(authenticationRequest.getPassword(), user.getPassword())) {
-            throw new UnauthorizedErrorException(AuthenticationError.WRONG_PASSWORD);
+            throw new UnauthorizedErrorException(AuthenticationError.WRONG_CREDENTIALS);
         }
 
         log.debug("Generating token");

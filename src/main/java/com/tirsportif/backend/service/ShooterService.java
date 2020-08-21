@@ -1,9 +1,6 @@
 package com.tirsportif.backend.service;
 
-import com.tirsportif.backend.dto.CreateShooterRequest;
-import com.tirsportif.backend.dto.GetSearchShooterResponse;
-import com.tirsportif.backend.dto.GetShooterResponse;
-import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.error.GenericClientError;
 import com.tirsportif.backend.exception.NotFoundErrorException;
 import com.tirsportif.backend.mapper.ShooterMapper;
@@ -16,6 +13,9 @@ import com.tirsportif.backend.repository.CategoryRepository;
 import com.tirsportif.backend.repository.ClubRepository;
 import com.tirsportif.backend.repository.ShooterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,15 +78,24 @@ public class ShooterService extends AbstractService {
         return response;
     }
 
-    public List<GetSearchShooterResponse> search(String searchName) {
-        log.info("Search for shooters with name: {}", searchName);
+    public List<GetSearchShooterResponse> searchShooters(String searchName, boolean freeClubOnly, @Nullable List<Long> categoryIds) {
+        log.info("Search for shooters with parameters: {}, {}, {}", searchName, freeClubOnly, categoryIds);
         String sanitizedSearchName = searchName.replaceAll("\\s+", " ").trim();
-        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName);
+        List<SearchShooterProjection> shooters = shooterRepository.search(sanitizedSearchName, freeClubOnly, categoryIds);
         List<GetSearchShooterResponse> response = shooters.stream()
                 .map(shooterMapper::mapSearchShooterToResponse)
                 .collect(Collectors.toList());
-        log.info("Found {} shooters matching searched name", searchName);
+        log.info("Found {} shooters", searchName);
         return response;
+    }
+
+    public Page<GetShooterListElementResponse> getShootersForClub(Long clubId, int page, int rowsPerPage) {
+        log.info("Looking for all shooters for club with ID: {}", clubId.toString());
+        PageRequest pageRequest = PageRequest.of(page, rowsPerPage);
+        Page<GetShooterListElementResponse> responses = shooterRepository.findAllForClubAsListElements(clubId, pageRequest)
+                .map(shooterMapper::mapShooterListElementToResponse);
+        log.info("Found {} shooters", responses.getNumberOfElements());
+        return responses;
     }
 
     public GetShooterResponse associateShooter(Long shooterId, Long clubId) {

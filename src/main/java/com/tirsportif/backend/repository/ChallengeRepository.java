@@ -4,10 +4,10 @@ import com.tirsportif.backend.model.Challenge;
 import com.tirsportif.backend.model.projection.ChallengeListElementProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface ChallengeRepository extends PagingAndSortingRepository<Challenge,Long> {
+public interface ChallengeRepository extends JpaRepository<Challenge,Long> {
 
     @Query(value = "SELECT challenge.id, challenge.name, challenge.startDate, address.city, COUNT(DISTINCT p.shooterId) AS nbShooters " +
             "FROM challenge " +

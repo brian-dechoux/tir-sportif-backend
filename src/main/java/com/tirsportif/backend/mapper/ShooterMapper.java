@@ -1,10 +1,13 @@
 package com.tirsportif.backend.mapper;
 
 import com.tirsportif.backend.dto.GetSearchShooterResponse;
+import com.tirsportif.backend.dto.GetShooterListElementResponse;
 import com.tirsportif.backend.dto.GetShooterResponse;
 import com.tirsportif.backend.dto.ResolvedCreateShooterRequest;
 import com.tirsportif.backend.model.Shooter;
 import com.tirsportif.backend.model.projection.SearchShooterProjection;
+import com.tirsportif.backend.model.projection.ShooterListElementProjection;
+import com.tirsportif.backend.utils.NameNormalizer;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -22,8 +25,8 @@ public class ShooterMapper {
 
     public Shooter mapCreateShooterDtoToShooter(ResolvedCreateShooterRequest request) {
         Shooter shooter = new Shooter();
-        shooter.setLastname(request.getLastname());
-        shooter.setFirstname(request.getFirstname());
+        shooter.setLastname(NameNormalizer.normalize(request.getLastname()));
+        shooter.setFirstname(NameNormalizer.normalize(request.getFirstname()));
         shooter.setBirthDate(request.getBirthdate());
         shooter.setClub(request.getClub());
         shooter.setCategory(request.getCategory());
@@ -51,6 +54,15 @@ public class ShooterMapper {
                 shooterProjection.getLastname(),
                 shooterProjection.getFirstname(),
                 shooterProjection.getClubName(),
+                shooterProjection.getCategoryLabel()
+        );
+    }
+
+    public GetShooterListElementResponse mapShooterListElementToResponse(ShooterListElementProjection shooterProjection) {
+        return new GetShooterListElementResponse(
+                shooterProjection.getId(),
+                shooterProjection.getLastname(),
+                shooterProjection.getFirstname(),
                 shooterProjection.getCategoryLabel()
         );
     }

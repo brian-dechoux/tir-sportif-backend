@@ -9,7 +9,7 @@ import java.util.List;
 @Value
 @Builder
 @AllArgsConstructor
-public class GetChallengeCategoryDisciplineResponse {
+public class GetChallengeCategoryDisciplineResultsResponse {
 
     long categoryId;
 

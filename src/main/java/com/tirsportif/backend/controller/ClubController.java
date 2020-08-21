@@ -1,9 +1,8 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.CreateClubRequest;
-import com.tirsportif.backend.dto.GetClubResponse;
-import com.tirsportif.backend.dto.UpdateClubRequest;
+import com.tirsportif.backend.dto.*;
 import com.tirsportif.backend.service.ClubService;
+import com.tirsportif.backend.service.ShooterService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,9 +16,11 @@ import java.util.List;
 public class ClubController {
 
     private final ClubService clubService;
+    private final ShooterService shooterService;
 
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService, ShooterService shooterService) {
         this.clubService = clubService;
+        this.shooterService = shooterService;
     }
 
     @PostMapping
@@ -36,25 +37,47 @@ public class ClubController {
         return clubService.getClubById(clubId);
     }
 
+    @GetMapping(value = "/my")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetClubResponse getMyClub() {
+        return clubService.getMyClub();
+    }
+
+    // TODO create a route returning a resume for a club
+    //  Club, nb shooters, nb challenges
+
     @GetMapping("/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public Page<GetClubResponse> getClubs(@RequestParam("page") int page) {
-        // TODO Exclude current club (Briey) as it's MyClub. Depends on connected user.
-        return clubService.getClubs(page);
+    public Page<GetClubListElementResponse> searchClubs(@RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return clubService.searchClubs(page, rowsPerPage);
+    }
+
+    @GetMapping(value = "/{clubId}/shooters")
+    @ResponseBody
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public Page<GetShooterListElementResponse> getShooters(@PathVariable Long clubId, @RequestParam("page") int page, @RequestParam("rowsPerPage") int rowsPerPage) {
+        return shooterService.getShootersForClub(clubId, page, rowsPerPage);
     }
 
     @GetMapping
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public List<GetClubResponse> getClubs() {
-        return clubService.getClubs();
+    public List<GetClubResponse> getClubs(@RequestParam(required = false, defaultValue = "false") boolean withMyClub) {
+        return clubService.getClubs(withMyClub);
     }
 
     @PutMapping(value = "/{clubId}")
     @PreAuthorize("authorizedFor('ADMIN')")
     public GetClubResponse updateClub(@PathVariable Long clubId, @Valid @RequestBody UpdateClubRequest request) {
        return  clubService.updateClub(clubId, request);
+    }
+
+    @PostMapping(value = "/{clubId}/shooters/{shooterId}/associate")
+    @PreAuthorize("authorizedFor('MANAGER')")
+    public GetShooterResponse associateShooter(@PathVariable Long clubId, @PathVariable Long shooterId) {
+        return shooterService.associateShooter(shooterId, clubId);
     }
 
 }

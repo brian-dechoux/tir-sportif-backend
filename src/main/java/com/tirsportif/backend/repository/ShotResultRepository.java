@@ -1,17 +1,16 @@
 package com.tirsportif.backend.repository;
 
 import com.tirsportif.backend.model.ShotResult;
+import com.tirsportif.backend.model.projection.SeriesShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultForCategoryAndDisciplineProjection;
 import com.tirsportif.backend.model.projection.ShotResultForChallengeProjection;
 import com.tirsportif.backend.model.projection.ShotResultProjection;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
-
-    boolean existsByParticipationId(Long participationId);
+public interface ShotResultRepository extends JpaRepository<ShotResult, Long> {
 
     @Query(value = "SELECT * FROM shotResult " +
             "WHERE participationId = ?1 " +
@@ -22,7 +21,7 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
 
     @Query(value = "SELECT s.lastname, s.firstname, c.id AS categoryId, c.label AS categoryLabel, d.id AS disciplineId, d.label AS disciplineLabel, participationResults.participationId, participationTotalPoints " +
             "FROM (" +
-            "        SELECT raw.participationId, SUM(sr.points) AS participationTotalPoints\n" +
+            "        SELECT raw.participationId, SUM(sr.points) AS participationTotalPoints " +
             "        FROM (" +
             "              SELECT p.id AS participationId, rawsr.serieNumber, MIN(rawsr.shotNumber) AS shotNumber " +
             "              FROM shotResult AS rawsr " +
@@ -41,6 +40,29 @@ public interface ShotResultRepository extends CrudRepository<ShotResult, Long> {
             "INNER JOIN discipline d ON d.id = p.disciplineId"
             , nativeQuery = true)
     List<ShotResultForChallengeProjection> getShotResultsForChallenge(Long challengeId);
+
+    @Query(value = "SELECT s.id AS shooterId, s.lastname, s.firstname, participationResults.serieNumber, participationResults.points " +
+            "FROM (" +
+            "    SELECT raw.participationId, raw.serieNumber, sr.points " +
+            "    FROM (" +
+            "             SELECT p.id AS participationId, rawsr.serieNumber, MIN(rawsr.shotNumber) AS shotNumber " +
+            "             FROM shotResult AS rawsr " +
+            "                      INNER JOIN participation p ON rawsr.participationId = p.id " +
+            "                      INNER JOIN shooter s ON p.shooterId = s.id " +
+            "             WHERE p.challengeId = ?1 " +
+            "               AND p.disciplineId = ?3 " +
+            "               AND s.categoryId = ?2 " +
+            "               AND (rawsr.shotNumber = -2 OR rawsr.shotNumber = -1) " +
+            "               AND p.outRank = false " +
+            "             GROUP BY p.id, rawsr.serieNumber " +
+            "         ) AS raw " +
+            "    INNER JOIN shotResult sr ON sr.serieNumber = raw.serieNumber AND sr.shotNumber = raw.shotNumber AND sr.participationId = raw.participationId " +
+            " ) AS participationResults " +
+            "INNER JOIN participation p ON p.id = participationResults.participationId " +
+            "INNER JOIN shooter s on p.shooterId = s.id " +
+            "ORDER BY participationResults.participationId, participationResults.serieNumber"
+            , nativeQuery = true)
+    List<SeriesShotResultForChallengeProjection> getSeriesShotResultsForChallenge(Long challengeId, Long categoryId, Long disciplineId);
 
     @Query(value = "SELECT SUM(points) AS totalPoints, shooter.lastname, shooter.firstname FROM shotResult AS sr " +
             "INNER JOIN participation p ON sr.participationId = p.id " +

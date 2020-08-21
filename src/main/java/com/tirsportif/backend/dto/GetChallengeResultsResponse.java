@@ -13,6 +13,6 @@ public class GetChallengeResultsResponse {
 
     GetChallengeResponse challenge;
 
-    List<GetChallengeCategoryDisciplineResponse> challengeResults;
+    List<GetChallengeCategoryDisciplineResultsResponse> challengeResults;
 
 }

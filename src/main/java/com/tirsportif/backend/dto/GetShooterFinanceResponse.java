@@ -7,6 +7,14 @@ import java.util.List;
 @Value
 public class GetShooterFinanceResponse {
 
-    List<GetBillResponse> bills;
+    String lastname;
+
+    String firstname;
+
+    List<GetShooterBillResponse> unpaidBills;
+
+    List<GetShooterBillResponse> participationBills;
+
+    List<GetShooterBillResponse> licenseBills;
 
 }

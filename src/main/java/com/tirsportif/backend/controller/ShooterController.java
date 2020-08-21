@@ -1,6 +1,5 @@
 package com.tirsportif.backend.controller;
 
-import com.tirsportif.backend.dto.AssociateShooterToClubRequest;
 import com.tirsportif.backend.dto.CreateShooterRequest;
 import com.tirsportif.backend.dto.GetSearchShooterResponse;
 import com.tirsportif.backend.dto.GetShooterResponse;
@@ -32,8 +31,12 @@ public class ShooterController {
     @GetMapping(value = "/search")
     @ResponseBody
     @PreAuthorize("authorizedFor('MANAGER')")
-    public List<GetSearchShooterResponse> searchShooters(@RequestParam String searchName) {
-        return shooterService.search(searchName);
+    public List<GetSearchShooterResponse> searchShooters(
+            @RequestParam String searchName,
+            @RequestParam(required = false, defaultValue = "false") boolean freeClubOnly,
+            @RequestParam(required = false) List<Long> categoryIds
+    ) {
+        return shooterService.searchShooters(searchName, freeClubOnly, categoryIds);
     }
 
     @GetMapping(value = "/{shooterId}")
@@ -41,12 +44,6 @@ public class ShooterController {
     @PreAuthorize("authorizedFor('MANAGER')")
     public GetShooterResponse getShooter(@PathVariable Long shooterId) {
         return shooterService.getShooterById(shooterId);
-    }
-
-    @PostMapping(value = "/{shooterId}/associate")
-    @PreAuthorize("authorizedFor('MANAGER')")
-    public GetShooterResponse associateShooter(@PathVariable Long shooterId, @Valid @RequestBody AssociateShooterToClubRequest associateShooterToClubRequest) {
-        return shooterService.associateShooter(shooterId, associateShooterToClubRequest.getClubId());
     }
 
 }

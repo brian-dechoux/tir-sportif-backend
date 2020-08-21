@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/challenges", produces = "application/json;charset=UTF-8")
@@ -111,6 +112,11 @@ public class ChallengeController {
     @GetMapping(value = "/{challengeId}/results")
     public GetChallengeResultsResponse getResultsForChallenge(@PathVariable Long challengeId) {
         return shotResultService.getResultsForChallenge(challengeId);
+    }
+
+    @GetMapping(value = "/{challengeId}/results/{categoryId}/{disciplineId}/series")
+    public List<GetChallengeSeriesResultsResponse> getSeriesResultsForChallenge(@PathVariable Long challengeId, @PathVariable Long categoryId, @PathVariable Long disciplineId) {
+        return shotResultService.getSeriesResultsForChallenge(challengeId, categoryId, disciplineId);
     }
 
     @GetMapping(value = "/{challengeId}/results/categories/{categoryId}/disciplines/{disciplineId}")
