@@ -48,14 +48,18 @@ public class BillService extends AbstractService {
         boolean forLicensee = licenseeRepository.findByShooterId(participation.getShooter().getId()).isPresent();
         Price price = priceRepository.findByTypeAndForLicenseeOnly(PriceType.CHALLENGE, forLicensee)
                 .orElseThrow(() -> new InternalServerErrorException(BillError.NO_PRICE_FOR_PARAMETERS, PriceType.CHALLENGE.name(), Boolean.toString(forLicensee)));
-        Bill bill  = Bill.builder()
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        Bill.BillBuilder billBuilder  = Bill.builder()
                 .value(price.getValue())
-                .creationDate(OffsetDateTime.now(clock))
+                .creationDate(now)
                 .paid(participation.isPaid())
                 .participation(participation)
-                .price(price)
-                .build();
-        billRepository.save(bill);
+                .price(price);
+        if (participation.isPaid()) {
+            billBuilder.paidDate(now);
+        }
+
+        billRepository.save(billBuilder.build());
         log.info("Bill generated");
     }
 
