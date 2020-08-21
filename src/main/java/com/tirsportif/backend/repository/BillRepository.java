@@ -28,7 +28,8 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             "WHERE s.id IN (" +
             "    (SELECT p.shooterId " +
             "    FROM bill b " +
-            "    INNER JOIN participation p ON b.participationId = p.id), " +
+            "    INNER JOIN participation p ON b.participationId = p.id)" +
+            "    UNION " +
             "    (SELECT l.shooterId " +
             "    FROM bill b " +
             "    INNER JOIN licensee l ON b.licenseeId = l.id) " +
@@ -39,7 +40,8 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             "WHERE s.id IN (" +
             "     (SELECT p.shooterId " +
             "     FROM bill b " +
-            "     INNER JOIN participation p ON b.participationId = p.id), " +
+            "     INNER JOIN participation p ON b.participationId = p.id) " +
+            "     UNION " +
             "     (SELECT l.shooterId " +
             "     FROM bill b " +
             "     INNER JOIN licensee l ON b.licenseeId = l.id)" +
